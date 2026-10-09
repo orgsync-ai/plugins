@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "orgsync": {
+      "type": "http",
+      "url": "https://orgsync.co/mcp",
+      "oauth": { "clientId": "PCWmqdfcUpyyOafpOrNzdplhiHwfzwDk", "callbackPort": 19876 }
+    }
+  }
+}

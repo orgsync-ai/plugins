@@ -1,0 +1,13 @@
+{
+  "name": "orgsync",
+  "owner": { "name": "OrgSync" },
+  "description": "OrgSync's plugins for Claude: your company's approved context, with citations, in the AI apps you already use.",
+  "plugins": [
+    {
+      "name": "orgsync",
+      "source": "./plugins/orgsync",
+      "description": "Cited answers from your company's approved OrgSync context, exact source lookups, and sharing or source changes that you approve yourself.",
+      "category": "productivity"
+    }
+  ]
+}
