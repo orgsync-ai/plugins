@@ -1,0 +1,30 @@
+{
+  "name": "orgsync",
+  "version": "0.3.0",
+  "description": "Use your company's approved OrgSync context in your AI app: cited answers, exact source lookups, and sharing or source changes that you approve yourself.",
+  "author": {
+    "name": "OrgSync",
+    "url": "https://orgsync.co"
+  },
+  "homepage": "https://orgsync.co",
+  "repository": "https://github.com/orgsync-ai/plugins",
+  "license": "MIT",
+  "keywords": [
+    "company knowledge",
+    "decisions",
+    "citations",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "OrgSync",
+    "shortDescription": "Your company's approved context, with citations",
+    "longDescription": "OrgSync keeps your company's current decisions and responsibilities available across your AI work. Ask about your company and get answers from the sources it has approved, each with a citation and an honest label: a reported fact is not presented as an accepted decision. When you want to share something with your company, the AI prepares a short draft, and nothing is shared until you approve it. Owners and Decision approvers can review suggested corrections and change a source's status, each confirmed in OrgSync's own prompt.",
+    "developerName": "OrgSync",
+    "category": "Productivity",
+    "capabilities": [],
+    "websiteURL": "https://orgsync.co",
+    "privacyPolicyURL": "https://orgsync.co/privacy",
+    "termsOfServiceURL": "https://orgsync.co/terms"
+  }
+}

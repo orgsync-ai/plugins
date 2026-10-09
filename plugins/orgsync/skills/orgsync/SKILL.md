@@ -12,7 +12,7 @@ OrgSync holds the company context that the person's company has approved, and se
 1. Call `readPermittedContext` with the person's question as the query.
    - For "what did we decide about …", add `knowledgeStatus: "accepted_decision"` so that only accepted decisions are searched.
    - Every call is a cited retrieval that uses company credit, so call it for a real question, not speculatively.
-2. Answer from `evidence` and cite each source you use by its title from `sources`. Use the status to describe it:
+2. Answer from `evidence` and cite each source you use by its title from `sources`. Answer only from this response: never from your memory, saved memories or earlier conversations, because company decisions change. If OrgSync can't answer, say so instead of filling in from memory. Use the status to describe it:
    - `knowledgeStatusSet.via` of `publication` means a member published the source as reported information. It is not an endorsement, so don't present it as a decision.
    - `status_change` or `correction` means an owner or decision approver set the status. For an accepted decision, `by` is who accepted it, and `at` is when.
    - Use `effectiveAt` only when it is present, and never invent a date.
