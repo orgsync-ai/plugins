@@ -1,7 +1,7 @@
 {
   "name": "orgsync",
   "displayName": "OrgSync",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Use your company's approved OrgSync context in Claude: cited answers, exact source lookups, and sharing or source changes that you approve yourself.",
   "author": { "name": "OrgSync", "url": "https://orgsync.co" },
   "homepage": "https://orgsync.co",

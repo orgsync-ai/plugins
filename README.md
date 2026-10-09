@@ -19,15 +19,16 @@ Then start Claude Code, run `/mcp`, select `plugin:orgsync:orgsync`, and sign in
 connection is for. To get new versions automatically, run `/plugin`, open **Marketplaces**, select
 `orgsync`, and choose **Enable auto-update**.
 
-If you connected OrgSync earlier with `claude mcp add`, remove that connection with
-`claude mcp remove orgsync` so that Claude does not see two copies of each tool.
+If you connected OrgSync earlier with `claude mcp add`, Claude Code keeps using that connection for the plugin's
+skills and does not add a second one, so there is nothing to remove.
 
 ## Install in Claude Desktop or claude.ai
 
 1. Add the OrgSync connector first, with the steps for "Claude Desktop or Claude on the web" on your company's
    **AI apps** page in OrgSync. On a Claude Team or Enterprise plan, an owner of your Claude organization adds
    connectors; you then connect with your own OrgSync account.
-2. Open **Customize > Plugins**, choose **Add > Add marketplace**, and enter `orgsync-ai/plugins`. Add **OrgSync**.
+2. Open **Customize > Plugins**, choose **Add > Add marketplace > Add from a repository**, enter
+   `https://github.com/orgsync-ai/plugins`, and choose **Sync**. Then choose **Add** beside **OrgSync**.
    Its **Connectors** tab shows OrgSync as connected, because the plugin uses the connector you added.
 
 A plugin added to your Claude account also reaches Claude Code when you are signed in with that account.
