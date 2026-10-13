@@ -52,6 +52,8 @@ A plugin added to your Claude account also reaches Claude Code when you are sign
    (**Plugins > Add > Add custom MCP server**, with OrgSync's client ID).
 2. Download [orgsync-chatgpt.zip](https://github.com/orgsync-ai/plugins/releases/latest/download/orgsync-chatgpt.zip).
    In ChatGPT open **Plugins > Add > Upload plugin archive**, add it, and choose **Install plugin**.
+   If ChatGPT says it couldn't add the plugin and you added OrgSync before, open the OrgSync plugin under your
+   plugins, choose **More actions > Upload new version**, upload the same file, then install it.
 3. In a chat, type `@OrgSync` and ask your question.
 
 ## Help

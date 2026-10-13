@@ -9,6 +9,7 @@ The person wants to share this with their company through OrgSync: $ARGUMENTS
 
 Follow the `orgsync` skill's "Sharing with the company" steps.
 - Write a short, accurate summary and only the excerpts that support it, with no secrets and no transcript.
+- For a local or attached file, the origin is its file name and section, never its path on this computer.
 - Call `submitDraft`. If OrgSync shows its own prompt, the person answers it there.
 - If the receipt says `awaiting_confirmation`, show the person exactly what will be shared and wait for an explicit yes before `shareDraft`.
 - If the person declines, the draft stays private.

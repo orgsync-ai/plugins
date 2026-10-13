@@ -5,12 +5,13 @@ description: Use when a task or question touches the person's company - its deci
 
 # Working with OrgSync
 
-OrgSync holds the company context that the person's company has approved, and serves it to this session over the `orgsync` MCP server. It answers only from published sources the person may read now. You never see other people's private drafts. The server's instructions name who this connection acts for, their role, and the company's newest accepted decisions with each one's `sourceId`.
+OrgSync holds the company context that the person's company has approved, and serves it to this session over the `orgsync` MCP server. It answers only from published sources the person may read now. You never see other people's private drafts. The server's instructions name who this connection acts for, their role, and the company's newest accepted decisions with each one's `sourceId`. Some apps pass no server instructions; there, `status` names the person, their role and the company.
 
 ## Checking OrgSync during work
 
 When a task touches a company topic, check OrgSync before you act on it: a listed decision, or a policy, price, process, commitment or owner the company may have decided. Writing a refund email, changing pricing code, planning a launch, or answering "who approves this" all touch company topics. Reformatting a file or explaining a library does not.
 
+- When the server instructions list no decisions (some apps pass none), call `listDecisions`, which is free, before relying on memory.
 - If a listed decision matches, open it with `readSource`. It is free.
 - Otherwise call `readPermittedContext` once for the topic, as below.
 - Tell the person what the company decided and cite it, then do the task in line with it. If the task conflicts with an accepted decision, say so before going ahead.
@@ -28,9 +29,10 @@ When a task touches a company topic, check OrgSync before you act on it: a liste
    - `unknown`: say the company has no permitted source for it.
    - `conflict`: show both sides and say that a person needs to resolve it.
    - `unavailable`: tell the person to try again shortly.
-   - `denied`: report the reason in plain words. For example, the company needs credit, or the connection was revoked.
+   - `denied`: tell the person what its `limitations` say, which explain the `reason` in plain words. Don't add a cause they don't give: a company with no active plan or free week may simply not have started one yet, so never say its subscription lapsed.
+   - A tool that returns `status: "error"` carries the same kind of plain-words `message` beside its `code`. Relay that message as given, for example that an owner can choose a plan or add credit in OrgSync under Settings › Billing.
 4. `responsibility` is the person's own work profile. `companyWorkProfiles` lists colleagues relevant to the question. Use them for "who handles …" questions. They describe roles; they don't grant access.
-5. To open one cited source exactly, for example to check that it is current, call `readSource` with its `sourceId`. It is free. It returns the current revision and says whether it is usable guidance. `content.sourceOrigin` says where the source came from: a link, a path or a label. To see an older revision's text, name that revision, and present it as not current guidance.
+5. To open one cited source exactly, for example to check that it is current, call `readSource` with its `sourceId`. It is free. It returns the current revision and says whether it is usable guidance. `content.sourceOrigin` says where the source came from: a link, a file name or a label. To see an older revision's text, name that revision, and present it as not current guidance.
 6. If the person says whether an answer helped, you may record it with `reportUsefulness`, using the request's `requestId` and one verdict (`useful`, `not_useful`, `out_of_date`, `incorrect` or `missing`). Don't record a verdict the person didn't give.
 
 ## Free company reads
@@ -49,7 +51,7 @@ Share only when the person deliberately asks to share something, or says yes whe
 1. **Check for a decision this replaces.** Call `listDecisions`, and `listDecisions` with `view: "mine"` for what the person shared themselves, and look for one on the same topic, for example a new refund limit and *Refund approvals*. If one looks related, open it with `readSource`. If the new decision changes it, ask: "This replaces *Refund approvals*. Update that instead?"
    - **Yes:** suggest the new text as a correction to that source, as "The person suggests better text" describes under "Managing sources". Don't also share it as a new draft.
    - **No:** share it as a new draft, as below.
-2. Prepare a short, accurate summary and only the excerpts that support it. Never include secrets, credentials or a full transcript. Put where it came from in `sourceOrigin`: a link to the original document or thread when there is one.
+2. Prepare a short, accurate summary and only the excerpts that support it. Never include secrets, credentials or a full transcript. Put where it came from in `sourceOrigin`: a link to the original document or thread when there is one. For an attached or local file, use its file name and section, such as "handbook.md#tune-up-prices", never its path on this computer, which would show the person's username and folders to the whole company.
 3. Call `submitDraft`. The result depends on how this connection confirms sharing.
    - **OrgSync's own prompt** (`approval.channel: "mcp_elicitation"`). This app shows the person a dialog that you cannot answer.
      - `shared`: it is published.
@@ -58,7 +60,7 @@ Share only when the person deliberately asks to share something, or says yes whe
      - Show the person exactly what `confirmation` contains: the company, title, summary and excerpts. Ask for an explicit yes.
      - Only after a clear yes, call `shareDraft` with the `draftId`, `revision` and `payloadHash` from the receipt.
      - If they say no, leave it private, or call `discardDraft` if they want it gone.
-   - **`not_requested`.** This connection uses the prompt, but this app can't show it. Tell the person that they can switch this connection to chat confirmation on its page in OrgSync (Connections), or share from an app that shows OrgSync's prompt.
+   - **`not_requested`.** This connection uses the prompt, but this app can't show it. Tell the person that they can switch this connection to chat confirmation on its page in OrgSync (AI apps), or share from an app that shows OrgSync's prompt.
 4. Use `listDrafts` to find the person's pending private drafts. Use `discardDraft` to remove one they no longer want.
 5. A published source becomes usable once processing is ready. `status` with the `operationId` reports progress. A `pauseReason` means it waits for company credit: it is not ready, and it resumes once the company has credit.
 
@@ -111,10 +113,10 @@ On a prompt connection, `setKnowledgeStatus` and `decideProposal` take effect on
 `deleteSource` still requires the person's answer in OrgSync's own prompt. If one is refused:
 
 - `approval_mode_prompt`: repeat without `confirmationHash` so OrgSync asks the person in its prompt.
-- `approval_mode_chat`: deletion needs OrgSync's prompt. They can switch this connection to the prompt on its page in OrgSync, or ask an owner whose connection uses it.
+- `approval_mode_chat`: deletion needs OrgSync's prompt. They can switch this connection to the prompt on its page in OrgSync (AI apps), or ask an owner whose connection uses it.
 - `prompt_unsupported`: this app can't show the prompt, so the change needs an app that can.
 - `declined_in_prompt` or `dismissed_in_prompt`: nothing changed. Don't ask again unless the person asks.
 
 ## Connection
 
-`status` with no arguments checks who this connection acts for and in which company. If a call is denied because the connection was revoked or expired, the person reconnects from OrgSync's Connections page.
+`status` with no arguments checks who this connection acts for and in which company. When the person asks who they are in OrgSync, call it and answer with `personName`, their role from `permissionProfile` (`owner`, `decision_approver` or `member`, said as Owner, Decision approver or Member) and `companyName`. If `personName` is null, the account has no name set; say so rather than guessing one. If a call is denied because the connection was revoked or expired, the person reconnects from OrgSync's AI apps page.
