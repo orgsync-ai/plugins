@@ -15,6 +15,17 @@ test("picture parses both wire shapes and stores only displayed facts", () => {
   expect(lookKey(a!)).toBe("look:v1:company-a:person-a");
 });
 
+test("an approver's newly shared reported information needs them, and an older server's picture without it still parses", () => {
+  const p = pictureFixture(), eva = { personId: "person-eva", label: "Eva" }, shared = { sourceId: "source-b", revision: 1, title: "Repair refunds over $700" };
+  const parsed = parsePicture(wire({ ...p, needsYou: { ...p.needsYou, approver: { ...p.needsYou.approver,
+    recentSharedSources: { count: 1, items: [{ source: shared, knowledgeStatus: "reported_information", sharedBy: eva, sharedAt: AS_OF }], truncated: false } } } }));
+  expect(parsed?.items.filter(i => i.section === "needs").map(i => i.id)).toEqual(["draft:draft-a:1", "proposal:proposal-a:1", "shared:source-b:1"]);
+  expect(parsed?.items.find(i => i.id === "shared:source-b:1")).toMatchObject({ title: "Repair refunds over $700",
+    details: ["Shared by Eva as reported information", "Not yet accepted as a company decision", `Shared ${AS_OF}`] });
+  expect(parsed?.counts).toContainEqual({ label: "Newly shared reported information", count: 1, truncated: false });
+  expect(parsePicture(wire(p))?.counts.map(c => c.label)).not.toContain("Newly shared reported information");
+});
+
 test("limitation codes become plain sentences, with unknown and engineering codes omitted", () => {
   const p = pictureFixture();
   p.limitations = ["drafts_require_submit_scope", "work_profile_missing", "role_relevance_not_ranked", "lookback_clamped",

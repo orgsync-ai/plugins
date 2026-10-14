@@ -83,6 +83,11 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
         const s = source(v.source);
         add(`report:${string(v.reportId)}`, "needs", s.title, [`${string(v.issueType).replace(/_/g, " ")} reported by ${person(v.reportedBy).label}`, `Reported ${date(v.reportedAt)}`]);
       });
+      // An older server sends no such section, and its absence is not a malformed picture.
+      if (a.recentSharedSources !== undefined) readSection(a.recentSharedSources, "Newly shared reported information", "sharedBy", v => {
+        const s = source(v.source);
+        add(`shared:${s.sourceId}:${s.revision}`, "needs", s.title, [`Shared by ${person(v.sharedBy).label} as reported information`, "Not yet accepted as a company decision", `Shared ${date(v.sharedAt)}`]);
+      });
     }
     readSection(needs.ownDecidedProposals, "Your decided proposals", "proposalId", v => {
       const s = source(v.source);
