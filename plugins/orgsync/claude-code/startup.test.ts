@@ -154,3 +154,14 @@ test("unchanged facts are silent; acknowledgements never cross people or compani
   expect(w.calls[w.calls.length - 1]?.args).toEqual({});
   expect(w.stored["look:v1:company-b:person-b"]).toBeDefined();
 });
+
+test("focus renders in the picture and never increases Needs you", async ($,on) => {
+  const w=world(on);w.body={...w.body,yourFocus:{count:1,truncated:false,items:[{objectiveId:"goal-a",revision:1,scope:"company",title:"First customers",
+    horizon:"week",dueOn:"2026-10-21",owner:null}]}} as typeof w.body;
+  await $.session.start({cwd:"/project",surface:"terminal",isInteractive:true});await w.activate();
+  const startup=await $.ui.mount({plugin:"orgsync",surface:"terminal",component:"AbovePrompt",props:band});
+  expect(await startup.find({type:"Text",text:/^2 need you/})).toBeDefined();
+  const full=await $.ui.mount({plugin:"orgsync",surface:"terminal",component:"Pane",requestId:"orgsync-picture",props:pane});
+  expect(await full.find({type:"Text",text:"Your focus"})).toBeDefined();expect(await full.find({type:"Text",text:/First customers/})).toBeDefined();
+  await startup.unmount();await full.unmount();
+});

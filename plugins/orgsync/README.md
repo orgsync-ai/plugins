@@ -28,7 +28,9 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
   before your request. In Codex, ask it to use OrgSync.
   - `/orgsync:ask <question>` asks OrgSync a question.
   - `/orgsync:share <what to share>` prepares a draft from this conversation.
-  - `/orgsync:today` shows what needs you, what changed for you, the decisions that shape your work, and your role.
+  - `/orgsync:today` shows what needs you, what changed for you, the decisions that shape your work, your focus, and your role.
+  - `/orgsync:goals` sets or revisits company and person objectives.
+  - `/orgsync:first-customers` prepares a plan and an artifact for your first customers.
   - `/orgsync:import <what to bring in>` brings decisions in from tools your AI app already reaches, such as
     Notion, Google Drive, Slack, GitHub or local files, and shares the ones you approve in one step.
   - `/orgsync:interview <area>` asks you a few questions about how your company works and turns your answers into drafts.
@@ -37,7 +39,7 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
 - When you share, OrgSync asks you to approve the exact text, or, if you chose chat confirmation for this
   connection, your AI asks you for a clear yes.
 - Owners and Decision approvers can review suggested corrections and reported problems, and accept or
-  dispute a source. Each change asks you in OrgSync's own prompt, which your AI cannot answer for you.
+  dispute a source. Each change uses your connection's confirmation mode. Only you answer OrgSync's prompt or give the explicit yes in chat.
 
 ## What it contains
 
@@ -53,7 +55,7 @@ It also contains the Claude Code mod described below.
 
 With no arguments, `/orgsync:today` opens the full picture in Claude Code and Claude Desktop's Code tab
 without an AI turn when the mod can draw it. Otherwise, the skill writes it as text. The picture shows
-what needs you, what changed, decisions that shape your work, and your work profile.
+what needs you, what changed, decisions that shape your work, your focus, the business profile, and your work profile.
 A startup notice appears when facts are new. Your AI receives the picture once per conversation
 and changes at your next prompt. Memory-file writes offer a note for sharing, with content approval
 still required. An `OrgSync context:` line names sources returned during an answered turn and their status.
@@ -89,3 +91,11 @@ company's OrgSync credit; see [orgsync.co](https://orgsync.co) for rates.
 - [Privacy notice](https://orgsync.co/privacy)
 - [Terms of service](https://orgsync.co/terms)
 - [Help](https://orgsync.co/help)
+
+## Goals and first customers in 0.5.0
+
+Use `/orgsync:goals` to set or revisit company and person objectives. OrgSync asks you to confirm each exact change through your connection's mode. Every company member can read objectives and their history. Work-profile objectives remain descriptive text.
+
+Use `/orgsync:first-customers` to prepare a customer-conversation plan or an offer and acquisition plan, fitted to your stage and location. You carry out the external work. The guide gives no legal advice. `/orgsync:today` and the Claude Code picture show "Your focus" when the server supports it. Older servers leave focus unavailable.
+
+Version 0.5.0 is built, not released. It requires the v0.2 server for objective tools and guide-use reports. Publishing the plugin and applying migration 0064 are separate release steps.

@@ -122,3 +122,10 @@ On a prompt connection, `setKnowledgeStatus` and `decideProposal` take effect on
 ## Connection
 
 `status` with no arguments checks who this connection acts for and in which company. When the person asks who they are in OrgSync, call it and answer with `personName`, their role from `permissionProfile` (`owner`, `decision_approver` or `member`, said as Owner, Decision approver or Member) and `companyName`. If `personName` is null, the account has no name set; say so rather than guessing one. If a call is denied because the connection was revoked or expired, the person reconnects from OrgSync's AI apps page.
+
+## Goals and a first guide
+
+- /orgsync:goals uses free `listObjectives` and `setObjective` to maintain explicit company or person objectives. Every current company member can read them. Owners and Decision approvers can change any objective; Members can change only person objectives they own. Assignment describes responsibility and grants no permission. Work-profile `roleObjectives` stays descriptive text.
+- `setObjective` uses the same prompt or chat confirmation as source-status changes. Only the person answers OrgSync's prompt. In chat, show the complete server-built before and after, then repeat identical arguments with `confirmationHash` only after their explicit yes. Changed state needs a fresh yes. Completion and dropping are final person-judged changes. No goals web page exists.
+- `readPicture` adds `yourFocus` and nullable `businessProfile`. Focus has exact totals and at most five summaries, with full criteria in `listObjectives`. An older server's absent focus means unavailable, not zero objectives. Connection facts can omit goals; read the tools freshly before relying on them.
+- /orgsync:first-customers prepares a plan and an artifact fitted to the business and its location. It reports one actual exchange through `reportGuideUse`, `guide: "first_customers"`, with a fresh key per invocation. Reports are AI-client-reported usage proxies. The guide grants no external action, sends no messages, and gives no legal advice.

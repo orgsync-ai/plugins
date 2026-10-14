@@ -21,3 +21,5 @@ export const wire = (structuredContent: unknown) => ({ isError: false, content: 
 export const jsonWire = (body: unknown) => ({ isError: false, content: [{ type: "text", text: JSON.stringify(body) }] });
 export const changed = (eventId = "event-a", at = AS_OF) => ({ kind: "status_changed", eventId, at, by: { ...PERSON }, source: { ...SOURCE }, previousKnowledgeStatus: "accepted_decision", knowledgeStatus: "disputed", effectiveAt: null });
 export const sourceFixture = () => ({ status: "source", ...SOURCE, knowledgeStatus: "accepted_decision", knowledgeStatusSet: { via: "status_change", by: { ...PERSON }, at: BEFORE } });
+export const focusFixture = () => ({count:7,truncated:true,items:[{objectiveId:"objective-a",revision:1,scope:"company",title:"First five conversations",
+  horizon:"week",dueOn:"2026-10-21",owner:{...PERSON,active:true}}]});

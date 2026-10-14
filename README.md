@@ -60,3 +60,11 @@ A plugin added to your Claude account also reaches Claude Code when you are sign
 
 [Help](https://orgsync.co/help), [privacy notice](https://orgsync.co/privacy) and
 [terms of service](https://orgsync.co/terms). The plugin's files are under the [MIT license](LICENSE).
+
+## Goals and first customers in 0.5.0
+
+Use `/orgsync:goals` to set or revisit company and person objectives. OrgSync asks you to confirm each exact change through your connection's mode. Every company member can read objectives and their history. Work-profile objectives remain descriptive text.
+
+Use `/orgsync:first-customers` to prepare a customer-conversation plan or an offer and acquisition plan, fitted to your stage and location. You carry out the external work. The guide gives no legal advice. `/orgsync:today` and the Claude Code picture show "Your focus" when the server supports it. Older servers leave focus unavailable.
+
+Version 0.5.0 is built, not released. It requires the v0.2 server for objective tools and guide-use reports. Publishing the plugin and applying migration 0064 are separate release steps.

@@ -1,7 +1,7 @@
 export type OrgSyncLook = { asOf: string; factsHash: string; boundaryEventIds: string[] };
 export type OrgSyncPerson = { personId: string; label: string };
 export type OrgSyncStatus = "reported_information" | "accepted_decision" | "disputed" | "superseded" | "withdrawn";
-export type OrgSyncItem = { id: string; section: "needs" | "changed" | "decisions" | "role"; title: string; details: string[] };
+export type OrgSyncItem = { id: string; section: "needs" | "changed" | "decisions" | "focus" | "business" | "role"; title: string; details: string[] };
 export type OrgSyncChange = { eventId: string; at: string; line: string };
 export type OrgSyncSource = { sourceId: string; revision: number; title: string; knowledgeStatus: OrgSyncStatus; acceptedBy: string | null };
 export type OrgSyncPicture = {
@@ -12,6 +12,7 @@ export type OrgSyncPicture = {
   since: string | null;
   sinceClamped: boolean;
   changesComplete: boolean;
+  focusAvailable?: boolean;
   counts: { label: string; count: number; truncated: boolean }[];
   items: OrgSyncItem[];
   changes: OrgSyncChange[];

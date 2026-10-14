@@ -122,3 +122,15 @@ test("source metadata ignores content and never invents historical acceptance", 
   expect(decisionLine(parseSources(wire(s), "readSource"))).not.toContain("accepted by");
   expect(parseSources(wire({ status: "denied", sources: [s] }), "readPermittedContext")).toEqual([]);
 });
+
+test("new focus and business facts change standing hashes; absent focus stays unavailable", () => {
+  const old=pictureFixture(), focus={count:1,truncated:false,items:[{objectiveId:"objective-a",revision:1,scope:"person",title:"Customer conversations",
+    horizon:"week",dueOn:"2026-10-21",owner:{...PERSON,active:false}}]};
+  const p={...old,yourFocus:focus,businessProfile:{country:"CA",subdivision:"CA-NS",stage:"starting",helpAreas:["sales_marketing"]}};
+  const parsed=parsePicture(wire(p))!;expect(parsed.focusAvailable).toBe(true);expect(parsePicture(wire(old))?.focusAvailable).toBe(false);
+  expect(parsed.items.find(i=>i.section==="focus")?.details).toContain("Responsible: Sam (inactive membership)");
+  expect(parsed.items.find(i=>i.section==="business")?.details).toContain("Stage: starting");
+  expect(parsed.standingHash).not.toBe(parsePicture(wire({...p,yourFocus:{...focus,items:[{...focus.items[0]!,revision:2,title:"New focus"}]}}))?.standingHash);
+  for(const yourFocus of [{...focus,count:0},{...focus,truncated:true},{...focus,items:Array(6).fill(focus.items[0])},
+    {...focus,items:[{...focus.items[0]!,dueOn:"2026-02-30"}]}]) expect(parsePicture(wire({...p,yourFocus}))).toBe(null);
+});

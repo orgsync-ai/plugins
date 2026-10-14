@@ -125,6 +125,30 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
       const effective = nullableDate(d.effectiveAt), processing = string(d.processing), usable = boolean(d.usableAsCurrentGuidance);
       add(`source:${string(d.sourceId)}:${revision(d.currentRevision)}`, "decisions", string(d.title), [statusWords(current), `${current === "accepted_decision" ? "Accepted" : "Status set"} by ${by.label}`, `Published ${date(d.publishedAt)}`, ...(effective ? [`Effective ${effective}`] : []), ...(usable ? [] : ["Not current guidance"]), `Processing ${processing}`]);
     });
+    if (p.yourFocus !== undefined) {
+      const focus = section(p.yourFocus);
+      if (focus.items.length > 5 || focus.truncated !== (focus.count > focus.items.length)) invalid();
+      counts.push({label: "Your focus", count: focus.count, truncated: focus.truncated});
+      for (const raw of focus.items) {
+        const goal = record(raw), scope = string(goal.scope), horizon = string(goal.horizon), dueOn = string(goal.dueOn);
+        if (!["company", "person"].includes(scope) || !["day", "week", "month"].includes(horizon) ||
+          !/^\d{4}-\d{2}-\d{2}$/.test(dueOn) || !Number.isFinite(Date.parse(dueOn)) || new Date(dueOn).toISOString().slice(0,10) !== dueOn) invalid();
+        const owner = goal.owner === null ? null : record(goal.owner);
+        if (scope === "person" && owner === null) invalid();
+        if (owner) {person(owner); boolean(owner.active);}
+        add(`objective:${string(goal.objectiveId)}:${revision(goal.revision)}`, "focus", string(goal.title),
+          [`${scope} objective`, `Horizon ${horizon}`, `Due ${dueOn}`, owner ? `Responsible: ${person(owner).label}${owner.active ? "" : " (inactive membership)"}` : "Unassigned"]);
+      }
+    }
+    if (p.businessProfile !== undefined && p.businessProfile !== null) {
+      const profile = record(p.businessProfile), country = string(profile.country), stage = string(profile.stage);
+      const helpAreas = array(profile.helpAreas).map(string), allowed = ["sales_marketing", "finance", "legal", "product", "hiring_people", "operations"];
+      const subdivision = profile.subdivision === null ? null : string(profile.subdivision);
+      if (!/^[A-Z]{2}$/.test(country) || !["idea", "starting", "running", "growing"].includes(stage) ||
+        subdivision !== null && !subdivision.startsWith(`${country}-`) || helpAreas.length > 6 || new Set(helpAreas).size !== helpAreas.length || helpAreas.some(a => !allowed.includes(a))) invalid();
+      add(`business:${string(company.companyId)}`, "business", "Business profile", [country, ...(subdivision ? [subdivision] : []),
+        `Stage: ${stage}`, ...helpAreas.map(area => `Help: ${area.replace(/_/g, " ")}`)]);
+    }
     const who = person(role.person);
     const details = [permissionProfile.replace(/_/g, " ")];
     if (role.workProfile !== null) {
@@ -136,14 +160,14 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
     const result: OrgSyncPicture = {
       company: { companyId: string(company.companyId), name: string(company.name) }, person: who, permissionProfile,
       asOf: date(p.asOf), since: nullableDate(window.since), sinceClamped: boolean(window.sinceClamped),
-      changesComplete: !changeSection.truncated && !boolean(window.sinceClamped), counts, items, changes,
+      focusAvailable: p.yourFocus !== undefined, changesComplete: !changeSection.truncated && !boolean(window.sinceClamped), counts, items, changes,
       limitations: array(p.limitations).flatMap(code => { const line = limitationWords.get(string(code)); return line ? [line] : []; }), factsHash: "", standingHash: ""
     };
     if (date(window.until) !== result.asOf || (result.since && Date.parse(result.since) > Date.parse(result.asOf))) invalid();
     if (changes.some(c => Date.parse(c.at) > Date.parse(result.asOf) || (result.since && Date.parse(c.at) < Date.parse(result.since)))) invalid();
     if (new Set(items.map(i => i.id)).size !== items.length) invalid();
     // The interval is compared separately; its timestamps and old events cannot make standing facts new.
-    result.standingHash = JSON.stringify({ company: result.company, person: who, permissionProfile, counts: counts.filter(c => c.label !== "Changed for you"), items: items.filter(i => i.section !== "changed").sort((a, b) => a.id.localeCompare(b.id)), limitations: result.limitations });
+    result.standingHash = JSON.stringify({ focusAvailable: result.focusAvailable, company: result.company, person: who, permissionProfile, counts: counts.filter(c => c.label !== "Changed for you"), items: items.filter(i => i.section !== "changed").sort((a, b) => a.id.localeCompare(b.id)), limitations: result.limitations });
     result.factsHash = JSON.stringify({ standing: result.standingHash, counts: counts.filter(c => c.label === "Changed for you"), changes: items.filter(i => i.section === "changed").sort((a, b) => a.id.localeCompare(b.id)) });
     return result;
   } catch { return null; }

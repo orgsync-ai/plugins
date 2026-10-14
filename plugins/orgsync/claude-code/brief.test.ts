@@ -83,3 +83,12 @@ for (const reason of ["api-error", "empty-reply", "aborted", "refusal"] as const
   expect(w.data?.picture?.company.name).toBe("Acorn"); expect(w.data?.brief).toEqual([]);
   await $.command.run(command); expect(calls).toBe(1);
 });
+
+test("brief accepts explicit focus facts and rejects invented progress numbers", () => {
+  const raw={...pictureFixture(),yourFocus:{count:1,truncated:false,items:[{objectiveId:"objective-a",revision:1,scope:"company",title:"Talk to five customers",
+    horizon:"week",dueOn:"2026-10-21",owner:null}]}};
+  const p=parsePicture(wire(raw))!,id="objective:objective-a:1";
+  const good={text:"Your focus is to talk to five customers.",itemIds:[id]};
+  expect(parseBrief(JSON.stringify({sentences:[good,written[1]]}),p)).toEqual([good,written[1]]);
+  expect(parseBrief(JSON.stringify({sentences:[{text:"You already won 25 customers.",itemIds:[id]},written[1]]}),p)).toEqual([]);
+});
