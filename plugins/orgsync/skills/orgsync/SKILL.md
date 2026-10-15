@@ -71,7 +71,7 @@ For /orgsync:import and /orgsync:interview, one approval shares up to 20 new dra
 
 ## Managing sources
 
-Act only when the person asks. Call `readSource` first, so that you use the source's current `revision` and `knowledgeStatus`. If one of these tools is not listed, this OrgSync does not offer it yet. A source's `webUrl` opens a read-only page; these tools are the only way to change a source, so don't send the person to the web page to do it.
+Act only when the person asks. Call `readSource` first, so that you use the source's current `revision` and `knowledgeStatus`. To find a source the person names, use the free reads first: `list` with `what: "decisions"` (with `view: "mine"` for their own) or `readPicture`, which lists sources colleagues shared recently; use `readPermittedContext` only when those do not find it. If one of these tools is not listed, this OrgSync does not offer it yet. A source's `webUrl` opens a read-only page; these tools are the only way to change a source, so don't send the person to the web page to do it.
 
 - **Something is wrong.** Call `reportProblem` with the `sourceId`, the revision, one `issueType` (`incorrect`, `outdated`, `missing_context` or `other`) and, optionally, the person's note as `detail`. It changes nothing and needs no confirmation.
 - **The person suggests better text.** Show them the exact replacement summary, excerpts and reason. Say that sharing lets the company's Owners and Decision approvers see it under their name, and ask for a yes. Then call `proposeCorrection` with `baseRevision` set to the revision you read.
