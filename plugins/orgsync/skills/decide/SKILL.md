@@ -11,7 +11,7 @@ Build a decision brief from the company's OrgSync context, then help the person 
 
 1. **Name the decision.** Restate it in one line. If it is unclear what is being decided, ask one question first.
 2. **Gather what the company already decided.** Call `list` with `what: "decisions"`, which is free, and pick the decisions whose titles bear on this one. Open each with `readSource`, which is free, to read its current text, status and date.
-3. **Ask the company once.** Call `readPermittedContext` with the decision as the query. It is one cited retrieval and uses company credit, so call it once, not per option.
+3. **Ask the company once.** Always call `readPermittedContext` once with the decision as the query, even when step 2 found the relevant decisions: it also finds reported information and who is involved, which the decision list does not show. It is one cited retrieval and uses company credit, so call it once, not per option.
 4. **Write the brief**, citing every source by title:
    - **Already decided:** accepted decisions that settle or constrain this one, with who accepted them and when.
    - **Reported, not decided:** reported information and disputed sources that bear on it, labelled as such.
