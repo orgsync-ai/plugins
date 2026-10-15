@@ -15,6 +15,7 @@ When a task touches a company topic, check OrgSync before you act on it: a liste
 - If a listed decision matches, open it with `readSource`. It is free.
 - Otherwise call `readPermittedContext` once for the topic, as below.
 - Tell the person what the company decided and cite it, then do the task in line with it. If the task conflicts with an accepted decision, say so before going ahead.
+- Finding a source to act on (to change its status, correct it or delete it) is not a question: look it up free with `readPicture`, whose review section lists sources colleagues shared recently, and `list` with `what: "decisions"`. Never call `readPermittedContext` just to find a `sourceId`.
 
 ## Answering from company context
 
