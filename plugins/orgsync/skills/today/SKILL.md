@@ -12,7 +12,7 @@ Show the person their picture of the company from OrgSync. If they named a time 
    - **Needs you:** each item, with why it is theirs ("you approve changes to it", "your draft is deleted on Friday if not shared", "Eva shared it as reported information; you can accept it as a company decision").
    - **Changed for you:** what changed since then, newest first: what changed, who changed it and when.
    - **Decisions that shape your work:** the accepted decisions listed, with who accepted them and when.
-   - **Your focus:** active objectives from `yourFocus`, with their dates and responsible people. These do not increase Needs you. Full criteria and more objectives come from `listObjectives`. An absent focus section means unavailable, not zero objectives.
+   - **Your focus:** active objectives from `yourFocus`, with their dates and responsible people. These do not increase Needs you. Full criteria and more objectives come from `list` with `what: "objectives"`. An absent focus section means unavailable, not zero objectives.
    - **Your role:** their permission profile and work profile, in their words.
 3. Above these parts, write a brief of two or three sentences. Every sentence states only what an item below says, and names that item's title, so the person can find it. If nothing changed and nothing needs them, say so without hiding their focus.
 4. Say what the picture leaves out: if `window.sinceClamped` is true, OrgSync looked back only 30 days; if a section is `truncated`, say how many more there are (its `count`) and that the list tools show them; if `pendingDrafts` is null, this connection cannot list their drafts. Don't call a part empty when it was cut short.
