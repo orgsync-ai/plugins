@@ -31,6 +31,7 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
   - `/orgsync:today` shows what needs you, what changed for you, the decisions that shape your work, your focus, and your role.
   - `/orgsync:goals` sets or revisits company and person objectives.
   - `/orgsync:first-customers` prepares a plan and an artifact for your first customers.
+  - `/orgsync:review` runs your weekly review: priorities, check-ins on your goals, decisions to share and next week's priorities.
   - `/orgsync:import <what to bring in>` brings decisions in from tools your AI app already reaches, such as
     Notion, Google Drive, Slack, GitHub or local files, and shares the ones you approve in one step.
   - `/orgsync:interview <area>` asks you a few questions about how your company works and turns your answers into drafts.
@@ -46,8 +47,10 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
 - A connection to OrgSync's server at `https://orgsync.co/mcp`, for Claude apps. You sign in with your
   OrgSync account and choose your company the first time. In Codex and ChatGPT you add the connection with
   the steps on OrgSync's **AI apps** page.
-- Skills that tell your AI how to use OrgSync: when to look something up, how to cite and describe a
-  source, how to share only what you approve, and to answer from OrgSync rather than from memory.
+- Eleven skills. The `orgsync` skill tells your AI how to use OrgSync: when to look something up, how to cite and
+  describe a source, how to share only what you approve, and to answer from OrgSync rather than from memory. The
+  other ten are `ask`, `share`, `today`, `goals`, `first-customers`, `import`, `interview`, `decide`, `refresh` and
+  `review`, one for each command above.
 
 It also contains the Claude Code mod described below.
 
@@ -92,16 +95,21 @@ company's OrgSync credit; see [orgsync.co](https://orgsync.co) for rates.
 - [Terms of service](https://orgsync.co/terms)
 - [Help](https://orgsync.co/help)
 
-## Goals and first customers in 0.5.0
+## Goals and first customers
 
 Use `/orgsync:goals` to set or revisit company and person objectives. OrgSync asks you to confirm each exact change through your connection's mode. Every company member can read objectives and their history. Work-profile objectives remain descriptive text.
 
 Use `/orgsync:first-customers` to prepare a customer-conversation plan or an offer and acquisition plan, fitted to your stage and location. You carry out the external work. The guide gives no legal advice. `/orgsync:today` and the Claude Code picture show "Your focus" when the server supports it. Older servers leave focus unavailable.
-
-Version 0.5.0 is built, not released. It requires the v0.2 server for objective tools and guide-use reports. Publishing the plugin and applying migration 0064 are separate release steps.
 
 ## Weekly review
 
 Run `/orgsync:review` each week to revisit priorities, report what was done and what moved each goal, share chosen decisions, make a call on each goal and choose one to three priorities. An Owner also sees members' latest reviews. One confirmation saves the review and attempts selected shares. Saving is free; admitted publications are charged once ready. Partial shares keep the saved review. Calls of stop or done need a separate confirmed goal change.
 
 Research uses your AI app's own search on request, with at most two sourced ideas. An accepted idea becomes a priority. Weekly reminder emails are optional per company in Settings, Account. They name the company and contain counts, with an unsubscribe link that works without signing in.
+
+## Update the plugin
+
+- **Claude Code:** in a terminal, run `claude plugin marketplace update orgsync`, then `claude plugin update orgsync@orgsync`, then restart Claude Code.
+- **Claude Desktop:** open **Settings › Plugins › OrgSync**. It shows the installed version and an **Update** button when a newer version exists. A "Couldn't check for updates" message in the Code tab comes from Claude Desktop itself. If the OrgSync plugin page shows the latest version, nothing is wrong. The latest version is listed in the plugin repository, `orgsync-ai/plugins`.
+- **claude.ai:** the OrgSync marketplace can stay on an older version until you choose **Check for updates** for it.
+- **ChatGPT:** after OrgSync adds or changes tools, ChatGPT keeps the old list until you open the OrgSync connection in ChatGPT's settings and choose **Refresh tools**. If ChatGPT's permission prompt calls the confirmation code that your AI sends after your yes "suspicious content", that is the one-time code OrgSync issued for the exact change you just approved. Allow it only if you just said yes to that change; otherwise decline, and nothing changes.
