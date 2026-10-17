@@ -1,6 +1,6 @@
 ---
 name: today
-description: See your picture of the company in OrgSync - what needs you, what changed for you, the decisions that shape your work, your focus, and your role.
+description: See your picture of the company in OrgSync - what needs you, what changed for you, the decisions that shape your work, your focus, how we work, and your role.
 argument-hint: "[since, such as 'last Monday']"
 disable-model-invocation: true
 ---
@@ -8,11 +8,12 @@ disable-model-invocation: true
 Show the person their picture of the company from OrgSync. If they named a time to look back from, use it: $ARGUMENTS
 
 1. Call `readPicture`, which is free. Pass `since` only when the person named a time, as a full date and time in the past; otherwise OrgSync covers the last seven days.
-2. Write the picture in five parts, in this order, and leave out a part that is empty:
+2. Write the picture in six parts, in this order, and leave out empty parts except the How we work availability note:
    - **Needs you:** each item, with why it is theirs ("you approve changes to it", "your draft is deleted on Friday if not shared", "Eva shared it as reported information; you can accept it as a company decision").
    - **Changed for you:** what changed since then, newest first: what changed, who changed it and when.
    - **Decisions that shape your work:** the accepted decisions listed, with who accepted them and when.
-   - **Your focus:** active objectives from `yourFocus`, with their dates and responsible people. These do not increase Needs you. Show each nullable `latestCheckIn` as the person's reported status, what moved, call and `recordedAt` date, naming who reported it. Keep its `objectiveRevision` visible when it differs from the current goal; never infer a newer status. A missing check-in means no report yet. Full criteria and more objectives come from `list` with `what: "objectives"`. An absent focus section means unavailable, not zero objectives.
+   - **Your focus:** active objectives from `yourFocus`, with their dates and responsible people. These do not increase Needs you. Show `supportsContext` with the company goal's current title, revision and state. If `revision` differs from `linkedRevision`, say the target changed; completed or dropped means closed. Never complete or relink a personal goal automatically. Show each nullable `latestCheckIn` as the person's reported status, what moved, call and `recordedAt` date, naming who reported it. Keep its `objectiveRevision` visible when it differs from the current goal; never infer a newer status. A missing check-in means no report yet. Full criteria and more objectives come from `list` with `what: "objectives"`. An absent focus section means unavailable, not zero objectives.
+   - **How we work:** adopted practices from `howWeWork`. An absent section means unavailable, a zero count means no adopted practices, and `truncated` means more exist. Say which applies even when there are no items. Titles alone contain no directions; use free `readSource` before relying on them. Practices do not increase Needs you. Use `list` with `what: "ways_of_working"` for more. An `acceptedInAreaCount` above one means candidates to compare, never an automatically resolved conflict.
    - **Your role:** their permission profile and work profile, in their words.
 3. Above these parts, write a brief of two or three sentences. Every sentence states only what an item below says, and names that item's title, so the person can find it. If nothing changed and nothing needs them, say so without hiding their focus.
 4. Say what the picture leaves out: if `window.sinceClamped` is true, OrgSync looked back only 30 days; if a section is `truncated`, say how many more there are (its `count`) and that the list tools show them; if `pendingDrafts` is null, this connection cannot list their drafts. Don't call a part empty when it was cut short.

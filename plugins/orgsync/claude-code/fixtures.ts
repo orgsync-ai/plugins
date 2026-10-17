@@ -23,3 +23,7 @@ export const changed = (eventId = "event-a", at = AS_OF) => ({ kind: "status_cha
 export const sourceFixture = () => ({ status: "source", ...SOURCE, knowledgeStatus: "accepted_decision", knowledgeStatusSet: { via: "status_change", by: { ...PERSON }, at: BEFORE } });
 export const focusFixture = () => ({count:7,truncated:true,items:[{objectiveId:"objective-a",revision:1,scope:"company",title:"First five conversations",
   horizon:"week",dueOn:"2026-10-21",owner:{...PERSON,active:true}}]});
+
+export const practiceFixture = () => ({ ...pictureFixture().decisionsThatShapeYourWork.page.items[0]!,
+  sourceId: "source-practice", title: "Review customer conversations weekly", area: "sales_marketing", classification: "way_of_working", acceptedInAreaCount: 2 });
+export const supportContextFixture = () => ({ objectiveId: "company-goal", title: "Win five customers", revision: 3, status: "active", linkedRevision: 2 });

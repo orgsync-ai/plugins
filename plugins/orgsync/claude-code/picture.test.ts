@@ -1,5 +1,5 @@
 import { test, expect } from "claude-code/testing";
-import { AS_OF, changed, jsonWire, PERSON, pictureFixture, SOURCE, sourceFixture, wire } from "./fixtures.js";
+import { AS_OF, changed, jsonWire, PERSON, pictureFixture, practiceFixture, supportContextFixture, SOURCE, sourceFixture, wire } from "./fixtures.js";
 import { decisionLine, lookKey, mapTools, parsePicture, parseSources, readable, refusalStopsReads } from "./picture.js";
 
 test("date display replaces ISO times without changing other plain facts", () => {
@@ -133,4 +133,57 @@ test("new focus and business facts change standing hashes; absent focus stays un
   expect(parsed.standingHash).not.toBe(parsePicture(wire({...p,yourFocus:{...focus,items:[{...focus.items[0]!,revision:2,title:"New focus"}]}}))?.standingHash);
   for(const yourFocus of [{...focus,count:0},{...focus,truncated:true},{...focus,items:Array(6).fill(focus.items[0])},
     {...focus,items:[{...focus.items[0]!,dueOn:"2026-02-30"}]}]) expect(parsePicture(wire({...p,yourFocus}))).toBe(null);
+});
+
+
+test("practices distinguish old-server absence, empty and truncated, and bind all standing facts", () => {
+  const old = pictureFixture(), practice = practiceFixture(), page = { count: 2, truncated: true, items: [practice] };
+  const parsed = parsePicture(wire({ ...old, howWeWork: page }))!;
+  expect(parsePicture(wire(old))?.howWeWorkAvailable).toBe(false);
+  const empty = parsePicture(wire({ ...old, howWeWork: { count: 0, items: [], truncated: false } }))!;
+  expect(empty.howWeWorkAvailable).toBe(true);
+  expect(empty.counts).toContainEqual({ label: "How we work", count: 0, truncated: false });
+  expect(parsed.items.find(i => i.section === "practices")).toMatchObject({ id: "practice:source-practice:2", title: practice.title,
+    details: expect.arrayContaining(["Area: sales marketing", "Way of working", "2 accepted practices in this area", "Compare directions before resolving any conflict."]) });
+  expect(parsed.counts).toContainEqual({ label: "How we work", count: 2, truncated: true });
+  for (const change of [{ title: "New wording" }, { acceptedInAreaCount: 1 }, { currentRevision: 3 }, { area: "operations" }]) {
+    expect(parsePicture(wire({ ...old, howWeWork: { ...page, items: [{ ...practice, ...change }] } }))?.standingHash).not.toBe(parsed.standingHash);
+  }
+  expect(empty.standingHash).not.toBe(parsePicture(wire(old))?.standingHash);
+});
+
+test("supplied practice sections fail closed for malformed or ineligible entries", () => {
+  const old = pictureFixture(), practice = practiceFixture(), page = { count: 1, truncated: false, items: [practice] };
+  for (const howWeWork of [null, {}, { ...page, count: 0 }, { ...page, truncated: true }, { ...page, count: 6, items: Array(6).fill(practice) },
+    ...[{ area: null }, { classification: null }, { area: "unknown" }, { classification: "practice" }, { knowledgeStatus: "disputed" },
+      { processing: "processing" }, { usableAsCurrentGuidance: false }, { acceptedInAreaCount: 0 }, { sourceId: undefined }].map(change => ({ ...page, items: [{ ...practice, ...change }] }))]) {
+    expect(parsePicture(wire({ ...old, howWeWork }))).toBe(null);
+  }
+});
+
+test("focus surfaces target revisions and closure without changing the personal goal", () => {
+  const old = pictureFixture(), target = supportContextFixture(), goal = { objectiveId: "person-goal", revision: 1, scope: "person",
+    title: "Speak with customers", horizon: "week", dueOn: "2026-10-21", owner: { ...PERSON, active: true }, supportsContext: target };
+  const parse = (supportsContext: unknown) => parsePicture(wire({ ...old, yourFocus: { count: 1, truncated: false, items: [{ ...goal, supportsContext }] } }));
+  const parsed = parse(target)!;
+  expect(parsed.items.find(i => i.section === "focus")?.details).toEqual(expect.arrayContaining(["Supports company goal: Win five customers",
+    "Target revision 3; linked at revision 2", "Target status: active", "Company goal changed. Review the link with the person."]));
+  for (const status of ["completed", "dropped"]) {
+    const closed = parse({ ...target, status })!;
+    expect(closed.items.find(i => i.section === "focus")?.details).toContain("Company goal closed. The person goal remains unchanged.");
+    expect(closed.standingHash).not.toBe(parsed.standingHash);
+  }
+  for (const change of [{ objectiveId: "other-company-goal" }, { title: "New company goal" }, { revision: 4 }, { linkedRevision: 3 }]) expect(parse({ ...target, ...change })?.standingHash).not.toBe(parsed.standingHash);
+  expect(parse(null)?.items.find(i => i.section === "focus")?.details.join(" ")).not.toContain("Supports");
+  expect(parse(undefined)).not.toBe(null);
+  for (const value of [{}, { ...target, objectiveId: null }, { ...target, title: null }, { ...target, revision: 0 },
+    { ...target, linkedRevision: undefined }, { ...target, status: "unknown" }]) expect(parse(value)).toBe(null);
+});
+
+
+test("a classified disputed decision can have no adopted practices in its area", () => {
+  const p = pictureFixture(), decision = { ...practiceFixture(), knowledgeStatus: "disputed", usableAsCurrentGuidance: false, acceptedInAreaCount: 0 };
+  const parsed = parsePicture(wire({ ...p, decisionsThatShapeYourWork: { ordering: "first_published_desc", page: { count: 1, truncated: false, items: [decision] } } }));
+  expect(parsed?.items.find(i => i.section === "decisions")?.details).toContain("0 accepted practices in this area");
+  expect(parsed?.items.filter(i => i.section === "practices")).toEqual([]);
 });

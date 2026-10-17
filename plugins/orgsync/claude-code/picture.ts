@@ -1,4 +1,4 @@
-import type { OrgSyncChange, OrgSyncItem, OrgSyncPicture, OrgSyncSource, OrgSyncStatus } from "../types/index.js";
+import type { OrgSyncChange, OrgSyncItem, OrgSyncPicture, OrgSyncSource, OrgSyncStatus, OrgSyncSupportContext } from "../types/index.js";
 
 type RecordValue = Record<string, unknown>;
 const invalid = (): never => { throw new Error("unavailable"); };
@@ -11,6 +11,38 @@ const array = (v: unknown): unknown[] => Array.isArray(v) && v.length <= 500 ? v
 const date = (v: unknown): string => /^\d{4}-\d\d-\d\dT/.test(string(v)) && Number.isFinite(Date.parse(string(v))) ? string(v) : invalid();
 const nullableDate = (v: unknown): string | null => v === null ? null : date(v);
 const person = (v: unknown) => { const p = record(v); return { personId: string(p.personId), label: string(p.label) }; };
+export const HELP_AREAS = ["sales_marketing", "finance", "legal", "product", "hiring_people", "operations"] as const;
+const metadata = (d: RecordValue) => {
+  const area = d.area === undefined || d.area === null ? null : string(d.area);
+  if (area !== null && !HELP_AREAS.includes(area as typeof HELP_AREAS[number])) invalid();
+  const classification = d.classification === undefined || d.classification === null ? null : string(d.classification);
+  if (classification !== null && classification !== "way_of_working") invalid();
+  return { area, classification };
+};
+const supportContext = (value: unknown): OrgSyncSupportContext | null => {
+  if (value === null) return null;
+  const target = record(value), state = string(target.status);
+  if (state !== "active" && state !== "completed" && state !== "dropped") return invalid();
+  return { objectiveId: string(target.objectiveId), title: string(target.title), revision: revision(target.revision), status: state, linkedRevision: revision(target.linkedRevision) };
+};
+const supportDetails = (target: OrgSyncSupportContext | null | undefined): string[] => target ? [
+  `Supports company goal: ${target.title}`, `Target revision ${target.revision}; linked at revision ${target.linkedRevision}`, `Target status: ${target.status}`,
+  ...(target.revision !== target.linkedRevision ? ["Company goal changed. Review the link with the person."] : []),
+  ...(target.status !== "active" ? ["Company goal closed. The person goal remains unchanged."] : [])
+] : [];
+const decisionFacts = (d: RecordValue, practice = false): string[] => {
+  const attribution = record(d.knowledgeStatusSet), current = status(d.knowledgeStatus), by = person(attribution.by);
+  string(attribution.via); date(attribution.at);
+  const effective = nullableDate(d.effectiveAt), processing = string(d.processing), usable = boolean(d.usableAsCurrentGuidance);
+  const { area, classification } = metadata(d);
+  if (practice && (area === null || classification !== "way_of_working" || current !== "accepted_decision" || processing !== "ready" || !usable)) invalid();
+  const inArea = d.acceptedInAreaCount === undefined ? null : number(d.acceptedInAreaCount);
+  if (practice && inArea === 0) invalid();
+  return [statusWords(current), `${current === "accepted_decision" ? "Accepted" : "Status set"} by ${by.label}`, `Published ${date(d.publishedAt)}`,
+    ...(effective ? [`Effective ${effective}`] : []), ...(usable ? [] : ["Not current guidance"]), `Processing ${processing}`,
+    ...(area ? [`Area: ${area.replace(/_/g, " ")}`] : []), ...(classification ? ["Way of working"] : []),
+    ...(inArea !== null ? [`${inArea} accepted ${inArea === 1 ? "practice" : "practices"} in this area`, ...(inArea > 1 ? ["Compare directions before resolving any conflict."] : [])] : [])];
+};
 const statuses = ["reported_information", "accepted_decision", "disputed", "superseded", "withdrawn"] as const;
 const status = (v: unknown): OrgSyncStatus => statuses.includes(v as OrgSyncStatus) ? v as OrgSyncStatus : invalid();
 export const statusWords = (v: OrgSyncStatus): string => ({ reported_information: "reported information", accepted_decision: "accepted decision", disputed: "disputed", superseded: "superseded", withdrawn: "withdrawn" })[v];
@@ -62,7 +94,8 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
     const permissionProfile = role.permissionProfile;
     if (permissionProfile !== "owner" && permissionProfile !== "decision_approver" && permissionProfile !== "member") return null;
     const items: OrgSyncItem[] = [], counts: OrgSyncPicture["counts"] = [], changes: OrgSyncChange[] = [];
-    const add = (id: string, sectionName: OrgSyncItem["section"], title: string, details: string[]) => items.push({ id, section: sectionName, title, details });
+    const add = (id: string, sectionName: OrgSyncItem["section"], title: string, details: string[], supportsContext?: OrgSyncSupportContext | null) =>
+      items.push({ id, section: sectionName, title, details, ...(supportsContext === undefined ? {} : { supportsContext }) });
     const readSection = (raw: unknown, label: string, key: string, visit: (v: RecordValue) => void) => {
       const s = section(raw); counts.push({ label, count: s.count, truncated: s.truncated });
       for (const item of s.items) if (item !== null && typeof item === "object" && !Array.isArray(item) && key in item) visit(record(item));
@@ -120,11 +153,17 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
     const decisions = record(p.decisionsThatShapeYourWork);
     if (decisions.ordering !== "first_published_desc") invalid();
     readSection(decisions.page, "Decisions that shape your work", "sourceId", d => {
-      const attribution = record(d.knowledgeStatusSet), current = status(d.knowledgeStatus), by = person(attribution.by);
-      string(attribution.via); date(attribution.at);
-      const effective = nullableDate(d.effectiveAt), processing = string(d.processing), usable = boolean(d.usableAsCurrentGuidance);
-      add(`source:${string(d.sourceId)}:${revision(d.currentRevision)}`, "decisions", string(d.title), [statusWords(current), `${current === "accepted_decision" ? "Accepted" : "Status set"} by ${by.label}`, `Published ${date(d.publishedAt)}`, ...(effective ? [`Effective ${effective}`] : []), ...(usable ? [] : ["Not current guidance"]), `Processing ${processing}`]);
+      add(`source:${string(d.sourceId)}:${revision(d.currentRevision)}`, "decisions", string(d.title), decisionFacts(d));
     });
+    if (p.howWeWork !== undefined) {
+      const practices = section(p.howWeWork);
+      if (practices.items.length > 5 || practices.truncated !== (practices.count > practices.items.length)) invalid();
+      counts.push({ label: "How we work", count: practices.count, truncated: practices.truncated });
+      for (const raw of practices.items) {
+        const d = record(raw);
+        add(`practice:${string(d.sourceId)}:${revision(d.currentRevision)}`, "practices", string(d.title), decisionFacts(d, true));
+      }
+    }
     if (p.yourFocus !== undefined) {
       const focus = section(p.yourFocus);
       if (focus.items.length > 5 || focus.truncated !== (focus.count > focus.items.length)) invalid();
@@ -136,16 +175,18 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
         const owner = goal.owner === null ? null : record(goal.owner);
         if (scope === "person" && owner === null) invalid();
         if (owner) {person(owner); boolean(owner.active);}
+        const target = goal.supportsContext === undefined ? undefined : supportContext(goal.supportsContext);
+        if (scope !== "person" && target) invalid();
         add(`objective:${string(goal.objectiveId)}:${revision(goal.revision)}`, "focus", string(goal.title),
-          [`${scope} objective`, `Horizon ${horizon}`, `Due ${dueOn}`, owner ? `Responsible: ${person(owner).label}${owner.active ? "" : " (inactive membership)"}` : "Unassigned"]);
+          [`${scope} objective`, `Horizon ${horizon}`, `Due ${dueOn}`, owner ? `Responsible: ${person(owner).label}${owner.active ? "" : " (inactive membership)"}` : "Unassigned", ...supportDetails(target)], target);
       }
     }
     if (p.businessProfile !== undefined && p.businessProfile !== null) {
       const profile = record(p.businessProfile), country = string(profile.country), stage = string(profile.stage);
-      const helpAreas = array(profile.helpAreas).map(string), allowed = ["sales_marketing", "finance", "legal", "product", "hiring_people", "operations"];
+      const helpAreas = array(profile.helpAreas).map(string);
       const subdivision = profile.subdivision === null ? null : string(profile.subdivision);
       if (!/^[A-Z]{2}$/.test(country) || !["idea", "starting", "running", "growing"].includes(stage) ||
-        subdivision !== null && !subdivision.startsWith(`${country}-`) || helpAreas.length > 6 || new Set(helpAreas).size !== helpAreas.length || helpAreas.some(a => !allowed.includes(a))) invalid();
+        subdivision !== null && !subdivision.startsWith(`${country}-`) || helpAreas.length > 6 || new Set(helpAreas).size !== helpAreas.length || helpAreas.some(a => !HELP_AREAS.includes(a as typeof HELP_AREAS[number]))) invalid();
       add(`business:${string(company.companyId)}`, "business", "Business profile", [country, ...(subdivision ? [subdivision] : []),
         `Stage: ${stage}`, ...helpAreas.map(area => `Help: ${area.replace(/_/g, " ")}`)]);
     }
@@ -160,14 +201,14 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
     const result: OrgSyncPicture = {
       company: { companyId: string(company.companyId), name: string(company.name) }, person: who, permissionProfile,
       asOf: date(p.asOf), since: nullableDate(window.since), sinceClamped: boolean(window.sinceClamped),
-      focusAvailable: p.yourFocus !== undefined, changesComplete: !changeSection.truncated && !boolean(window.sinceClamped), counts, items, changes,
+      focusAvailable: p.yourFocus !== undefined, howWeWorkAvailable: p.howWeWork !== undefined, changesComplete: !changeSection.truncated && !boolean(window.sinceClamped), counts, items, changes,
       limitations: array(p.limitations).flatMap(code => { const line = limitationWords.get(string(code)); return line ? [line] : []; }), factsHash: "", standingHash: ""
     };
     if (date(window.until) !== result.asOf || (result.since && Date.parse(result.since) > Date.parse(result.asOf))) invalid();
     if (changes.some(c => Date.parse(c.at) > Date.parse(result.asOf) || (result.since && Date.parse(c.at) < Date.parse(result.since)))) invalid();
     if (new Set(items.map(i => i.id)).size !== items.length) invalid();
     // The interval is compared separately; its timestamps and old events cannot make standing facts new.
-    result.standingHash = JSON.stringify({ focusAvailable: result.focusAvailable, company: result.company, person: who, permissionProfile, counts: counts.filter(c => c.label !== "Changed for you"), items: items.filter(i => i.section !== "changed").sort((a, b) => a.id.localeCompare(b.id)), limitations: result.limitations });
+    result.standingHash = JSON.stringify({ focusAvailable: result.focusAvailable, howWeWorkAvailable: result.howWeWorkAvailable, company: result.company, person: who, permissionProfile, counts: counts.filter(c => c.label !== "Changed for you"), items: items.filter(i => i.section !== "changed").sort((a, b) => a.id.localeCompare(b.id)), limitations: result.limitations });
     result.factsHash = JSON.stringify({ standing: result.standingHash, counts: counts.filter(c => c.label === "Changed for you"), changes: items.filter(i => i.section === "changed").sort((a, b) => a.id.localeCompare(b.id)) });
     return result;
   } catch { return null; }
@@ -193,6 +234,7 @@ export function parseSources(value: unknown, tool: string): OrgSyncSource[] {
     const values = tool === "readSource" ? [body] : array(body.sources);
     return values.map(v => {
       const s = source(v), d = record(v), current = status(d.knowledgeStatus), set = record(d.knowledgeStatusSet);
+      metadata(d);
       string(set.via); date(set.at);
       const by = person(set.by);
       return { ...s, knowledgeStatus: current, acceptedBy: current === "accepted_decision" ? by.label : null };

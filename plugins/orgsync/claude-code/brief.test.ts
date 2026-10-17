@@ -1,6 +1,6 @@
 import { test, expect } from "claude-code/testing";
 import { parseBrief, PROMPT_VERSION } from "./brief.js";
-import { pictureFixture, wire } from "./fixtures.js";
+import { pictureFixture, practiceFixture, supportContextFixture, wire } from "./fixtures.js";
 import { parsePicture } from "./picture.js";
 import { command, world } from "./test-kit.js";
 
@@ -91,4 +91,25 @@ test("brief accepts explicit focus facts and rejects invented progress numbers",
   const good={text:"Your focus is to talk to five customers.",itemIds:[id]};
   expect(parseBrief(JSON.stringify({sentences:[good,written[1]]}),p)).toEqual([good,written[1]]);
   expect(parseBrief(JSON.stringify({sentences:[{text:"You already won 25 customers.",itemIds:[id]},written[1]]}),p)).toEqual([]);
+});
+
+
+test("brief refreshes when practice or support facts change, using only the same free picture read", async ($, on) => {
+  const w = world(on); let completions = 0;
+  Object.assign(w.body, { howWeWork: { count: 1, truncated: false, items: [practiceFixture()] }, yourFocus: { count: 1, truncated: false,
+    items: [{ objectiveId: "personal", revision: 1, scope: "person", title: "Customer calls", horizon: "week", dueOn: "2026-10-21",
+      owner: { personId: "person-a", label: "Sam", active: true }, supportsContext: supportContextFixture() }] } });
+  on("session.model", () => ({ value: "selected-main-model" }));
+  on("model.complete", ($, e) => {
+    completions++; expect(e.system).toContain("A practice title supplies no substantive directions"); expect(e.system).toContain("Goal links grant no authority");
+    expect(e.prompt).toContain("Review customer conversations weekly"); expect(e.prompt).toContain("Supports company goal: Win five customers");
+    return { value: { isAnswered: false, reason: "empty-reply", usage: { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 } } };
+  });
+  await $.session.start({ cwd: "/project", surface: "terminal", isInteractive: true }); await w.activate(); expect(completions).toBe(1);
+  Object.assign(w.body, { howWeWork: { count: 1, truncated: false, items: [{ ...practiceFixture(), currentRevision: 3 }] } });
+  await w.clock.advance(30000); await $.command.run(command); await w.clock.settle(); expect(completions).toBe(2);
+  Object.assign(w.body, { yourFocus: { count: 1, truncated: false, items: [{ objectiveId: "personal", revision: 1, scope: "person", title: "Customer calls",
+    horizon: "week", dueOn: "2026-10-21", owner: { personId: "person-a", label: "Sam", active: true }, supportsContext: { ...supportContextFixture(), status: "dropped" } }] } });
+  await w.clock.advance(30000); await $.command.run(command); await w.clock.settle(); expect(completions).toBe(3);
+  expect(w.calls.map(c => c.tool)).toEqual(["readPicture", "readPicture", "readPicture"]);
 });

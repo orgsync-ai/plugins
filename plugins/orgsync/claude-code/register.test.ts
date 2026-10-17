@@ -1,6 +1,6 @@
 import { test, expect } from "claude-code/testing";
 import { band, command, pane, world } from "./test-kit.js";
-import { AS_OF, pictureFixture, wire } from "./fixtures.js";
+import { AS_OF, pictureFixture, practiceFixture, supportContextFixture, wire } from "./fixtures.js";
 import { shortDate } from "./picture.js";
 
 for (const surface of ["terminal", "desktop"] as const) test(`limitation codes never appear on ${surface}`, async ($, on) => {
@@ -141,4 +141,24 @@ test("server-selected and clamped windows remain available and opening acknowled
   await ui.unmount();
   expect(w.data?.picture?.since).toBe("2026-10-11T12:30:00.000Z");
   expect(w.stored["look:v1:company-a:person-a"]).toEqual({ asOf: "2026-10-11T13:00:00.000Z", factsHash: expect.any(String), boundaryEventIds: [] });
+});
+
+
+for (const state of ["unavailable", "empty", "truncated"] as const) test(`How we work shows ${state} without increasing Needs you or making another read`, async ($, on) => {
+  const w = world(on);
+  if (state !== "unavailable") Object.assign(w.body, { howWeWork: { count: state === "empty" ? 0 : 3, truncated: state === "truncated", items: state === "empty" ? [] : [practiceFixture()] } });
+  Object.assign(w.body, { yourFocus: { count: 1, truncated: false, items: [{ objectiveId: "person-goal", revision: 1, scope: "person", title: "Talk with customers",
+    horizon: "week", dueOn: "2026-10-21", owner: { personId: "person-a", label: "Sam", active: true }, supportsContext: { ...supportContextFixture(), status: "completed" } }] } });
+  await $.session.start({ cwd: "/project", surface: "terminal", isInteractive: true }); await w.activate();
+  const ui = await $.ui.mount({ plugin: "orgsync", surface: "terminal", component: "Pane", requestId: "orgsync-picture", props: pane });
+  const text = JSON.stringify(await ui.drawn());
+  expect(text).toContain(state === "unavailable" ? "How we work is unavailable on this server." : state === "empty" ? "No adopted ways of working yet." : "More ways of working are available through the free list.");
+  expect(text).toContain("Supports company goal: Win five customers"); expect(text).toContain("Company goal closed.");
+  if (state === "truncated") { expect((await ui.find({ type: "Text", text: /^How we work: 3/ }))?.text).toContain("(list truncated)"); expect(text).toContain("Compare directions before resolving any conflict."); }
+  const bandUi = await $.ui.mount({ plugin: "orgsync", surface: "terminal", component: "AbovePrompt", props: band });
+  expect(JSON.stringify(await bandUi.drawn())).toContain("2 need you");
+  expect(w.calls).toEqual([{ server: "orgsync-owner", tool: "readPicture", args: {} }]);
+  const framed = JSON.stringify(w.session.appended());
+  expect(framed).toContain("Goal links grant no authority"); expect(framed).toContain("howWeWorkAvailable");
+  await bandUi.unmount(); await ui.unmount();
 });

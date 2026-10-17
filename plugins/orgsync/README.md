@@ -29,6 +29,7 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
   - `/orgsync:ask <question>` asks OrgSync a question.
   - `/orgsync:share <what to share>` prepares a draft from this conversation.
   - `/orgsync:today` shows what needs you, what changed for you, the decisions that shape your work, your focus, and your role.
+  - `/orgsync:guide` helps choose one useful next goal from the current situation and agreed ways of working.
   - `/orgsync:goals` sets or revisits company and person objectives.
   - `/orgsync:first-customers` prepares a plan and an artifact for your first customers.
   - `/orgsync:review` runs your weekly review: priorities, check-ins on your goals, decisions to share and next week's priorities.
@@ -47,9 +48,9 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
 - A connection to OrgSync's server at `https://orgsync.co/mcp`, for Claude apps. You sign in with your
   OrgSync account and choose your company the first time. In Codex and ChatGPT you add the connection with
   the steps on OrgSync's **AI apps** page.
-- Eleven skills. The `orgsync` skill tells your AI how to use OrgSync: when to look something up, how to cite and
+- Twelve skills. The `orgsync` skill tells your AI how to use OrgSync: when to look something up, how to cite and
   describe a source, how to share only what you approve, and to answer from OrgSync rather than from memory. The
-  other ten are `ask`, `share`, `today`, `goals`, `first-customers`, `import`, `interview`, `decide`, `refresh` and
+  other eleven are `ask`, `share`, `today`, `goals`, `guide`, `first-customers`, `import`, `interview`, `decide`, `refresh` and
   `review`, one for each command above.
 
 It also contains the Claude Code mod described below.
@@ -58,7 +59,7 @@ It also contains the Claude Code mod described below.
 
 With no arguments, `/orgsync:today` opens the full picture in Claude Code and Claude Desktop's Code tab
 without an AI turn when the mod can draw it. Otherwise, the skill writes it as text. The picture shows
-what needs you, what changed, decisions that shape your work, your focus, the business profile, and your work profile.
+what needs you, what changed, decisions that shape your work, your focus, how we work, the business profile, and your work profile.
 A startup notice appears when facts are new. Your AI receives the picture once per conversation
 and changes at your next prompt. Memory-file writes offer a note for sharing, with content approval
 still required. An `OrgSync context:` line names sources returned during an answered turn and their status.
@@ -95,15 +96,17 @@ company's OrgSync credit; see [orgsync.co](https://orgsync.co) for rates.
 - [Terms of service](https://orgsync.co/terms)
 - [Help](https://orgsync.co/help)
 
-## Goals and first customers
+## The guide, goals and first customers
 
-Use `/orgsync:goals` to set or revisit company and person objectives. OrgSync asks you to confirm each exact change through your connection's mode. Every company member can read objectives and their history. Work-profile objectives remain descriptive text.
+Use `/orgsync:guide` to choose one useful next goal from your current situation, agreed ways of working and previous review. Keep your own approach, tailor it, try an optional example or skip adoption. A way of working becomes adopted only as a current, ready, active source accepted by an Owner or Decision approver. Changes use the source-correction path.
 
-Use `/orgsync:first-customers` to prepare a customer-conversation plan or an offer and acquisition plan, fitted to your stage and location. You carry out the external work. The guide gives no legal advice. `/orgsync:today` and the Claude Code picture show "Your focus" when the server supports it. Older servers leave focus unavailable.
+Use `/orgsync:goals` to set or revisit company and person objectives. OrgSync asks you to confirm each exact change through your connection's mode. Every company member can read objectives and their history. Work-profile objectives remain descriptive text. A person goal may optionally support one active company goal. Changed or closed targets are shown for your judgment; they never complete or relink a person goal automatically.
+
+Use `/orgsync:first-customers` to prepare a customer-conversation plan or an offer and acquisition plan, fitted to your stage and location. You carry out the external work. The guide gives no legal advice. `/orgsync:today` and the Claude Code picture show "Your focus" when the server supports it. Older servers leave missing focus or How we work sections unavailable. Empty and truncated practice lists are labeled separately.
 
 ## Weekly review
 
-Run `/orgsync:review` each week to revisit priorities, report what was done and what moved each goal, share chosen decisions, make a call on each goal and choose one to three priorities. An Owner also sees members' latest reviews. One confirmation saves the review and attempts selected shares. Saving is free; admitted publications are charged once ready. Partial shares keep the saved review. Calls of stop or done need a separate confirmed goal change.
+Run `/orgsync:review` each week to revisit priorities, report what was done and what moved each goal, share chosen decisions, make a call on each goal and choose one to three priorities. An Owner also sees members' latest reviews, grouped by supported company goal while keeping each author and their evidence. Unlinked check-ins stay visible. One confirmation saves the review and attempts selected shares. Saving is free; admitted publications are charged once ready. Partial shares keep the saved review. Calls of stop or done need a separate confirmed goal change.
 
 Research uses your AI app's own search on request, with at most two sourced ideas. An accepted idea becomes a priority. Weekly reminder emails are optional per company in Settings, Account. They name the company and contain counts, with an unsubscribe link that works without signing in.
 
