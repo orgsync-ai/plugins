@@ -1,6 +1,6 @@
 import { test, expect } from "claude-code/testing";
 import { parseBrief, PROMPT_VERSION } from "./brief.js";
-import { pictureFixture, practiceFixture, supportContextFixture, wire } from "./fixtures.js";
+import { frameworkConfigFixture, frameworkSummaryFixture, pictureFixture, pillarInstructionsFixture, practiceFixture, supportContextFixture, wire } from "./fixtures.js";
 import { parsePicture } from "./picture.js";
 import { command, world } from "./test-kit.js";
 
@@ -52,6 +52,20 @@ test("brief uses the selected main model, facts only, bounded request and cache"
   w.body.decisionsThatShapeYourWork.page.items[0]!.title = "Updated refunds";
   await w.clock.advance(30000); await $.command.run(command);
   expect(calls).toBe(2);
+});
+
+test("the native brief receives custom pillar labels without any instruction text", async ($, on) => {
+  const w = world(on); let calls = 0;
+  Object.assign(w.body, { frameworkConfig: { ...frameworkConfigFixture(), pillarInstructions: pillarInstructionsFixture() } });
+  on("session.model", () => ({ value: "selected-main-model" }));
+  on("model.complete", ($, e) => {
+    calls++; expect(e.prompt).toContain("Custom instructions: Business management, Product management, Project management, Finance, Marketing, Sales");
+    expect(e.prompt).toContain("Read readFrameworks with view guidance for the relevant pillars before planning work.");
+    expect(JSON.stringify(e)).not.toContain("HIDDEN");
+    return { value: { isAnswered: false, reason: "empty-reply", usage: { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 } } };
+  });
+  await $.session.start({ cwd: "/project", surface: "terminal", isInteractive: true }); await w.activate();
+  expect(calls).toBe(1); expect(w.calls.map(call => call.tool)).toEqual(["readPicture"]);
 });
 
 test("a restored briefing lock blocks another call until its expiry, then allows a new brief", async ($, on) => {
@@ -112,4 +126,22 @@ test("brief refreshes when practice or support facts change, using only the same
     horizon: "week", dueOn: "2026-10-21", owner: { personId: "person-a", label: "Sam", active: true }, supportsContext: { ...supportContextFixture(), status: "dropped" } }] } });
   await w.clock.advance(30000); await $.command.run(command); await w.clock.settle(); expect(completions).toBe(3);
   expect(w.calls.map(c => c.tool)).toEqual(["readPicture", "readPicture", "readPicture"]);
+});
+
+
+test("the actual brief prompt carries compact current availability and preserves approved knowledge", async ($, on) => {
+  const w = world(on); let calls = 0;
+  Object.assign(w.body, { frameworkSummary: { ...frameworkSummaryFixture(), customPillars: ["sales"] } });
+  on("session.model", () => ({ value: "selected-main-model" }));
+  on("model.complete", ($, e) => {
+    calls++;
+    expect(e.prompt).toContain("Refund approvals");
+    expect(e.prompt).toContain("Custom instructions: Sales");
+    expect(e.prompt).not.toContain("MEDDICC");
+    expect(e.prompt).not.toContain("HIDDEN");
+    expect(e.prompt.length).toBeLessThan(7500);
+    return { value: { isAnswered: false, reason: "empty-reply", usage: { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 } } };
+  });
+  await $.session.start({ cwd: "/project", surface: "terminal", isInteractive: true }); await w.activate();
+  expect(calls).toBe(1); expect(w.calls.map(call => call.tool)).toEqual(["readPicture"]);
 });

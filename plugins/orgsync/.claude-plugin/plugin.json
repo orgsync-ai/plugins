@@ -1,8 +1,8 @@
 {
   "name": "orgsync",
   "displayName": "OrgSync",
-  "version": "0.8.0",
-  "description": "Use your company's approved OrgSync context in your AI app: cited answers, exact source lookups, and sharing or source changes that you approve yourself.",
+  "version": "0.9.3",
+  "description": "Use current company guidance, agree contributions and review evidence across AI apps, with attributable human confirmation.",
   "author": {
     "name": "OrgSync",
     "url": "https://orgsync.co"

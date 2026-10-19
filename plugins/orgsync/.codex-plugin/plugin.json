@@ -1,7 +1,7 @@
 {
   "name": "orgsync",
-  "version": "0.8.0",
-  "description": "Use your company's approved OrgSync context in your AI app: cited answers, exact source lookups, and sharing or source changes that you approve yourself.",
+  "version": "0.9.3",
+  "description": "Use current company guidance, agree contributions and review evidence across AI apps, with attributable human confirmation.",
   "author": {
     "name": "OrgSync",
     "url": "https://orgsync.co"
@@ -19,7 +19,7 @@
   "interface": {
     "displayName": "OrgSync",
     "shortDescription": "Your company's approved context, with citations",
-    "longDescription": "OrgSync keeps your company's current decisions and responsibilities available across your AI work. Ask about your company and get answers from the sources it has approved, each with a citation and an honest label: a reported fact is not presented as an accepted decision. When you want to share something with your company, the AI prepares a short draft, and nothing is shared until you approve it. Owners and Decision approvers can review suggested corrections and change a source's status, each confirmed in OrgSync's own prompt.",
+    "longDescription": "OrgSync keeps your company's current decisions, goals and ways of working available across AI apps. Agree weekly contributions, distinguish manager assignments from recipient commitments, submit evidence and review results. Shared collaboration is readable by current company members. Exact human confirmation controls changes. Incoming requests never grant your consent. The web provides settings, read-only details and an agenda; discovery happens at your next check-in or through supported active sessions.",
     "developerName": "OrgSync",
     "category": "Productivity",
     "capabilities": [],

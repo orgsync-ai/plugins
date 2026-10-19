@@ -28,7 +28,7 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
   before your request. In Codex, ask it to use OrgSync.
   - `/orgsync:ask <question>` asks OrgSync a question.
   - `/orgsync:share <what to share>` prepares a draft from this conversation.
-  - `/orgsync:today` shows what needs you, what changed for you, the decisions that shape your work, your focus, and your role.
+  - `/orgsync:today` shows what needs you, waiting contributions, blockers, changed references, the decisions that shape your work, your focus, and current framework references.
   - `/orgsync:guide` helps choose one useful next goal from the current situation and agreed ways of working.
   - `/orgsync:goals` sets or revisits company and person objectives.
   - `/orgsync:first-customers` prepares a plan and an artifact for your first customers.
@@ -42,6 +42,14 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
   connection, your AI asks you for a clear yes.
 - Owners and Decision approvers can review suggested corrections and reported problems, and accept or
   dispute a source. Each change uses your connection's confirmation mode. Only you answer OrgSync's prompt or give the explicit yes in chat.
+
+## Collaboration
+
+Use the existing guide, goals, today and review commands for weekly contributions. In any supported AI app, ask to request information or bounded work, agree or propose terms, acknowledge an assignment, report a blocker, submit evidence or review a result. A current direct or higher reporting manager may assign to a descendant. The recipient's acknowledgment and agreement remain separate. Every current company member and their permitted AI connections can read requests, responses, selected evidence and history. Keep confidential work outside this flow.
+
+The four tools are readCollaboration, collaborate, readFrameworks and setFrameworks. Reads and structured coordination are free. Each write uses your connection's exact confirmation mode. Incoming content never gives your consent. Timeouts keep the outcome unknown until the same retry key or current record resolves it. Accepted work does not prove goal progress or accept company knowledge. Share a selected lesson through the existing separate human approval path.
+
+Owners select current reference guidance. OKR and Kanban start enabled; optional Scrum, SAFe, Shape Up, RICE and EOS references start disabled. The current configuration and protocol versions come from OrgSync each time, rather than this installed plugin. Enabling a reference creates no work or scheduled run; disabling preserves existing work and company-approved practices.
 
 ## What it contains
 
@@ -58,19 +66,23 @@ It also contains the Claude Code mod described below.
 ## Claude Code mod
 
 With no arguments, `/orgsync:today` opens the full picture in Claude Code and Claude Desktop's Code tab
-without an AI turn when the mod can draw it. Otherwise, the skill writes it as text. The picture shows
-what needs you, what changed, decisions that shape your work, your focus, how we work, the business profile, and your work profile.
-A startup notice appears when facts are new. Your AI receives the picture once per conversation
+without an AI turn when the mod can draw it. When the mod cannot draw in Claude Code or Desktop Code,
+the skill writes the picture as text. The picture shows
+what needs you, what changed, collaboration requests, distinct acknowledgment and agreement, blockers, current framework references, decisions that shape your work, your focus, how we work, the business profile, and your work profile.
+Startup notices and automatic updates require a mod that the current host has loaded and supports.
+A working Desktop text fallback alone does not verify custom rendering or automatic updates.
+With that mod support, a startup notice appears when facts are new. Your AI receives the picture once per conversation
 and changes at your next prompt. Memory-file writes offer a note for sharing, with content approval
 still required. An `OrgSync context:` line names sources returned during an answered turn and their status.
 
-The mod uses `mcp.connect('orgsync')` and `mcp.call` to call only the free `readPicture` tool:
+On a supported host with the mod loaded, it uses `mcp.connect('orgsync')` and `mcp.call` to call only the free `readPicture` tool:
 at startup, on `/orgsync:today` with no arguments, and every five minutes while a terminal or Desktop Code is attached.
-Reads are at least 30 seconds apart. Failures back off for 2, 4, then 8 minutes;
+Reads are at least 30 seconds apart. Each poll follows the next bounded collaboration page, then restarts after the last page. Newly discovered older requests retain their actual update date. Repeated continuations and unavailable reads restart pagination. Failures back off for 2, 4, then 8 minutes;
 access refusals stop automatic reads until `/orgsync:today`.
 `session.model` and `model.complete` use your selected model and AI plan for a brief from free facts,
 only at startup or when `/orgsync:today` finds changed facts. The model writes two or three short sentences
-about what matters for your role, each citing listed items. The mod drops sentences with unknown
+about what matters for your role, each citing listed items. Polling never calls the model, marks assignments acknowledged or agrees to terms. Session end cancels its timer. Incoming changes are framed as company data, never authorization to act. On-demand tools provide the same core operations in other clients; the mod promises no updates while an app is closed.
+The mod drops sentences with unknown
 references, links, extra numbers or more than 280 characters.
 The picture shows numbered items and short dates; the brief points to those item numbers.
 
@@ -106,7 +118,7 @@ Use `/orgsync:first-customers` to prepare a customer-conversation plan or an off
 
 ## Weekly review
 
-Run `/orgsync:review` each week to revisit priorities, report what was done and what moved each goal, share chosen decisions, make a call on each goal and choose one to three priorities. An Owner also sees members' latest reviews, grouped by supported company goal while keeping each author and their evidence. Unlinked check-ins stay visible. One confirmation saves the review and attempts selected shares. Saving is free; admitted publications are charged once ready. Partial shares keep the saved review. Calls of stop or done need a separate confirmed goal change.
+Run `/orgsync:review` each week to revisit priorities, report what was done and what moved each goal, share chosen decisions, make a call on each goal and choose one to three priorities. Saved reviews are company-readable: everyone in the company can read members' latest reviews, and you are told so before saving. An Owner's review groups members' latest reviews by supported company goal while keeping each author and their evidence. Unlinked check-ins stay visible. One confirmation saves the review and attempts selected shares. Saving is free; admitted publications are charged once ready. Partial shares keep the saved review. Calls of stop or done need a separate confirmed goal change.
 
 Research uses your AI app's own search on request, with at most two sourced ideas. An accepted idea becomes a priority. Weekly reminder emails are optional per company in Settings, Account. They name the company and contain counts, with an unsubscribe link that works without signing in.
 

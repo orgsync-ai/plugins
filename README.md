@@ -69,6 +69,12 @@ Use `/orgsync:goals` to set or revisit company and person objectives. OrgSync as
 
 Use `/orgsync:first-customers` to prepare a customer-conversation plan or an offer and acquisition plan, fitted to your stage and location. You carry out the external work. The guide gives no legal advice. `/orgsync:today` and the Claude Code picture show "Your focus" when the server supports it. Older servers leave missing focus or How we work sections unavailable. Empty and truncated practice lists are labeled separately.
 
+## Weekly contributions across AI apps
+
+Plugin 0.9.3 adds the confirmed collaboration workflow to guide, goals, today and review. Ask your AI to request evidence from a teammate, acknowledge or agree to an incoming contribution, propose a different date, report a blocker, submit selected evidence or review its exact revision. Current company members can read these records and their history. A peer request needs recipient agreement; direct and higher reporting managers can assign work, with acknowledgment and agreement recorded separately. Reviewing a contribution neither completes a goal nor accepts company knowledge.
+
+Your next successful check-in shows relevant work. Supported active-session mods also surface changes; no delivery is promised while your app is closed. The same readCollaboration and collaborate tools work on demand in the supported AI clients. readFrameworks reads current reference versions; only an Owner changes them with setFrameworks. Update the plugin and refresh tools when those capabilities are missing. Installed skills cannot override disabled guidance.
+
 ## Weekly review
 
 Run `/orgsync:review` each week to revisit priorities, report what was done and what moved each goal, share chosen decisions, make a call on each goal and choose one to three priorities. An Owner also sees members' latest reviews, grouped by supported company goal while keeping each author and their evidence. Unlinked check-ins stay visible. One confirmation saves the review and attempts selected shares. Saving is free; admitted publications are charged once ready. Partial shares keep the saved review. Calls of stop or done need a separate confirmed goal change.

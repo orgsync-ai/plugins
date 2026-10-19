@@ -2,7 +2,7 @@ export type OrgSyncLook = { asOf: string; factsHash: string; boundaryEventIds: s
 export type OrgSyncPerson = { personId: string; label: string };
 export type OrgSyncStatus = "reported_information" | "accepted_decision" | "disputed" | "superseded" | "withdrawn";
 export type OrgSyncSupportContext = { objectiveId: string; title: string; revision: number; status: "active" | "completed" | "dropped"; linkedRevision: number };
-export type OrgSyncItem = { id: string; section: "needs" | "changed" | "decisions" | "practices" | "focus" | "business" | "role"; title: string; details: string[]; supportsContext?: OrgSyncSupportContext | null };
+export type OrgSyncItem = { id: string; section: "needs" | "changed" | "decisions" | "practices" | "focus" | "collaboration" | "frameworks" | "business" | "role"; title: string; details: string[]; supportsContext?: OrgSyncSupportContext | null };
 export type OrgSyncChange = { eventId: string; at: string; line: string };
 export type OrgSyncSource = { sourceId: string; revision: number; title: string; knowledgeStatus: OrgSyncStatus; acceptedBy: string | null };
 export type OrgSyncPicture = {
@@ -15,6 +15,10 @@ export type OrgSyncPicture = {
   changesComplete: boolean;
   focusAvailable?: boolean;
   howWeWorkAvailable?: boolean;
+  collaborationAvailable?: boolean;
+  collaborationNextCursor?: string | null;
+  collaborationChanges?: OrgSyncChange[];
+  frameworksAvailable?: boolean;
   counts: { label: string; count: number; truncated: boolean }[];
   items: OrgSyncItem[];
   changes: OrgSyncChange[];
@@ -36,6 +40,8 @@ export type OrgSyncRuntime = {
   nextAttempt: number;
   failures: number;
   pollSince: string | null;
+  collaborationCursor: string | null;
+  collaborationCursorHistory: string[];
   baseline: string | null;
   lease: { id: string; expires: number } | null;
 };

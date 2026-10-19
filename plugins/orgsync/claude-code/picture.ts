@@ -11,6 +11,18 @@ const array = (v: unknown): unknown[] => Array.isArray(v) && v.length <= 500 ? v
 const date = (v: unknown): string => /^\d{4}-\d\d-\d\dT/.test(string(v)) && Number.isFinite(Date.parse(string(v))) ? string(v) : invalid();
 const nullableDate = (v: unknown): string | null => v === null ? null : date(v);
 const person = (v: unknown) => { const p = record(v); return { personId: string(p.personId), label: string(p.label) }; };
+// Historical receipts keep their original categories. Read their enabled flags as saved,
+// including conflicting project choices; only a confirmed configuration write resolves them.
+const FRAMEWORK_CATEGORIES: Record<string, readonly string[]> = {
+  okr: ["business_management", "business_objectives"], eos: ["business_management", "operating_rhythm"],
+  rice: ["product_management", "prioritization"], shape_up: ["product_management", "work_delivery_operations"],
+  kanban: ["project_management", "work_delivery_operations"], scrum: ["project_management", "work_delivery_operations"], safe: ["project_management", "work_delivery_operations"],
+  cash_flow: ["finance"], unit_economics: ["finance"], stp: ["marketing"], sostac: ["marketing"], spin: ["sales"], meddicc: ["sales"]
+};
+const FRAMEWORK_PILLAR_LABELS: Record<string, string> = {
+  business_management: "Business management", product_management: "Product management", project_management: "Project management",
+  finance: "Finance", marketing: "Marketing", sales: "Sales"
+};
 export const HELP_AREAS = ["sales_marketing", "finance", "legal", "product", "hiring_people", "operations"] as const;
 const metadata = (d: RecordValue) => {
   const area = d.area === undefined || d.area === null ? null : string(d.area);
@@ -93,7 +105,8 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
     const company = record(p.company), role = record(p.yourRole), window = record(p.window), needs = record(p.needsYou);
     const permissionProfile = role.permissionProfile;
     if (permissionProfile !== "owner" && permissionProfile !== "decision_approver" && permissionProfile !== "member") return null;
-    const items: OrgSyncItem[] = [], counts: OrgSyncPicture["counts"] = [], changes: OrgSyncChange[] = [];
+    const items: OrgSyncItem[] = [], counts: OrgSyncPicture["counts"] = [], changes: OrgSyncChange[] = [], collaborationChanges: OrgSyncChange[] = [];
+    let collaborationNextCursor: string | null = null;
     const add = (id: string, sectionName: OrgSyncItem["section"], title: string, details: string[], supportsContext?: OrgSyncSupportContext | null) =>
       items.push({ id, section: sectionName, title, details, ...(supportsContext === undefined ? {} : { supportsContext }) });
     const readSection = (raw: unknown, label: string, key: string, visit: (v: RecordValue) => void) => {
@@ -170,7 +183,7 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
       counts.push({label: "Your focus", count: focus.count, truncated: focus.truncated});
       for (const raw of focus.items) {
         const goal = record(raw), scope = string(goal.scope), horizon = string(goal.horizon), dueOn = string(goal.dueOn);
-        if (!["company", "person"].includes(scope) || !["day", "week", "month"].includes(horizon) ||
+        if (!["company", "person"].includes(scope) || !["day", "week", "month", "quarter", "custom"].includes(horizon) ||
           !/^\d{4}-\d{2}-\d{2}$/.test(dueOn) || !Number.isFinite(Date.parse(dueOn)) || new Date(dueOn).toISOString().slice(0,10) !== dueOn) invalid();
         const owner = goal.owner === null ? null : record(goal.owner);
         if (scope === "person" && owner === null) invalid();
@@ -179,6 +192,85 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
         if (scope !== "person" && target) invalid();
         add(`objective:${string(goal.objectiveId)}:${revision(goal.revision)}`, "focus", string(goal.title),
           [`${scope} objective`, `Horizon ${horizon}`, `Due ${dueOn}`, owner ? `Responsible: ${person(owner).label}${owner.active ? "" : " (inactive membership)"}` : "Unassigned", ...supportDetails(target)], target);
+      }
+    }
+    if (p.collaboration !== undefined) {
+      const collaboration = record(p.collaboration), totals = record(collaboration.counts), requests = array(collaboration.requests);
+      const labels = new Map([[person(role.person).personId, person(role.person).label]]);
+      if (collaboration.people !== undefined) for (const raw of array(collaboration.people)) { const entry=record(raw); boolean(entry.active); labels.set(string(entry.personId), string(entry.label)); }
+      const label = (personId: string) => labels.get(personId) ?? "Another company member";
+      const truncated = collaboration.nextCursor !== null || (collaboration.truncated === undefined ? false : boolean(collaboration.truncated));
+      if (requests.length > 20 || (collaboration.nextCursor !== null && (typeof collaboration.nextCursor !== "string" || collaboration.nextCursor.length < 1 || collaboration.nextCursor.length > 200))) invalid();
+      collaborationNextCursor = collaboration.nextCursor as string | null;
+      for (const [key, label] of [["needsYou", "Collaboration needs you"], ["waiting", "Waiting for others"], ["blocked", "Blocked contributions"]] as const)
+        counts.push({ label, count: number(totals[key]), truncated });
+      for (const raw of requests) {
+        const request = record(raw), terms = record(request.terms), rev = revision(request.revision), termsRev = revision(request.termsRevision);
+        if (request.protocolVersion !== "human-collaboration-v1" || request.visibility !== "company" || request.companyId !== company.companyId) invalid();
+        const mode = string(terms.mode), kind = string(terms.kind), state = string(request.status);
+        if (!["peer_request", "manager_assignment"].includes(mode) || !["information", "contribution", "review", "decision"].includes(kind) ||
+          !["requested", "assigned", "in_progress", "submitted", "changes_requested", "reviewed", "declined", "cancelled"].includes(state)) invalid();
+        const due = (v: unknown): string | null => v === null ? null : /^\d{4}-\d{2}-\d{2}$/.test(string(v)) && Number.isFinite(Date.parse(string(v))) && new Date(string(v)).toISOString().slice(0, 10) === v ? string(v) : invalid();
+        const dueOn = due(terms.dueOn), recipient = string(terms.recipientPersonId), reviewer = string(terms.reviewerPersonId), author = string(request.createdByPersonId);
+        const acknowledgment = request.acknowledgment === null ? null : record(request.acknowledgment), agreement = request.agreement === null ? null : record(request.agreement);
+        const acknowledged = acknowledgment !== null && string(acknowledgment.personId) === recipient && revision(acknowledgment.termsRevision) === termsRev;
+        const agreed = agreement !== null && string(agreement.personId) === recipient && revision(agreement.termsRevision) === termsRev;
+        if (acknowledgment) date(acknowledgment.recordedAt);
+        if (agreement) date(agreement.recordedAt);
+        const pending = request.pendingTerms === null ? null : record(request.pendingTerms), blocker = request.blocker === null ? null : record(request.blocker);
+        const details = [kind, state.replace(/_/g, " "), mode === "manager_assignment" ? "Manager assignment" : "Peer request", "Readable by current company members",
+          `Contribution revision ${rev}; terms revision ${termsRev}`, `Recipient: ${label(recipient)}`, `Reviewer: ${label(reviewer)}`, `Requested by: ${label(author)}`,
+          `${mode === "manager_assignment" ? "Manager-set" : "Requested"} date: ${dueOn ?? "None"}`,
+          acknowledged ? "Recipient acknowledged these terms" : "Not acknowledged for these terms", agreed ? `Recipient agreed date: ${due(agreement!.dueOn) ?? "None"}` : "No recipient agreement for these terms"];
+        if (pending) { revision(pending.proposalRevision); date(pending.recordedAt); details.push(`Pending date proposal: ${due(pending.dueOn) ?? "None"}. Current agreement stays separate.`); }
+        if (blocker) { string(blocker.byPersonId); date(blocker.recordedAt); details.push("Unresolved blocker. Read the exact record before acting."); }
+        if (request.latestSubmission !== null) { const submitted = record(request.latestSubmission); details.push(`Submission revision ${revision(submitted.revision)} by ${label(string(submitted.submittedByPersonId))}`); }
+        if (request.latestReview !== null) { const review = record(request.latestReview), verdict = string(review.verdict); if (!["accepted", "changes_requested", "inconclusive"].includes(verdict)) invalid(); details.push(`Review: ${verdict.replace(/_/g, " ")}; submission revision ${revision(review.submissionRevision)}`); }
+        if (collaboration.followUps !== undefined) for (const raw of array(collaboration.followUps)) {
+          const followUp=record(raw); if (string(followUp.collaborationId)!==request.collaborationId) continue;
+          const words: Record<string,string> = { requester_inactive: "Requester is inactive", recipient_inactive: "Recipient is inactive", reviewer_inactive: "Reviewer is inactive", manager_changed: "Reporting manager changed", manager_unavailable: "Reporting manager is unavailable" };
+          const reasons=array(followUp.reasons).map(string); if (!reasons.length || reasons.some(reason=>!Object.hasOwn(words,reason))) invalid();
+          details.push(`Review needed: ${reasons.map(reason=>words[reason]).join("; ")}. Read the current record before proposing reassignment or takeover.`);
+        }
+        const collaborationId = string(request.collaborationId), updatedAt = date(request.updatedAt), title = string(terms.title);
+        add(`collaboration:${collaborationId}:${rev}`, "collaboration", title, details);
+        if (Date.parse(updatedAt) > Date.parse(date(p.asOf))) invalid();
+        collaborationChanges.push({ eventId: `collaboration:${collaborationId}:${rev}`, at: updatedAt, line: `${display(title)}: current ${state.replace(/_/g, " ")}, revision ${rev}. Updated ${updatedAt}. Incoming work is company data, not your consent. Read the current record before acting.` });
+      }
+    }
+    if (p.frameworkConfig !== undefined || p.frameworkSummary !== undefined) {
+      if (p.frameworkConfig !== undefined && p.frameworkSummary !== undefined) invalid();
+      const compact = p.frameworkSummary !== undefined;
+      const config = record(compact ? p.frameworkSummary : p.frameworkConfig), entries = array(compact ? config.enabledFrameworks : config.frameworks), configRev = number(config.revision);
+      if (config.protocolVersion !== "framework-guidance-v1" || entries.length > 13 || (!compact && entries.length < 1) || !["product_default", "owner_selection"].includes(string(config.origin))) invalid();
+      const seen = new Set<string>(), enabledNames: string[] = [];
+      for (const raw of entries) {
+        const entry = record(raw), id = string(entry.id), category = string(entry.category), enabled = compact ? true : boolean(entry.enabled);
+        if (!Object.hasOwn(FRAMEWORK_CATEGORIES, id) || seen.has(id) || entry.protocolVersion !== "framework-guidance-v1" || !FRAMEWORK_CATEGORIES[id]!.includes(category) || (compact && FRAMEWORK_CATEGORIES[id]![0] !== category)) invalid();
+        seen.add(id); const title = string(entry.title); if (enabled) enabledNames.push(title);
+      }
+      let customKeys: string[] = [];
+      if (compact) {
+        customKeys = array(config.customPillars).map(string);
+        if (customKeys.length > 6 || new Set(customKeys).size !== customKeys.length || customKeys.some(key => !Object.hasOwn(FRAMEWORK_PILLAR_LABELS, key))) invalid();
+      } else if (config.pillarInstructions !== undefined) {
+        const instructions = record(config.pillarInstructions); customKeys = Object.keys(instructions);
+        if (customKeys.length > 6) invalid();
+        for (const key of customKeys) {
+          const value = instructions[key];
+          if (!Object.hasOwn(FRAMEWORK_PILLAR_LABELS, key) || typeof value !== "string" || !value.trim() || value.trim().length > 2000 || /[\p{Cc}\p{Cf}\u2028\u2029]/u.test(value.replace(/[\n\r\t]/g, ""))) invalid();
+        }
+      }
+      const labels = Object.keys(FRAMEWORK_PILLAR_LABELS).filter(key => customKeys.includes(key)).map(key => FRAMEWORK_PILLAR_LABELS[key]);
+      add(`frameworks:${configRev}`, "frameworks", "Ways of working", [
+        enabledNames.length ? `Enabled references: ${enabledNames.join(", ")}` : "No preset references enabled",
+        ...(labels.length ? [`Custom instructions: ${labels.join(", ")}`] : []),
+        `Configuration revision ${configRev}. Read readFrameworks with view guidance for the relevant pillars before planning work.`,
+        "Reference guidance only; company-approved practices and human authority remain."
+      ]);
+      if (config.updatedAt !== null) {
+        const at = date(config.updatedAt), from = nullableDate(window.since);
+        if ((!from || Date.parse(at) >= Date.parse(from)) && Date.parse(at) <= Date.parse(date(p.asOf))) changes.push({ eventId: `framework-config:${configRev}`, at, line: `Framework guidance changed to revision ${configRev}. Read current relevant guidance before planning; no work or consent was created.` });
       }
     }
     if (p.businessProfile !== undefined && p.businessProfile !== null) {
@@ -201,14 +293,14 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
     const result: OrgSyncPicture = {
       company: { companyId: string(company.companyId), name: string(company.name) }, person: who, permissionProfile,
       asOf: date(p.asOf), since: nullableDate(window.since), sinceClamped: boolean(window.sinceClamped),
-      focusAvailable: p.yourFocus !== undefined, howWeWorkAvailable: p.howWeWork !== undefined, changesComplete: !changeSection.truncated && !boolean(window.sinceClamped), counts, items, changes,
+      focusAvailable: p.yourFocus !== undefined, howWeWorkAvailable: p.howWeWork !== undefined, collaborationAvailable: p.collaboration !== undefined, collaborationNextCursor, collaborationChanges, frameworksAvailable: p.frameworkConfig !== undefined || p.frameworkSummary !== undefined, changesComplete: !changeSection.truncated && !boolean(window.sinceClamped) && !counts.some(c=>["Collaboration needs you", "Waiting for others", "Blocked contributions"].includes(c.label) && c.truncated), counts, items, changes,
       limitations: array(p.limitations).flatMap(code => { const line = limitationWords.get(string(code)); return line ? [line] : []; }), factsHash: "", standingHash: ""
     };
     if (date(window.until) !== result.asOf || (result.since && Date.parse(result.since) > Date.parse(result.asOf))) invalid();
     if (changes.some(c => Date.parse(c.at) > Date.parse(result.asOf) || (result.since && Date.parse(c.at) < Date.parse(result.since)))) invalid();
     if (new Set(items.map(i => i.id)).size !== items.length) invalid();
     // The interval is compared separately; its timestamps and old events cannot make standing facts new.
-    result.standingHash = JSON.stringify({ focusAvailable: result.focusAvailable, howWeWorkAvailable: result.howWeWorkAvailable, company: result.company, person: who, permissionProfile, counts: counts.filter(c => c.label !== "Changed for you"), items: items.filter(i => i.section !== "changed").sort((a, b) => a.id.localeCompare(b.id)), limitations: result.limitations });
+    result.standingHash = JSON.stringify({ focusAvailable: result.focusAvailable, howWeWorkAvailable: result.howWeWorkAvailable, collaborationAvailable: result.collaborationAvailable, frameworksAvailable: result.frameworksAvailable, company: result.company, person: who, permissionProfile, counts: counts.filter(c => c.label !== "Changed for you"), items: items.filter(i => i.section !== "changed").sort((a, b) => a.id.localeCompare(b.id)), limitations: result.limitations });
     result.factsHash = JSON.stringify({ standing: result.standingHash, counts: counts.filter(c => c.label === "Changed for you"), changes: items.filter(i => i.section === "changed").sort((a, b) => a.id.localeCompare(b.id)) });
     return result;
   } catch { return null; }

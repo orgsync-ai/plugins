@@ -1,5 +1,5 @@
 import { test, expect } from "claude-code/testing";
-import { AS_OF, changed, jsonWire, PERSON, pictureFixture, practiceFixture, supportContextFixture, SOURCE, sourceFixture, wire } from "./fixtures.js";
+import { AS_OF, changed, collaborationFixture, frameworkConfigFixture, frameworkSummaryFixture, legacyFrameworkConfigFixture, jsonWire, PERSON, pictureFixture, pillarInstructionsFixture, practiceFixture, supportContextFixture, SOURCE, sourceFixture, wire } from "./fixtures.js";
 import { decisionLine, lookKey, mapTools, parsePicture, parseSources, readable, refusalStopsReads } from "./picture.js";
 
 test("date display replaces ISO times without changing other plain facts", () => {
@@ -186,4 +186,130 @@ test("a classified disputed decision can have no adopted practices in its area",
   const parsed = parsePicture(wire({ ...p, decisionsThatShapeYourWork: { ordering: "first_published_desc", page: { count: 1, truncated: false, items: [decision] } } }));
   expect(parsed?.items.find(i => i.section === "decisions")?.details).toContain("0 accepted practices in this area");
   expect(parsed?.items.filter(i => i.section === "practices")).toEqual([]);
+});
+
+
+test("collaboration title facts preserve assignment, acknowledgment, pending and agreed terms without loading request text", () => {
+  const request = collaborationFixture();
+  const body = { ...pictureFixture(), collaboration: { requests: [request], counts: { needsYou: 1, waiting: 2, blocked: 0 }, nextCursor: null }, frameworkConfig: frameworkConfigFixture() };
+  const parsed = parsePicture(wire(body));
+  expect(parsed?.collaborationAvailable).toBe(true); expect(parsed?.frameworksAvailable).toBe(true);
+  expect(parsed?.items.find(i => i.id === "collaboration:contribution-a:1")?.details).toContain("No recipient agreement for these terms");
+  expect(JSON.stringify(parsed?.items.filter(i => i.section === "frameworks"))).not.toContain("Kanban");
+  expect(parsed?.counts).toContainEqual({ label: "Collaboration needs you", count: 1, truncated: false });
+  expect(JSON.stringify(parsed)).not.toContain("HIDDEN");
+  const agreement = { personId: "person-a", termsRevision: 1, dueOn: "2026-10-23", recordedAt: AS_OF };
+  const pendingTerms = { proposedByPersonId: "person-a", proposalRevision: 2, dueOn: "2026-10-24", reason: "HIDDEN PROPOSAL", recordedAt: AS_OF };
+  const next = parsePicture(wire({ ...body, collaboration: { ...body.collaboration, requests: [{ ...request, revision: 2, agreement, pendingTerms }] } }));
+  const item = next?.items.find(i => i.section === "collaboration");
+  expect(item?.details).toContain("Recipient agreed date: 2026-10-23");
+  expect(item?.details).toContain("Pending date proposal: 2026-10-24. Current agreement stays separate.");
+  expect(next?.standingHash).not.toBe(parsed?.standingHash);
+});
+
+test("missing collaboration/config remains unavailable while malformed supplied protocols fail closed", () => {
+  const older = parsePicture(wire(pictureFixture()));
+  expect(older?.collaborationAvailable).toBe(false); expect(older?.frameworksAvailable).toBe(false);
+  const request = collaborationFixture(), base = { ...pictureFixture(), collaboration: { requests: [request], counts: { needsYou: 1, waiting: 0, blocked: 0 }, nextCursor: null } };
+  for (const update of [{ protocolVersion: "unknown" }, { companyId: "other-company" }, { status: "committed" }, { visibility: "private" }])
+    expect(parsePicture(wire({ ...base, collaboration: { ...base.collaboration, requests: [{ ...request, ...update }] } }))).toBe(null);
+  const config = frameworkConfigFixture();
+  expect(parsePicture(wire({ ...base, frameworkConfig: { ...config, protocolVersion: "unknown" } }))).toBe(null);
+  expect(parsePicture(wire({ ...base, frameworkConfig: { ...config, frameworks: [config.frameworks[0], config.frameworks[0]] } }))).toBe(null);
+});
+
+test("historical two- and seven-reference configurations keep their original categories", () => {
+  const original = legacyFrameworkConfigFixture();
+  expect(parsePicture(wire({ ...pictureFixture(), frameworkConfig: original }))?.items.filter(item => item.section === "frameworks").length).toBe(1);
+  const extra = ["scrum", "safe", "shape_up", "rice", "eos"].map(id => ({ id, category: id === "rice" ? "prioritization" : id === "eos" ? "operating_rhythm" : "work_delivery_operations",
+    title: id.toUpperCase(), protocolVersion: "framework-guidance-v1", purpose: "HIDDEN REFERENCE CONTENT", enabled: false }));
+  const parsed = parsePicture(wire({ ...pictureFixture(), frameworkConfig: { ...original, frameworks: [...original.frameworks, ...extra] } }));
+  expect(parsed?.items.filter(item => item.section === "frameworks").length).toBe(1);
+  expect(parsed?.items.filter(item => item.section === "practices").length).toBe(0);
+  expect(JSON.stringify(parsed)).not.toContain("HIDDEN REFERENCE CONTENT");
+  expect(JSON.stringify(parsed?.items.filter(item => item.section === "frameworks"))).not.toContain("EOS");
+  expect(parsePicture(wire({ ...pictureFixture(), frameworkConfig: { ...original, frameworks: [...original.frameworks, { ...extra[0], category: "prioritization" }] } }))).toBe(null);
+});
+
+test("all thirteen references across six pillars supply metadata without guidance or adoption", () => {
+  const config = frameworkConfigFixture();
+  const parsed = parsePicture(wire({ ...pictureFixture(), frameworkConfig: config }));
+  expect(parsed?.frameworksAvailable).toBe(true);
+  expect(parsed?.items.filter(item => item.section === "frameworks").length).toBe(1);
+  expect(parsed?.items.filter(item => item.section === "practices").length).toBe(0);
+  for (const entry of config.frameworks) {
+    if (entry.enabled) expect(parsed?.items.find(item => item.id === "frameworks:0")?.details.join(" ")).toContain(entry.title);
+    expect(parsePicture(wire({ ...pictureFixture(), frameworkConfig: { ...config,
+      frameworks: config.frameworks.map(item => item.id === entry.id ? { ...item, category: item.category === "finance" ? "sales" : "finance" } : item)
+    } }))).toBe(null);
+  }
+  expect(JSON.stringify(parsed)).not.toContain("HIDDEN");
+  expect(parsePicture(wire({ ...pictureFixture(), frameworkConfig: { ...config, frameworks: [...config.frameworks, config.frameworks[0]] } }))).toBe(null);
+  expect(parsePicture(wire({ ...pictureFixture(), frameworkConfig: { ...config, frameworks: [{ ...config.frameworks[0], id: "constructor" }] } }))).toBe(null);
+});
+
+test("reading normalized legacy project conflicts preserves every saved enabled flag", () => {
+  const config = frameworkConfigFixture();
+  const frameworks = config.frameworks.map(entry => ({ ...entry, enabled: entry.category === "project_management" || entry.id === "okr" }));
+  const parsed = parsePicture(wire({ ...pictureFixture(), frameworkConfig: { ...config, frameworks } }));
+  expect(parsed?.frameworksAvailable).toBe(true);
+  for (const title of ["Kanban", "Scrum", "SAFe"]) expect(parsed?.items.find(item => item.id === "frameworks:0")?.details.join(" ")).toContain(title);
+  expect(parsed?.items.filter(item => item.section === "frameworks").length).toBe(1);
+});
+
+test("six maximum-length custom pillar instructions expose only their availability beside thirteen references", () => {
+  const config = frameworkConfigFixture(), pillarInstructions = pillarInstructionsFixture();
+  const parsed = parsePicture(wire({ ...pictureFixture(), frameworkConfig: { ...config, pillarInstructions } }));
+  expect(parsed?.frameworksAvailable).toBe(true);
+  expect(parsed?.items.filter(item => item.section === "frameworks").length).toBe(1);
+  expect(parsed?.items.find(item => item.id === "frameworks:0")?.details).toContain("Custom instructions: Business management, Product management, Project management, Finance, Marketing, Sales");
+  expect(parsed?.items.find(item => item.id === "frameworks:0")?.details).toContain("Configuration revision 0. Read readFrameworks with view guidance for the relevant pillars before planning work.");
+  expect(JSON.stringify(parsed)).not.toContain("HIDDEN");
+  expect(parsed?.items.filter(item => item.section === "practices").length).toBe(0);
+  const legacy = legacyFrameworkConfigFixture();
+  expect(parsePicture(wire({ ...pictureFixture(), frameworkConfig: legacy }))?.standingHash)
+    .toBe(parsePicture(wire({ ...pictureFixture(), frameworkConfig: { ...legacy, pillarInstructions: {} } }))?.standingHash);
+  expect(parsePicture(wire({ ...pictureFixture(), frameworkConfig: { ...config, pillarInstructions: { sales: "  Use our discovery questions.  " } } }))?.frameworksAvailable).toBe(true);
+  expect(parsePicture(wire({ ...pictureFixture(), frameworkConfig: { ...config, pillarInstructions: { sales: "First question.\nSecond question.\r\n\tKeep evidence." } } }))?.frameworksAvailable).toBe(true);
+});
+
+test("malformed custom pillar maps fail closed without retaining their text", () => {
+  const config = frameworkConfigFixture();
+  for (const pillarInstructions of [null, [], "hidden", { sales: "" }, { sales: "  \n " }, { sales: "x".repeat(2001) }, { sales: false },
+    { sales: "Hidden\u202etext" }, { sales: "Hidden\u0000text" }, { sales: "\ufeffHidden" }, { sales: "Hidden\u2028text" },
+    { other: "Hidden instructions" }, { operating_rhythm: "Hidden legacy category" }, { ...pillarInstructionsFixture(), other: "Seventh key" }]) {
+    expect(parsePicture(wire({ ...pictureFixture(), frameworkConfig: { ...config, pillarInstructions } }))).toBe(null);
+  }
+});
+
+test("compact collaboration summary names permitted people and flags explicit manager recovery", () => {
+  const full = collaborationFixture();
+  const { purpose, expectedResponse, criteria, objective, sourceReferences, ...terms } = full.terms;
+  const summary = { ...full, terms, detailRequired: true };
+  const parsed = parsePicture(wire({ ...pictureFixture(), collaboration: { requests: [summary], counts: { needsYou: 1, waiting: 0, blocked: 0 }, nextCursor: null,
+    people: [{ personId: "person-a", label: "Sam", active: true }, { personId: "person-b", label: "Riley", active: true }], followUps: [{ collaborationId: full.collaborationId, reasons: ["manager_changed"] }] } }));
+  const item = parsed?.items.find(item => item.section === "collaboration");
+  expect(item?.details).toContain("Recipient: Sam"); expect(item?.details).toContain("Reviewer: Riley");
+  expect(item?.details.some(line => line.includes("Reporting manager changed"))).toBe(true);
+  expect(item?.details.some(line => line.includes("Read the current record"))).toBe(true);
+  expect(summary.agreement).toBe(null); expect(summary.acknowledgment).toBe(null);
+});
+
+
+test("compact guidance availability is one bounded fact without disabled references or custom text", () => {
+  const summary = frameworkSummaryFixture();
+  const full = frameworkConfigFixture();
+  const parsed = parsePicture(wire({ ...pictureFixture(), frameworkSummary: { ...summary, customPillars: ["finance", "sales"] } }))!;
+  expect(parsed.frameworksAvailable).toBe(true);
+  const facts = parsed.items.filter(item => item.section === "frameworks");
+  expect(facts.length).toBe(1); expect(JSON.stringify(facts).length).toBeLessThan(800);
+  expect(facts[0].details).toContain("Custom instructions: Finance, Sales");
+  expect(JSON.stringify(facts)).not.toContain("HIDDEN");
+  for (const disabled of full.frameworks.filter(entry => !entry.enabled)) expect(JSON.stringify(facts)).not.toContain(disabled.title);
+  expect(parsePicture(wire({ ...pictureFixture(), frameworkSummary: { ...summary, enabledFrameworks: [], customPillars: ["sales"] } }))?.items.find(item => item.id === "frameworks:0")?.details).toContain("No preset references enabled");
+  for (const update of [{ customPillars: ["sales", "sales"] }, { customPillars: ["unknown"] }, { protocolVersion: "unknown" }, { enabledFrameworks: [{ ...summary.enabledFrameworks[0], category: "finance" }] }])
+    expect(parsePicture(wire({ ...pictureFixture(), frameworkSummary: { ...summary, ...update } }))).toBe(null);
+  expect(parsePicture(wire({ ...pictureFixture(), frameworkSummary: summary, frameworkConfig: full }))).toBe(null);
+  const changed = parsePicture(wire({ ...pictureFixture(), frameworkSummary: { ...summary, revision: 1 } }))!;
+  expect(changed.standingHash).not.toBe(parsePicture(wire({ ...pictureFixture(), frameworkSummary: summary }))?.standingHash);
 });
