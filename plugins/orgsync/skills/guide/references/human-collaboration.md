@@ -17,6 +17,11 @@ record. Resource agenda reads a bounded date range; resource flow reads derived
 flow measures. Follow nextCursor as cursor where present. These reads do not
 acknowledge assignments, agree terms or incur provider charges.
 
+Inbox, requests and flow take optional personId, objectiveId and tagId filters,
+and view mentioned lists work that mentions this person. Answer a question about
+a team, project, goal or person with one filtered read rather than paging
+everything. A filter only narrows what this person may already read.
+
 Read before changing an existing record. Use the current collaboration revision
 as expectedRevision. Show author, recipient, named reviewer, request kind and
 mode, manager-set date, agreed date, pending terms, acknowledgment, blockers and
@@ -39,6 +44,13 @@ recipient and reviewer. A weekly contribution links the exact objective revision
 A simple information question can omit the goal and avoid an artificial work
 commitment. Requests for review or a decision describe the needed judgment;
 they grant no company-decision authority.
+
+Optionally label the request with up to five tagIds taken from the active tags
+that readFrameworks returns, and mention up to eight people, each as kind person
+with the personId of an active member resolved as above. Tags and mentions are
+set once at creation. A mention adds the request to that person's mentioned view
+so they notice it; it assigns no work, grants no access and records no
+agreement. Show tag labels and mentioned names in the preview.
 
 Use collaborate with operation create, a new collaborationId, expectedRevision
 zero, a fresh idempotencyKey and the request. Default to peer_request. Only a
@@ -63,6 +75,12 @@ and pending proposal separately. accept_terms requires the other party's exact
 confirmation. Use reject_terms with its proposal revision to decline or withdraw
 a pending date proposal while keeping the current terms. Revised management instructions remain manager-set until the
 recipient agrees. Reading, polling and a model's summary provide no consent.
+
+Before a recipient agrees or starts, and before creating a request for someone,
+read flow with personId set to the recipient when Kanban is enabled. If overLimit
+is true, tell the person how many items the recipient has active against the
+company limit. The limit is advisory: the person decides, and the write goes
+ahead when they confirm it.
 
 Use start for a deliberate start, block for a reported inability or conflict and
 unblock after its explicit resolution. Two managers' directions remain separate
@@ -128,10 +146,23 @@ criteria remain valid. Quarterly/custom outcome periods and review cadence are
 separate. Kanban guidance distinguishes waiting for agreement, active work and
 waiting for review, with explicit start/finish rules and control of work in
 progress. Label an initial service expectation as an estimate. Flow measures are
-canonical-event summaries with a window and units, not employee ratings.
+canonical-event summaries with a window and units, not employee ratings. While
+Kanban is enabled, flow also returns the company's per-person workInProgressLimit
+as limit, overLimit and overLimitPeople; otherwise limit and overLimit are null.
+
+Tags label goals and requests for finding work. Each company keeps one tag list
+with its framework settings; guidance and configuration reads return the active
+tags. A tag has a stable tagId, a kind of team, project or topic, a label, a
+status of active or archived and, for a team, memberPersonIds. A team is a
+department; a project that needs an outcome is a company goal carrying that
+project's tag. Tags grant no access and assign nothing.
 
 Only an Owner changes framework configuration through setFrameworks after its
-exact preview. Read the returned fit and guidance before selecting a reference.
+exact preview. That includes tags and the work-in-progress limit, 1 to 50 per
+person or null for none. Each entry in tags replaces that tag whole, and tags not
+named stay unchanged. Renaming keeps the tagId; archive a tag rather than
+removing it, so history keeps its label. A member who needs a new tag sends an
+Owner a decision request through collaborate naming the kind and label. Read the returned fit and guidance before selecting a reference.
 The catalog groups thirteen references into six pillars:
 
 | Pillar | Reference guidance |

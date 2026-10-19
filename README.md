@@ -75,6 +75,10 @@ Plugin 0.9.3 adds the confirmed collaboration workflow to guide, goals, today an
 
 Your next successful check-in shows relevant work. Supported active-session mods also surface changes; no delivery is promised while your app is closed. The same readCollaboration and collaborate tools work on demand in the supported AI clients. readFrameworks reads current reference versions; only an Owner changes them with setFrameworks. Update the plugin and refresh tools when those capabilities are missing. Installed skills cannot override disabled guidance.
 
+## Key results, flow and tags
+
+Plugin 0.10.0 needs an OrgSync server with key results and tags; on an older server those fields are refused or absent. With OKR enabled, `/orgsync:goals` proposes up to three key results for a goal, and `/orgsync:review` records their numbers in your check-in and flags goals with no check-in for a week. OrgSync computes progress itself, so every AI app reports the same numbers. With Kanban enabled, the review and collaboration workflow tell you when active work exceeds the company's optional work-in-progress limit; the limit never blocks work. Owners keep one company tag list for teams, projects and topics, and goals and requests can carry those tags and mention people. A tag or mention helps people find and notice work; it grants no access and assigns nothing. Members ask an Owner for a new tag.
+
 ## Weekly review
 
 Run `/orgsync:review` each week to revisit priorities, report what was done and what moved each goal, share chosen decisions, make a call on each goal and choose one to three priorities. An Owner also sees members' latest reviews, grouped by supported company goal while keeping each author and their evidence. Unlinked check-ins stay visible. One confirmation saves the review and attempts selected shares. Saving is free; admitted publications are charged once ready. Partial shares keep the saved review. Calls of stop or done need a separate confirmed goal change.
