@@ -7,7 +7,8 @@ accepted decision. When you want to share something with your company, your AI p
 and nothing is shared until you approve it yourself.
 
 You need an OrgSync account and a membership in your company's OrgSync. Sign up or join at
-[orgsync.co](https://orgsync.co).
+[orgsync.co](https://orgsync.co). [Help](https://orgsync.co/help) explains every feature and lists what's new; your AI
+reads the same help as text at `https://orgsync.co/help.md` when you ask how OrgSync works.
 
 ## Install
 
@@ -33,11 +34,14 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
   - `/orgsync:goals` sets or revisits company and person objectives.
   - `/orgsync:first-customers` prepares a plan and an artifact for your first customers.
   - `/orgsync:review` runs your weekly review: priorities, check-ins on your goals, decisions to share and next week's priorities.
-  - `/orgsync:import <what to bring in>` brings decisions in from tools your AI app already reaches, such as
-    Notion, Google Drive, Slack, GitHub or local files, and shares the ones you approve in one step.
+  - `/orgsync:import <where to start>` brings your company in, guided by what is still missing across its six
+    business areas, goals and roles: from tools your AI app already reaches, such as Notion, Google Drive, Slack,
+    GitHub or local files, or by asking you, sharing each batch you approve in one step.
   - `/orgsync:interview <area>` asks you a few questions about how your company works and turns your answers into drafts.
   - `/orgsync:decide <decision>` lays out what your company already decided before you decide, then offers to share the decision.
   - `/orgsync:refresh` re-reads the originals of sources you brought in and suggests a correction where one changed.
+  - `/orgsync:feedback <what to tell OrgSync>` sends the OrgSync team a pain point, idea, bug or praise about OrgSync,
+    stored without your name, company or connection. You see the exact text before it is sent.
 - When you share, OrgSync asks you to approve the exact text, or, if you chose chat confirmation for this
   connection, your AI asks you for a clear yes.
 - Owners and Decision approvers can review suggested corrections and reported problems, and accept or
@@ -58,10 +62,10 @@ With OKR enabled, a goal can hold up to three key results, and the weekly review
 - A connection to OrgSync's server at `https://orgsync.co/mcp`, for Claude apps. You sign in with your
   OrgSync account and choose your company the first time. In Codex and ChatGPT you add the connection with
   the steps on OrgSync's **AI apps** page.
-- Twelve skills. The `orgsync` skill tells your AI how to use OrgSync: when to look something up, how to cite and
+- Thirteen skills. The `orgsync` skill tells your AI how to use OrgSync: when to look something up, how to cite and
   describe a source, how to share only what you approve, and to answer from OrgSync rather than from memory. The
-  other eleven are `ask`, `share`, `today`, `goals`, `guide`, `first-customers`, `import`, `interview`, `decide`, `refresh` and
-  `review`, one for each command above.
+  other twelve are `ask`, `share`, `today`, `goals`, `guide`, `first-customers`, `import`, `interview`, `decide`, `refresh`,
+  `review` and `feedback`, one for each command above.
 
 It also contains the Claude Code mod described below.
 
