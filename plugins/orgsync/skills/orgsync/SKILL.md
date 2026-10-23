@@ -60,8 +60,11 @@ cited search.
 5. `readSource` opens one source exactly, with its current revision and `content.sourceOrigin`; an older revision is
    shown as not current. When the person says whether an answer helped, you may record it with `reportUsefulness`.
 
-**When OrgSync doesn't know.** On `unknown`, say the company has no permitted source for it. Unless this chat already
-shows the person's name and role, call free `status` now to learn them. Then take one path:
+**When OrgSync doesn't know.** A search can miss a decision worded differently from the question. On `unknown`, first
+check free `list` with `what: "decisions"` (and `what: "ways_of_working"` for how something is done). If a title
+clearly covers the question, open it with free `readSource`, answer from its content and cite its title and status.
+Only when no title fits, or the source does not answer the question, say the company has no permitted source for it.
+Unless this chat already shows the person's name and role, call free `status` now to learn them. Then take one path:
 
 - **Someone else would know:** when `companyWorkProfiles` names a colleague other than the person, offer once: "Want me
   to ask Haruka?" On a yes, send an information request as /orgsync:request describes.

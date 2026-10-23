@@ -34,7 +34,8 @@ yes, suggest the new text as a correction ([managing sources](sources.md)) rathe
 1. Call `submitDraft` for each draft. Each saves privately and asks nothing; keep its `draftId`, `revision` and
    `payloadHash`.
 2. Show the person every draft's title, summary, origin, area, classification, tags by label and privacy mark, and let
-   them drop or edit any.
+   them drop or edit any. Show them again in the message that asks for the yes, so the person sees exactly what they
+   approve.
 3. Call `shareDrafts` once with up to 20 entries in `drafts`, then confirm as the ground rules describe, repeating the
    same drafts with the returned `idempotencyKey` after the yes.
 4. Report each entry from `results`: shared, or not shared and why. A decline leaves them all private; never try
