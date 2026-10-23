@@ -2,7 +2,7 @@ export type OrgSyncLook = { asOf: string; factsHash: string; boundaryEventIds: s
 export type OrgSyncPerson = { personId: string; label: string };
 export type OrgSyncStatus = "reported_information" | "accepted_decision" | "disputed" | "superseded" | "withdrawn";
 export type OrgSyncSupportContext = { objectiveId: string; title: string; revision: number; status: "active" | "completed" | "dropped"; linkedRevision: number };
-export type OrgSyncItem = { id: string; section: "needs" | "changed" | "decisions" | "practices" | "focus" | "collaboration" | "frameworks" | "business" | "role"; title: string; details: string[]; supportsContext?: OrgSyncSupportContext | null };
+export type OrgSyncItem = { id: string; section: "needs" | "todos" | "changed" | "decisions" | "practices" | "focus" | "collaboration" | "frameworks" | "business" | "role"; title: string; details: string[]; supportsContext?: OrgSyncSupportContext | null };
 export type OrgSyncChange = { eventId: string; at: string; line: string };
 export type OrgSyncSource = { sourceId: string; revision: number; title: string; knowledgeStatus: OrgSyncStatus; acceptedBy: string | null };
 export type OrgSyncPicture = {
@@ -19,6 +19,8 @@ export type OrgSyncPicture = {
   collaborationNextCursor?: string | null;
   collaborationChanges?: OrgSyncChange[];
   frameworksAvailable?: boolean;
+  /** D-181: the author's own due and overdue to-dos. Absent means unavailable on this connection, never none. */
+  todosAvailable?: boolean;
   counts: { label: string; count: number; truncated: boolean }[];
   items: OrgSyncItem[];
   changes: OrgSyncChange[];

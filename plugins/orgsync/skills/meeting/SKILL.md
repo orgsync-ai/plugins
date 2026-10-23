@@ -19,12 +19,15 @@ Refer to colleagues by name or as "they", never with a pronoun guessed from thei
    - **Decisions:** one draft each, as [sharing](../orgsync/references/sharing.md) describes, with the meeting's date
      or a link as the origin. A decision that changes an existing one becomes a suggested fix instead.
    - **Follow-ups:** who does what by when, each as a request to a company member, linked to a goal when it moves one.
-     Someone outside the company stays in the list as "outside OrgSync".
+     Someone outside the company stays in the list as "outside OrgSync". A follow-up the person will do themselves
+     is offered as their own private to-do instead (/orgsync:todo), with its date.
    - **Goal updates:** a new key-result number or status for a goal; these are recorded in the owner's weekly review
      (/orgsync:review), so list them for it.
-4. **Show the lists** and let the person drop or edit any item. Say how many confirmations follow: one for all
-   decisions together, then one per request.
-5. **Confirm and save:** share the decisions in one batch, then create each request as /orgsync:request describes.
-   Report what was shared, created or left for the review.
+4. **Show the lists** and let the person drop or edit any item, and pick which of their own follow-ups to keep as
+   to-dos. Say how many confirmations follow: one for all decisions together, then one per request. Their to-dos need
+   no confirmation, only their answer.
+5. **Confirm and save:** share the decisions in one batch, then create each request as /orgsync:request describes, then
+   save each to-do they picked with `setTodo`. Nothing is saved as a to-do without their answer. Report what was
+   shared, created, saved as a to-do or left for the review.
 
 Nothing is recorded or read in the background, and a meeting's notes are never shared whole.

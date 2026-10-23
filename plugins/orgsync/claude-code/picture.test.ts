@@ -1,5 +1,5 @@
 import { test, expect } from "claude-code/testing";
-import { AS_OF, changed, collaborationFixture, frameworkConfigFixture, frameworkSummaryFixture, legacyFrameworkConfigFixture, jsonWire, PERSON, pictureFixture, pillarInstructionsFixture, practiceFixture, supportContextFixture, SOURCE, sourceFixture, wire } from "./fixtures.js";
+import { AS_OF, changed, collaborationFixture, frameworkConfigFixture, frameworkSummaryFixture, legacyFrameworkConfigFixture, jsonWire, PERSON, pictureFixture, pillarInstructionsFixture, practiceFixture, supportContextFixture, SOURCE, sourceFixture, todosFixture, wire } from "./fixtures.js";
 import { decisionLine, lookKey, mapTools, parsePicture, parseSources, readable, refusalStopsReads } from "./picture.js";
 
 test("date display replaces ISO times without changing other plain facts", () => {
@@ -145,6 +145,24 @@ test("this week's own priorities join focus; null or an older server adds none, 
     expect(parsePicture(wire({...old,yourPriorities}))).toBe(null);
 });
 
+test("the author's due and overdue to-dos parse into their own section; absence stays unavailable and malformed pages are unavailable", () => {
+  const old=pictureFixture(), todos=todosFixture(), parsed=parsePicture(wire({...old,yourTodos:todos}))!;
+  expect(parsed.todosAvailable).toBe(true); expect(parsePicture(wire(old))?.todosAvailable).toBe(false);
+  expect(parsed.items.filter(i=>i.section==="todos")).toEqual([
+    {id:"todo:todo-a:occ-4",section:"todos",title:"Send the October invoices",details:["Your private to-do","Overdue by 2 days","Due 2026-10-08","3 earlier dates passed unfinished"]},
+    {id:"todo:todo-b:occ-1",section:"todos",title:"Send Acme the revised price",details:["Your private to-do","Due today","Due 2026-10-11 at 10:00","Reminder due","Closes itself at its reminder"]}]);
+  expect(parsed.counts).toEqual(expect.arrayContaining([{label:"Your to-dos due",count:1,truncated:false},{label:"Your overdue to-dos",count:1,truncated:false}]));
+  expect(parsed.items.filter(i=>i.section==="needs")).toEqual(parsePicture(wire(old))?.items.filter(i=>i.section==="needs"));
+  const first=todos.items[0]!, shorter={...todos,overdue:2,truncated:true};
+  expect(parsePicture(wire({...old,yourTodos:shorter}))?.counts).toContainEqual({label:"Your overdue to-dos",count:2,truncated:true});
+  expect(parsePicture(wire({...old,yourTodos:{...todos,items:[{...first,overdueDays:0}]},}))).toBe(null);
+  expect(parsePicture(wire({...old,yourTodos:{...todos,truncated:true,items:[{...first,overdueDays:0}]}}))?.items.find(i=>i.section==="todos")?.details).toContain("Overdue by less than a day");
+  expect(parsed.standingHash).not.toBe(parsePicture(wire({...old,yourTodos:{...todos,items:[{...first,overdueDays:3},todos.items[1]!]}}))?.standingHash);
+  for(const yourTodos of [null,{},{...todos,truncated:true},{...todos,due:0,overdue:0},{...todos,items:[...todos.items,...todos.items,...todos.items,first,first]},
+    ...[{reasons:[]},{reasons:["overdue","overdue"]},{reasons:["later"]},{dueOn:"2026-02-30"},{dueTime:"24:00"},{dueAt:"tomorrow"},{revision:0},{rolledOver:-1},{title:"x".repeat(201)},{todoId:undefined}]
+      .map(change=>({...todos,items:[{...first,...change},todos.items[1]!]}))])
+    expect(parsePicture(wire({...old,yourTodos}))).toBe(null);
+});
 
 test("practices distinguish old-server absence, empty and truncated, and bind all standing facts", () => {
   const old = pictureFixture(), practice = practiceFixture(), page = { count: 2, truncated: true, items: [practice] };

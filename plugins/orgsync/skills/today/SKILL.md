@@ -1,6 +1,6 @@
 ---
 name: today
-description: Use when the person asks what needs them, what to do today, what changed, what's on their plate, or wants to work through their OrgSync items - requests, approvals, drafts, weekly priorities.
+description: Use when the person asks what needs them, what to do today, what changed, what's on their plate, or wants to work through their OrgSync items - requests, approvals, drafts, to-dos, weekly priorities.
 argument-hint: "[since, such as 'last Monday']"
 ---
 
@@ -19,15 +19,22 @@ replace each one with the name or "they".
      sources they can accept;
    - their private drafts, with the day each is deleted if not shared;
    - goals they own that are due within seven days, or whose `latestCheckIn` is missing or more than 14 days old;
+   - their own to-dos from `yourTodos`: each due or overdue item, which only they can see;
    - their own priorities for this week from `yourPriorities`, in their order.
 
-   Rank them in this order: someone is waiting on them; then what is due or deleted soonest; then work for a company
-   goal; then their weekly priorities; then the rest. Give each line its reason in a few words ("Sam is waiting for
-   your answer since Tuesday", "deleted Friday if not shared", "your priority this week", "no check-in since 3
-   October"). Never rank by guessing importance from titles. Say how many more items are below the list.
+   Rank them in this order: someone is waiting on them; then what is due or deleted soonest, due and overdue to-dos
+   included; then work for a company goal; then their weekly priorities; then the rest, with open to-dos that have no
+   date last (the picture leaves them out: read them with free `list`, `what: "todos"`, only when the list has room).
+   A to-do whose reminder is due never ranks above something a person waits on. Give each line its reason in a few
+   words ("Sam is waiting for your answer since Tuesday", "deleted Friday if not shared", "your to-do, due today at
+   10:00", "your to-do, overdue by 3 days", "your priority this week", "no check-in since 3 October"). Say how long
+   an overdue to-do is overdue from `overdueDays`; `rolledOver` counts the times a repeat passed unfinished, and
+   `closes_at_reminder` means a follow-up that closes itself if what it waits on moves. Never rank by guessing
+   importance from titles. Say how many more items are below the list.
    If `yourPriorities` is null, say they have no weekly review from the last two weeks and offer /orgsync:review; if
-   it is absent, say priorities are unavailable in this picture. Priorities change only in /orgsync:review, and
-   nothing on the list is marked done from here.
+   it is absent, say priorities are unavailable in this picture. If `yourTodos` is absent, say to-dos are unavailable
+   on this connection, never that there are none. Priorities change only in /orgsync:review, and reading the list
+   marks nothing done.
 3. Below the list, write the picture in this order, leaving out empty parts except the How we work note. Refer to an
    item already on the list by its number instead of repeating it:
    - **Needs you:** collaboration that needs them, then each other item with why it is theirs ("you approve changes
@@ -42,22 +49,24 @@ replace each one with the name or "they".
    - **How we work:** adopted practices from `howWeWork`; absent means unavailable, a zero count means none. For
      references, use the picture's `frameworkSummary`: enabled reference titles, custom-pillar availability and, when
      present, the tag count and work-in-progress limit. On an older picture, use `frameworkConfig` if present. If both fields are absent, say reference guidance is unavailable in this picture, not disabled or empty.
+   - **Your to-dos:** due and overdue to-dos not already on the list, private to them, never under Needs you.
    - **Your role:** their permission profile and work profile, in their words.
 4. Above the list, write a brief of one or two sentences, each stating only what an item below says and naming it.
 5. Say what the picture leaves out: `window.sinceClamped` means OrgSync looked back only 30 days; a `truncated`
-   section has more (its `count`), which `list` and `readCollaboration` return; a null `pendingDrafts` means this
-   connection cannot list drafts.
+   section has more (its `count`, or for `yourTodos` its `due` plus `overdue`), which `list` and `readCollaboration`
+   return; a null `pendingDrafts` means this connection cannot list drafts.
 6. **Act from here.** Offer to work through the list in its order, one item at a time. For each, open it in full first,
    then offer only the actions it allows:
    - a request: answer, agree, decline, propose other terms, start, report a blocker, submit or review, as
      /orgsync:request describes;
    - a shared source, suggested fix or problem report (Owners and Decision approvers): accept, decide or look, as
      [managing sources](../orgsync/references/sources.md) describes;
-   - their own private draft: share or discard, as [sharing](../orgsync/references/sharing.md) describes.
-   Each change takes its own confirmation. Reading, opening the picture and polling acknowledge nothing and agree to
-   nothing. Stop when they want.
+   - their own private draft: share or discard, as [sharing](../orgsync/references/sharing.md) describes;
+   - their own to-do: complete, snooze, change, hand off or drop, as /orgsync:todo describes.
+   Each change takes its own confirmation; a to-do change saves on their answer, without a preview. Reading, opening
+   the picture and polling acknowledge nothing and agree to nothing. Stop when they want.
 
-If they ask OrgSync to remind them at a set time, say OrgSync cannot send reminders yet. Offer their AI app's own
-scheduled task or reminder, or their phone, and offer to carry it as a priority in their next /orgsync:review.
+If they ask OrgSync to remember or remind them of something for their work, offer /orgsync:todo: OrgSync keeps it as
+their private to-do and emails the reminder at the time they set.
 
 Only when the person requests planning or a proposed contribution, choose the smallest relevant pillar set and call `readFrameworks` with `view: "guidance"` and those `pillars` before recommending the method of work. If current guidance is missing, unsupported or unavailable, say so and do not invent it or treat it as empty.

@@ -1,6 +1,6 @@
 ---
 name: review
-description: Use when the person wants their weekly review - last week's priorities, goal check-ins and key-result numbers, decisions to share, and next week's priorities.
+description: Use when the person wants their weekly review - last week's priorities, goal check-ins and key-result numbers, decisions to share, to-dos that keep slipping, and next week's priorities.
 ---
 
 Run the weekly review in this AI app. Record the person's own account, uncertainty included: work done does not prove
@@ -28,14 +28,20 @@ a result moved. Keep it to evidence, without scores or rankings. Refer to collea
    confirmation. A changed practice is a suggested fix to its source instead.
 6. **A call on each goal:** keep going, change approach, stop or done, recorded apart from its status. A stop or done
    call does not close the goal.
-7. **Next week's one to three priorities**, each within 200 characters. When `overLimit` is true, say the person's
+7. **Slipping to-dos.** Read free `list` with `what: "todos"` (follow every `nextCursor`). Show only the person their
+   own to-dos overdue for more than seven days (`overdueDays` above 7) or with `rolledOver` of three or more, and
+   offer for each: drop, defer to a new date (`update`, or `snooze`), hand off to a teammate as a request, or keep.
+   Save each answer as its own `setTodo` write, as /orgsync:todo describes. To-dos stay private: they never go into
+   the saved review, and `saveReview` carries none.
+8. **Next week's one to three priorities**, each within 200 characters. When `overLimit` is true, say the person's
    active work exceeds the company's limit; it never blocks a priority. Before they choose, offer research on the top
    goal with this app's own web search, on request only: at most two ideas, with sources.
-8. **Save** with one `saveReview`: `checkIns`, `nextWeekPriorities`, the selected `drafts` and `contributions` (empty
+9. **Save** with one `saveReview`: `checkIns`, `nextWeekPriorities`, the selected `drafts` and `contributions` (empty
    lists when none) and a fresh `idempotencyKey`. Saving is free; each shared draft is charged once ready. In the
    confirmation, say that every member and their AI apps can read the saved review, its priorities and check-ins.
    Where the app cannot show OrgSync's prompt and the connection uses it, save nothing.
-9. **Report** whether the review saved and each share's result. A partial share still saved the review, and retrying
-   its key does not retry failed drafts. After an unavailable result, retry the identical key.
-10. **After saving**, offer a separate `setObjective` change for any stop or done call, only on the person's judgment.
-    The weekly reminder is optional, in OrgSync's web app under Settings, Account.
+10. **Report** whether the review saved and each share's result. A partial share still saved the review, and retrying
+    its key does not retry failed drafts. After an unavailable result, retry the identical key.
+11. **After saving**, offer a separate `setObjective` change for any stop or done call, only on the person's judgment.
+    Offer the person's own follow-ups from the review as private to-dos (/orgsync:todo); they pick which, and nothing
+    is saved without their answer. The weekly reminder is optional, in OrgSync's web app under Settings, Account.

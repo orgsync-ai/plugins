@@ -11,6 +11,10 @@ const array = (v: unknown): unknown[] => Array.isArray(v) && v.length <= 500 ? v
 const date = (v: unknown): string => /^\d{4}-\d\d-\d\dT/.test(string(v)) && Number.isFinite(Date.parse(string(v))) ? string(v) : invalid();
 const nullableDate = (v: unknown): string | null => v === null ? null : date(v);
 const person = (v: unknown) => { const p = record(v); return { personId: string(p.personId), label: string(p.label) }; };
+const day = (v: unknown): string => /^\d{4}-\d{2}-\d{2}$/.test(string(v)) && Number.isFinite(Date.parse(string(v))) && new Date(string(v)).toISOString().slice(0, 10) === v ? string(v) : invalid();
+const clockTime = (v: unknown): string => /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(string(v)) ? string(v) : invalid();
+const TODO_REASONS = ["overdue", "due_today", "reminder_due", "closes_at_reminder", "rolled_over", "link_unavailable"];
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 // Historical receipts keep their original categories. Read their enabled flags as saved,
 // including conflicting project choices; only a confirmed configuration write resolves them.
 const FRAMEWORK_CATEGORIES: Record<string, readonly string[]> = {
@@ -200,6 +204,26 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
       if (priorities.length < 1 || priorities.length > 3) invalid();
       priorities.forEach((raw, index) => add(`priority:${reviewId}:${index}`, "focus", string(raw), ["Your priority this week", `From your weekly review of ${reviewed}`]));
     }
+    // D-181: the author's own due and overdue to-dos, private to them. They are reminders, never part of Needs you.
+    if (p.yourTodos !== undefined) {
+      const todos = record(p.yourTodos), entries = array(todos.items), due = number(todos.due), overdue = number(todos.overdue), truncated = boolean(todos.truncated);
+      number(todos.open);
+      if (entries.length > 7 || entries.length > due + overdue || truncated !== (entries.length < due + overdue)) invalid();
+      counts.push({ label: "Your to-dos due", count: due, truncated }, { label: "Your overdue to-dos", count: overdue, truncated });
+      for (const raw of entries) {
+        const todo = record(raw), title = string(todo.title), reasons = array(todo.reasons).map(string), rolled = number(todo.rolledOver);
+        if (title.length > 200 || reasons.length < 1 || reasons.length > 6 || new Set(reasons).size !== reasons.length || reasons.some(r => !TODO_REASONS.includes(r))) invalid();
+        const dueOn = todo.dueOn === null ? null : day(todo.dueOn), dueTime = todo.dueTime === null ? null : clockTime(todo.dueTime), late = todo.overdueDays === null ? null : number(todo.overdueDays);
+        revision(todo.revision); nullableDate(todo.dueAt);
+        add(`todo:${string(todo.todoId)}:${string(todo.occurrenceId)}`, "todos", title, ["Your private to-do",
+          ...(reasons.includes("overdue") ? [late ? `Overdue by ${plural(late, "day", "days")}` : "Overdue by less than a day"] : []),
+          ...(reasons.includes("due_today") ? ["Due today"] : []), ...(dueOn ? [`Due ${dueOn}${dueTime ? ` at ${dueTime}` : ""}`] : []),
+          ...(reasons.includes("reminder_due") ? ["Reminder due"] : []),
+          ...(rolled > 0 ? [`${plural(rolled, "earlier date", "earlier dates")} passed unfinished`] : []),
+          ...(reasons.includes("closes_at_reminder") ? ["Closes itself at its reminder"] : []),
+          ...(reasons.includes("link_unavailable") ? ["A linked record is no longer available"] : [])]);
+      }
+    }
     if (p.collaboration !== undefined) {
       const collaboration = record(p.collaboration), totals = record(collaboration.counts), requests = array(collaboration.requests);
       const labels = new Map([[person(role.person).personId, person(role.person).label]]);
@@ -299,14 +323,14 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
     const result: OrgSyncPicture = {
       company: { companyId: string(company.companyId), name: string(company.name) }, person: who, permissionProfile,
       asOf: date(p.asOf), since: nullableDate(window.since), sinceClamped: boolean(window.sinceClamped),
-      focusAvailable: p.yourFocus !== undefined, howWeWorkAvailable: p.howWeWork !== undefined, collaborationAvailable: p.collaboration !== undefined, collaborationNextCursor, collaborationChanges, frameworksAvailable: p.frameworkConfig !== undefined || p.frameworkSummary !== undefined, changesComplete: !changeSection.truncated && !boolean(window.sinceClamped) && !counts.some(c=>["Collaboration needs you", "Waiting for others", "Blocked contributions"].includes(c.label) && c.truncated), counts, items, changes,
+      focusAvailable: p.yourFocus !== undefined, howWeWorkAvailable: p.howWeWork !== undefined, collaborationAvailable: p.collaboration !== undefined, collaborationNextCursor, collaborationChanges, frameworksAvailable: p.frameworkConfig !== undefined || p.frameworkSummary !== undefined, todosAvailable: p.yourTodos !== undefined, changesComplete: !changeSection.truncated && !boolean(window.sinceClamped) && !counts.some(c=>["Collaboration needs you", "Waiting for others", "Blocked contributions"].includes(c.label) && c.truncated), counts, items, changes,
       limitations: array(p.limitations).flatMap(code => { const line = limitationWords.get(string(code)); return line ? [line] : []; }), factsHash: "", standingHash: ""
     };
     if (date(window.until) !== result.asOf || (result.since && Date.parse(result.since) > Date.parse(result.asOf))) invalid();
     if (changes.some(c => Date.parse(c.at) > Date.parse(result.asOf) || (result.since && Date.parse(c.at) < Date.parse(result.since)))) invalid();
     if (new Set(items.map(i => i.id)).size !== items.length) invalid();
     // The interval is compared separately; its timestamps and old events cannot make standing facts new.
-    result.standingHash = JSON.stringify({ focusAvailable: result.focusAvailable, howWeWorkAvailable: result.howWeWorkAvailable, collaborationAvailable: result.collaborationAvailable, frameworksAvailable: result.frameworksAvailable, company: result.company, person: who, permissionProfile, counts: counts.filter(c => c.label !== "Changed for you"), items: items.filter(i => i.section !== "changed").sort((a, b) => a.id.localeCompare(b.id)), limitations: result.limitations });
+    result.standingHash = JSON.stringify({ focusAvailable: result.focusAvailable, howWeWorkAvailable: result.howWeWorkAvailable, collaborationAvailable: result.collaborationAvailable, frameworksAvailable: result.frameworksAvailable, todosAvailable: result.todosAvailable, company: result.company, person: who, permissionProfile, counts: counts.filter(c => c.label !== "Changed for you"), items: items.filter(i => i.section !== "changed").sort((a, b) => a.id.localeCompare(b.id)), limitations: result.limitations });
     result.factsHash = JSON.stringify({ standing: result.standingHash, counts: counts.filter(c => c.label === "Changed for you"), changes: items.filter(i => i.section === "changed").sort((a, b) => a.id.localeCompare(b.id)) });
     return result;
   } catch { return null; }

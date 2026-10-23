@@ -32,9 +32,9 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
     offers to share decisions or waits for you to ask, and whether it gives you a short brief when you start working),
     then takes the first useful step: bringing your company in, or a short tour if it is already covered. Run it first:
     it also checks your connection, which OrgSync's setup page waits for.
-  - `/orgsync:today` opens with one ranked list of what to do: what someone is waiting on first, then what is due,
-    work for a company goal and the priorities from your weekly review. Then it shows what changed, your focus and how
-    we work, and offers to work through the list one item at a time.
+  - `/orgsync:today` opens with one ranked list of what to do: what someone is waiting on first, then what is due
+    (your due and overdue to-dos included), work for a company goal and the priorities from your weekly review. Then it
+    shows what changed, your focus and how we work, and offers to work through the list one item at a time.
   - `/orgsync:ask <question>` asks OrgSync a question. When OrgSync has no answer, your AI offers to ask the colleague
     who would know.
   - `/orgsync:decide <decision>` lays out what your company already decided before you decide, then offers to share
@@ -46,7 +46,10 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
   - `/orgsync:team` shows goals at risk, blockers, missing check-ins and what waits for approval, or prepares a
     one-on-one.
   - `/orgsync:goals` sets or revisits company and person objectives.
-  - `/orgsync:review` runs your weekly review: priorities, check-ins on your goals, decisions to share and next week's priorities.
+  - `/orgsync:review` runs your weekly review: priorities, check-ins on your goals, decisions to share, to-dos that keep slipping and next week's priorities.
+  - `/orgsync:todo <what and when>` keeps a private to-do for your work, with a date, a time, a repeat and reminders
+    by email, such as "remind me Friday at 10 to send Acme the new price" or "remind me Thursday if Priya hasn't
+    submitted".
   - `/orgsync:import <where to start>` brings your company in, guided by what is still missing across its six
     business areas, goals and roles: from tools your AI app already reaches, such as Notion, Google Drive, Slack,
     GitHub or local files, from your past chats where the app can search them, or by asking you, sharing each batch
@@ -76,9 +79,9 @@ With OKR enabled, a goal can hold up to three key results, and the weekly review
 - A connection to OrgSync's server at `https://orgsync.co/mcp`, for Claude apps. You sign in with your
   OrgSync account and choose your company the first time. In Codex and ChatGPT you add the connection with
   the steps on OrgSync's **AI apps** page.
-- Seventeen skills. The `orgsync` skill tells your AI how to use OrgSync: when to look something up, how to cite and
+- Eighteen skills. The `orgsync` skill tells your AI how to use OrgSync: when to look something up, how to cite and
   describe a source, how to share only what you approve, and to answer from OrgSync rather than from memory, with
-  reference files for sharing, managing sources, requests between people and framework settings. The other sixteen
+  reference files for sharing, managing sources, requests between people and framework settings. The other seventeen
   are one for each command above.
 
 It also contains the Claude Code mod described below.
@@ -88,7 +91,7 @@ It also contains the Claude Code mod described below.
 With no arguments, `/orgsync:today` opens the full picture in Claude Code and Claude Desktop's Code tab
 without an AI turn when the mod can draw it. When the mod cannot draw in Claude Code or Desktop Code,
 the skill writes the picture as text. The picture shows
-what needs you, what changed, collaboration requests, distinct acknowledgment and agreement, blockers, current framework references, decisions that shape your work, your focus, how we work, the business profile, and your work profile.
+what needs you, what changed, collaboration requests, distinct acknowledgment and agreement, blockers, current framework references, decisions that shape your work, your focus, your due and overdue to-dos (never counted in what needs you), how we work, the business profile, and your work profile.
 Startup notices and automatic updates require a mod that the current host has loaded and supports.
 A working Desktop text fallback alone does not verify custom rendering or automatic updates.
 With that mod support, a startup notice appears when facts are new. Your AI receives the picture once per conversation
@@ -141,6 +144,24 @@ Ask `/orgsync:guide` for help with first customers to prepare a customer-convers
 Run `/orgsync:review` each week to revisit priorities, report what was done and what moved each goal, share chosen decisions, make a call on each goal and choose one to three priorities. Saved reviews are company-readable: everyone in the company can read members' latest reviews, and you are told so before saving. An Owner's review groups members' latest reviews by supported company goal while keeping each author and their evidence. Unlinked check-ins stay visible. One confirmation saves the review and attempts selected shares. Saving is free; admitted publications are charged once ready. Partial shares keep the saved review. Calls of stop or done need a separate confirmed goal change.
 
 Research uses your AI app's own search on request, with at most two sourced ideas. An accepted idea becomes a priority. Weekly reminder emails are optional per company in Settings, Account. They name the company and contain counts, with an unsubscribe link that works without signing in.
+
+## To-dos and reminders
+
+Ask your AI to remember something for your work: "remind me Friday at 10 to send Acme the new price", "every last
+Friday of the month, check the runway", or "remind me Thursday unless Priya has submitted the report". Your AI repeats
+the schedule in words and saves it as a to-do with `/orgsync:todo`, without OrgSync's approval prompt, because it
+changes only your own list.
+
+- **Private to you.** Only you can read your to-dos, through your own AI apps. Your teammates, managers and your
+  company's Owners cannot, and a to-do is never shared as company knowledge.
+- **Emailed reminders.** At the time you set, OrgSync emails the address you sign in with. The email shows only the
+  company name, the to-do's title and its time, never its note or anything it links to, so a title can't hold a link,
+  an email address or a handle. Stop these emails for a company in **Settings › Account** or with the link in any
+  reminder; `/orgsync:today` still shows due to-dos.
+- **Follow-ups that close themselves.** A to-do linked to a request or a goal can wait on it: if the request moves or
+  someone checks in on the goal first, no email is sent and the to-do closes itself.
+- **Free.** To-dos use no company credit. Done, dropped and handed-off to-dos are deleted 30 days after they close.
+- **Work only.** Reminders for life outside work belong in your phone or your own to-do app.
 
 ## Update the plugin
 

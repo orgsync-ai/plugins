@@ -1,6 +1,6 @@
 import { test, expect } from "claude-code/testing";
 import { band, pane, world } from "./test-kit.js";
-import { AS_OF, BEFORE, changed, wire } from "./fixtures.js";
+import { AS_OF, BEFORE, changed, todosFixture, wire } from "./fixtures.js";
 
 for (const surface of ["terminal", "desktop"] as const) {
   test(`startup band on ${surface} acknowledges the displayed server watermark`, async ($, on) => {
@@ -164,4 +164,28 @@ test("focus renders in the picture and never increases Needs you", async ($,on) 
   const full=await $.ui.mount({plugin:"orgsync",surface:"terminal",component:"Pane",requestId:"orgsync-picture",props:pane});
   expect(await full.find({type:"Text",text:"Your focus"})).toBeDefined();expect(await full.find({type:"Text",text:/First customers/})).toBeDefined();
   await startup.unmount();await full.unmount();
+});
+
+test("due and overdue to-dos render in the picture and never increase Needs you", async ($,on) => {
+  const w=world(on);w.body={...w.body,yourTodos:{...todosFixture(),overdue:2,truncated:true}} as typeof w.body;
+  await $.session.start({cwd:"/project",surface:"terminal",isInteractive:true});await w.activate();
+  const startup=await $.ui.mount({plugin:"orgsync",surface:"terminal",component:"AbovePrompt",props:band});
+  expect(await startup.find({type:"Text",text:/^2 need you/})).toBeDefined();
+  const full=await $.ui.mount({plugin:"orgsync",surface:"terminal",component:"Pane",requestId:"orgsync-picture",props:pane});
+  expect(await full.find({type:"Text",text:/^Your to-dos$/})).toBeDefined();
+  expect((await full.find({type:"Text",text:/Send the October invoices/}))?.text).toContain("Overdue by 2 days");
+  expect(await full.find({type:"Text",text:"More due to-dos are available through /orgsync:todo."})).toBeDefined();
+  expect(JSON.stringify(await full.drawn())).not.toContain("Your to-dos are unavailable");
+  expect(JSON.stringify(w.session.appended())).toContain("never company knowledge, requests or Needs you items");
+  await startup.unmount();await full.unmount();
+});
+
+// An older server or a connection without submit scope has no to-do page: the pane stays quiet rather than announcing it to everyone.
+test("an absent to-do page draws no to-do section and no notice", async ($,on) => {
+  const w=world(on);
+  await $.session.start({cwd:"/project",surface:"terminal",isInteractive:true});await w.activate();
+  const full=await $.ui.mount({plugin:"orgsync",surface:"terminal",component:"Pane",requestId:"orgsync-picture",props:pane});
+  expect(await full.find({type:"Text",text:/to-dos are unavailable/i})).toBeUndefined();
+  expect(await full.find({type:"Text",text:/^Your to-dos$/})).toBeUndefined();
+  await full.unmount();
 });

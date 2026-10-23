@@ -24,6 +24,12 @@ export const sourceFixture = () => ({ status: "source", ...SOURCE, knowledgeStat
 export const focusFixture = () => ({count:7,truncated:true,items:[{objectiveId:"objective-a",revision:1,scope:"company",title:"First five conversations",
   horizon:"week",dueOn:"2026-10-21",owner:{...PERSON,active:true}}]});
 
+export const todosFixture = () => ({ open: 3, due: 1, overdue: 1, truncated: false, items: [
+  { todoId: "todo-a", occurrenceId: "occ-4", revision: 2, title: "Send the October invoices", dueOn: "2026-10-08", dueTime: null, dueAt: "2026-10-09T03:00:00.000Z",
+    overdueDays: 2, rolledOver: 3, reasons: ["overdue", "rolled_over"] },
+  { todoId: "todo-b", occurrenceId: "occ-1", revision: 1, title: "Send Acme the revised price", dueOn: "2026-10-11", dueTime: "10:00", dueAt: "2026-10-11T13:00:00.000Z",
+    overdueDays: null, rolledOver: 0, reasons: ["due_today", "reminder_due", "closes_at_reminder"] }] });
+
 export const practiceFixture = () => ({ ...pictureFixture().decisionsThatShapeYourWork.page.items[0]!,
   sourceId: "source-practice", title: "Review customer conversations weekly", area: "sales_marketing", classification: "way_of_working", acceptedInAreaCount: 2 });
 export const supportContextFixture = () => ({ objectiveId: "company-goal", title: "Win five customers", revision: 3, status: "active", linkedRevision: 2 });
