@@ -4,7 +4,8 @@ description: Use when the person wants to get started with OrgSync, has just con
 ---
 
 Set OrgSync up with the person: a welcome that fits them, three quick choices, then a first useful step. Speak
-plainly, with no tool names, field names or IDs, and keep everything before the choices under about 60 words.
+plainly, with no tool names, field names or IDs, and keep everything before the choices under about 60 words. Refer to
+colleagues by name or as "they", never with a pronoun guessed from their name.
 
 1. **Check the connection.** Call `status`; this also finishes the check OrgSync's setup page waits for. If the
    connection was revoked or expired, say they can reconnect from OrgSync's AI apps page, and stop. On another

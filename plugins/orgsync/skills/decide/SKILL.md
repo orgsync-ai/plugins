@@ -6,7 +6,7 @@ argument-hint: "[the decision to make]"
 
 The person is making this decision: $ARGUMENTS
 
-Lay out what the company knows; the person decides.
+Lay out what the company knows; the person decides. Refer to colleagues by name or as "they", never with a pronoun guessed from their name.
 
 1. **Name the decision** in one line. If it is unclear what is being decided, ask one question first.
 2. **Gather what the company decided.** If the decision includes a plan or way of working, read `readFrameworks` with

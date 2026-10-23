@@ -6,6 +6,8 @@ argument-hint: "[who and what, such as 'ask Priya for this week's refund numbers
 
 Help the person ask or assign a colleague, or act on a request, through OrgSync. What they asked: $ARGUMENTS
 
+Refer to colleagues by name or as "they", never with a pronoun guessed from their name.
+
 Follow [requests between people](../orgsync/references/collaboration.md) for the record's rules and the ground rules'
 confirmation for every write.
 

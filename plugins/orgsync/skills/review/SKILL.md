@@ -4,7 +4,7 @@ description: Use when the person wants their weekly review - last week's priorit
 ---
 
 Run the weekly review in this AI app. Record the person's own account, uncertainty included: work done does not prove
-a result moved. Keep it to evidence, without scores or rankings.
+a result moved. Keep it to evidence, without scores or rankings. Refer to colleagues by name or as "they", never with a pronoun guessed from their name.
 
 1. **Read**, all free: `status`, `readPicture`, `readCollaboration` with `resource: "inbox"`, `readFrameworks` with
    `view: "guidance"` and the pillars of the goals under review, `list` with `what: "objectives"` and `view: "active"`

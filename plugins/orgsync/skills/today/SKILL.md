@@ -7,6 +7,8 @@ argument-hint: "[since, such as 'last Monday']"
 Show the person their picture of the company, then help them act on what needs them. A time to look back from, if
 given: $ARGUMENTS
 
+Refer to colleagues by name or as "they", never with a pronoun guessed from their name.
+
 1. Call `readPicture` and `readCollaboration` with `resource: "inbox"`. Both are free. Pass `since` only when the person named a time, as a full past date and time; otherwise OrgSync covers the last seven days.
 2. Write the picture in this order, leaving out empty parts except the How we work note:
    - **Needs you:** collaboration that needs them, then each other item with why it is theirs ("you approve changes
