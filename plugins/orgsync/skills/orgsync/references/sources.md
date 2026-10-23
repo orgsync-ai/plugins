@@ -8,8 +8,10 @@ sources) and `list` with `what: "decisions"` (`view: "mine"` for their own), the
   `missing_context` or `other`) and the person's note as `detail`. It changes nothing and needs no confirmation.
 - **Better text.** Show the exact replacement summary, excerpts and reason, say that Owners and Decision approvers will
   see it under the person's name, and ask for a yes. Then `proposeCorrection` with `baseRevision` set to the revision
-  you read. Keep `area` and `classification` unless the person deliberately changes them, and show any change. Nothing
-  changes until an approver accepts it.
+  you read. Keep `area` and `classification` unless the person deliberately changes them, and show any change. Omit
+  `tagIds` to keep the source's `tags`, which `readSource` shows; to change them, pass the whole new list from the
+  active tags (`[]` clears them) and show the change by label. To tag an existing decision, suggest a fix that keeps
+  its text and changes only `tagIds`. Nothing changes until an approver accepts it.
 - **Take back a suggestion.** Find it with `list`, `what: "proposals"`, `view: "mine"`, then `withdrawProposal` with
   its `proposalId` and `revision`. It works until someone decides it.
 - **Accept, question or withdraw** (Owners and Decision approvers). `setKnowledgeStatus` with the expected and target
@@ -34,8 +36,9 @@ Owners and Decision approvers, when they ask.
   the source's `currentRevision` can no longer be decided.
 - **Accept or reject.** Show the proposal first, then `decideProposal` with its `proposalId`, `revision` and
   `decision` (`accept` or `reject`). A rejection needs the person's reason; an acceptance takes their own reason only
-  if they give one, never the proposer's. Accepting makes the text the source's new current revision, an accepted
-  decision under the person's name, charged as one publication; pass `effectiveAt` only if they gave a date.
+  if they give one, never the proposer's. When the confirmation's `baseTags` and `tags` differ, show that change by
+  label. Accepting makes the text the source's new current revision, an accepted decision under the person's name,
+  charged as one publication; pass `effectiveAt` only if they gave a date.
 - **Problem reports.** `list` with `what: "problem_reports"`, then `readSource` to look, and act only if the person
   decides to.
 - **Accepting a shared source.** A colleague's newly shared source is reported information until an approver accepts

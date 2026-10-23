@@ -14,6 +14,10 @@ approver makes it an accepted decision. Each publication uses company credit onc
   "OrgSync interview".
 - **Area.** Suggest one `area` (`sales_marketing`, `finance`, `legal`, `product`, `hiring_people` or `operations`)
   and show it, so the person's yes to the sharing confirmation is their agreement. Leave it out when none fits.
+- **Tags.** Suggest up to five company tags that fit, such as the team or project the decision concerns, and show each
+  by its label, so the person's yes covers them too. Take them only from the `tags` that free `readFrameworks` returns
+  with `status: "active"` and pass their IDs as `tagIds`; never make one up. Leave tags out when none fit. Tags help
+  people notice a decision; they grant no access. A member who needs a new tag asks an Owner (/orgsync:request).
 - **Way of working.** Set `classification: "way_of_working"` only when the person deliberately agrees the draft is how
   the team works; an area, title or folder alone never makes a practice.
 - **Private-looking material.** Set `privacyConcern` to `private_page`, `direct_message`, `personal_information` or
@@ -29,8 +33,8 @@ yes, suggest the new text as a correction ([managing sources](sources.md)) rathe
 
 1. Call `submitDraft` for each draft. Each saves privately and asks nothing; keep its `draftId`, `revision` and
    `payloadHash`.
-2. Show the person every draft's title, summary, origin, area, classification and privacy mark, and let them drop or
-   edit any.
+2. Show the person every draft's title, summary, origin, area, classification, tags by label and privacy mark, and let
+   them drop or edit any.
 3. Call `shareDrafts` once with up to 20 entries in `drafts`, then confirm as the ground rules describe, repeating the
    same drafts with the returned `idempotencyKey` after the yes.
 4. Report each entry from `results`: shared, or not shared and why. A decline leaves them all private; never try

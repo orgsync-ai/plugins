@@ -7,5 +7,6 @@ argument-hint: "[what to share]"
 The person wants to share this with their company through OrgSync: $ARGUMENTS
 
 Follow [sharing with the company](../orgsync/references/sharing.md): check for a decision it replaces, write the draft,
-save it privately with `submitDraft`, show it, then share it with `shareDrafts` and confirm. If it updates an existing
-source, suggest the text as a fix to that source instead. A decline keeps the draft private.
+save it privately with `submitDraft`, show it with any area and tags you suggest, then share it with `shareDrafts` and
+confirm. If it updates an existing source, suggest the text as a fix to that source instead. A decline keeps the draft
+private.

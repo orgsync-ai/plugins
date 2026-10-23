@@ -98,6 +98,10 @@ Plugin 0.13.0 arranges OrgSync around what people do, and your AI can now start 
 - When OrgSync has no answer, your AI offers to ask the colleague who would know.
 - `/orgsync:import` also covers answering questions and checking shared sources against their originals; `/orgsync:interview` and `/orgsync:refresh` lead there for one more version.
 
+## Tags on decisions
+
+Plugin 0.14.0 lets a decision you share carry up to five of your company's tags, such as a team or project, so the right people notice it. Your AI suggests only active tags from your company's list and shows each one before you approve the share. A suggested fix keeps the decision's tags unless you change them, and tagging an existing decision is a fix an approver accepts. Tags grant no access. This needs an OrgSync server with decision tags; an older server refuses them.
+
 ## Weekly review
 
 Run `/orgsync:review` each week to revisit priorities, report what was done and what moved each goal, share chosen decisions, make a call on each goal and choose one to three priorities. An Owner also sees members' latest reviews, grouped by supported company goal while keeping each author and their evidence. Unlinked check-ins stay visible. One confirmation saves the review and attempts selected shares. Saving is free; admitted publications are charged once ready. Partial shares keep the saved review. Calls of stop or done need a separate confirmed goal change.

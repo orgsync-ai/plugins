@@ -68,7 +68,7 @@ The four tools are `readCollaboration`, `collaborate`, `readFrameworks` and `set
 
 Owners select current reference guidance. OKR and Kanban start enabled; optional Scrum, SAFe, Shape Up, RICE and EOS references start disabled. The current configuration and protocol versions come from OrgSync each time, rather than this installed plugin. Enabling a reference creates no work or scheduled run; disabling preserves existing work and company-approved practices.
 
-With OKR enabled, a goal can hold up to three key results, and the weekly review records their numbers; OrgSync computes progress and days since the last check-in. With Kanban enabled, an Owner may set one advisory work-in-progress limit per person, and your AI tells you when it is exceeded without blocking work. Owners keep one tag list for teams, projects and topics; goals and requests can carry those tags and mention people. Tags and mentions help people find and notice work; they grant no access and assign nothing. Members ask an Owner for a new tag.
+With OKR enabled, a goal can hold up to three key results, and the weekly review records their numbers; OrgSync computes progress and days since the last check-in. With Kanban enabled, an Owner may set one advisory work-in-progress limit per person, and your AI tells you when it is exceeded without blocking work. Owners keep one tag list for teams, projects and topics; goals and requests can carry those tags and mention people, and decisions you share can carry tags too. Tags and mentions help people find and notice work; they grant no access and assign nothing. Members ask an Owner for a new tag.
 
 ## What it contains
 
