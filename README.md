@@ -83,6 +83,10 @@ Plugin 0.10.0 needs an OrgSync server with key results and tags; on an older ser
 
 Plugin 0.11.0 turns `/orgsync:import` into a guided flow. It shows how much of your company OrgSync covers: six business areas, company goals and roles. It then fills the biggest gaps first, from tools your AI app already reaches or from a few questions, and shares each batch you approve. On an older OrgSync server, the coverage counts are absent and the AI asks which areas matter. `/orgsync:feedback` sends the OrgSync team a pain point, idea, bug or praise about OrgSync itself. It is stored without your name, company or connection, and you see the exact text before it is sent. When you ask how OrgSync works, your AI reads [Help](https://orgsync.co/help) as text.
 
+## Getting started
+
+Plugin 0.12.0 adds `/orgsync:get-started`, the first thing to run after connecting. It checks your connection, welcomes you, and asks three quick choices: bring your company in now or later, whether your AI offers to share decisions or waits for you to ask, and a few questions about you and your work. Nothing is shared without your approval either way, and your AI keeps your sharing choice in its own memory only if you agree. `/orgsync:interview` can now also ask about you and your work, offering each result you want as a goal you confirm. In ChatGPT, type `@OrgSync get started`; in Codex, ask it to get started with OrgSync.
+
 ## Weekly review
 
 Run `/orgsync:review` each week to revisit priorities, report what was done and what moved each goal, share chosen decisions, make a call on each goal and choose one to three priorities. An Owner also sees members' latest reviews, grouped by supported company goal while keeping each author and their evidence. Unlinked check-ins stay visible. One confirmation saves the review and attempts selected shares. Saving is free; admitted publications are charged once ready. Partial shares keep the saved review. Calls of stop or done need a separate confirmed goal change.

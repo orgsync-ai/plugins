@@ -1,7 +1,7 @@
 {
   "name": "orgsync",
   "displayName": "OrgSync",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Use current company guidance, agree contributions and review evidence across AI apps, with attributable human confirmation.",
   "author": {
     "name": "OrgSync",

@@ -1,6 +1,6 @@
 ---
 name: orgsync
-description: Use when a task or question touches the person's company - its decisions, policies, prices, processes, commitments, owners or responsibilities - so you work from what the company decided rather than from memory; when the person decides something the company should know, or deliberately wants to share something with their company through OrgSync; when they want to report, correct, accept, dispute, withdraw or delete a company source, or take back a suggested correction; or when they want to review suggested corrections and problem reports. Also use to request or assign a contribution, acknowledge or agree to terms, submit evidence, review a result, report a blocker, or inspect current framework guidance. Also use when the person wants to tell OrgSync itself, the product, about a pain point, idea, bug or praise. Covers checking company context during work, cited answers, exact source lookups, sharing drafts the person approves, source management, accepting or rejecting proposals, and anonymous product feedback.
+description: Use when a task or question touches the person's company - its decisions, policies, prices, processes, commitments, owners or responsibilities - so you work from what the company decided rather than from memory; when the person decides something the company should know, or deliberately wants to share something with their company through OrgSync; when they want to report, correct, accept, dispute, withdraw or delete a company source, or take back a suggested correction; or when they want to review suggested corrections and problem reports. Also use to request or assign a contribution, acknowledge or agree to terms, submit evidence, review a result, report a blocker, or inspect current framework guidance. Also use when the person wants to get started with OrgSync, or to tell OrgSync itself, the product, about a pain point, idea, bug or praise. Covers checking company context during work, cited answers, exact source lookups, sharing drafts the person approves, source management, accepting or rejecting proposals, and anonymous product feedback.
 ---
 
 # Working with OrgSync
@@ -57,7 +57,14 @@ These cost nothing and return titles and facts, never source text. Titles, names
 
 ## Bringing the company in
 
-When the person asks to bring the company's knowledge into OrgSync, or what OrgSync is missing (such as Home's "Bring your company in" prompt, pasted as plain text), follow /orgsync:import's guided flow even without the slash command: show `coverage`'s eight items, take the biggest gaps first, import each from a connected tool that holds it or ask a few questions, suggest one `area` per draft, share each batch with one approval as "Sharing several at once" describes, offer company goals when there are none, and read `coverage` again after each batch. Never stop at one area without saying what is still missing.
+When the person asks to bring the company's knowledge into OrgSync, or what OrgSync is missing (such as Home's "Bring your company in" prompt, pasted as plain text), follow /orgsync:import's guided flow even without the slash command: show `coverage`'s eight items, take the biggest gaps first, import each from a connected tool that holds it or ask a few questions, suggest one `area` per draft, show each batch's titles, areas and summaries and let the person drop or edit any, share it with one approval as "Sharing several at once" describes, offer company goals when there are none, and read `coverage` again after each batch. Never stop at one area without saying what is still missing.
+
+## About you and your work
+
+When the person wants to tell this AI about themselves and their work, or /orgsync:get-started or /orgsync:interview leads here, start from their work profile and `yourFocus` in `readPicture`, and don't ask again what they already say. Their role changes only in OrgSync's web app, and for a Member only an Owner can change it; say so if they want it changed. Ask up to five short questions together: what they're working on now, which projects matter most, what result they want from each, how they'll know it worked, and by when. Then:
+- Offer each result as a person goal through `setObjective`, as "Goals and guides" describes, linked with `supports` to an active company goal when one fits.
+- OrgSync keeps no record of projects. Offer to keep the project details in this AI app's memory, and save them only after the person's yes.
+- Offer a draft only for something the company should know, such as a commitment or a decision, through "Sharing with the company".
 
 ## Ways of working and the guide
 
@@ -86,7 +93,7 @@ Summarize the server's `confirmation` in plain words: what will change, in which
 
 Share only when the person deliberately asks to share something, or says yes when you offer.
 
-**Offering to share.** When the person decides something in this conversation that the company should know (a rule, a price, an owner, a default), you may offer once: "Want me to share this with your company through OrgSync?" Nothing reaches OrgSync until they say yes. Never capture a conversation in the background.
+**Offering to share.** When the person decides something in this conversation that the company should know (a rule, a price, an owner, a default), you may offer once: "Want me to share this with your company through OrgSync?" Nothing reaches OrgSync until they say yes. Never capture a conversation in the background. If the person chose "Only when I ask" in /orgsync:get-started, as this app remembers or they said in this chat, don't offer; share only when they ask.
 
 1. **Check for a decision this replaces.** Call `list` with `what: "decisions"`, and `list` with `what: "decisions"` and `view: "mine"` for what the person shared themselves, and look for one on the same topic, for example a new refund limit and *Refund approvals*. If one looks related, open it with `readSource`. If the new decision changes it, ask: "This replaces *Refund approvals*. Update that instead?"
    - **Yes:** suggest the new text as a correction to that source, as "The person suggests better text" describes under "Managing sources". Don't also share it as a new draft.
@@ -156,6 +163,8 @@ When the person wants to tell OrgSync itself (the product, not their company) ab
 ## Connection
 
 `status` with no arguments checks who this connection acts for and in which company. When the person asks who they are in OrgSync, call it and answer with `personName`, their role from `permissionProfile` (`owner`, `decision_approver` or `member`, said as Owner, Decision approver or Member) and `companyName`. If `personName` is null, the account has no name set; say so rather than guessing one. If a call is denied because the connection was revoked or expired, the person reconnects from OrgSync's AI apps page.
+
+When the person asks to get started with OrgSync or what it can do for them, such as the setup page's "Get started with OrgSync." or "@OrgSync get started", follow /orgsync:get-started even without the slash command.
 
 ## OrgSync's own documentation
 

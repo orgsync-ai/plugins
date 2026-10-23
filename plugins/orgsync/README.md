@@ -27,6 +27,9 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
   policy or who approves what.
 - In Claude Code and Claude Desktop, these commands work with OrgSync directly. In ChatGPT, type `@OrgSync`
   before your request. In Codex, ask it to use OrgSync.
+  - `/orgsync:get-started` welcomes you and asks three quick choices: bring your company in now or later, whether
+    your AI offers to share decisions or waits for you to ask, and a few questions about you and your work. Run it
+    first: it also checks your connection, which OrgSync's setup page waits for.
   - `/orgsync:ask <question>` asks OrgSync a question.
   - `/orgsync:share <what to share>` prepares a draft from this conversation.
   - `/orgsync:today` shows what needs you, waiting contributions, blockers, changed references, the decisions that shape your work, your focus, and current framework references.
@@ -37,7 +40,8 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
   - `/orgsync:import <where to start>` brings your company in, guided by what is still missing across its six
     business areas, goals and roles: from tools your AI app already reaches, such as Notion, Google Drive, Slack,
     GitHub or local files, or by asking you, sharing each batch you approve in one step.
-  - `/orgsync:interview <area>` asks you a few questions about how your company works and turns your answers into drafts.
+  - `/orgsync:interview <area>` asks you a few questions about how your company works, or about you and your work,
+    and turns your answers into drafts and goals.
   - `/orgsync:decide <decision>` lays out what your company already decided before you decide, then offers to share the decision.
   - `/orgsync:refresh` re-reads the originals of sources you brought in and suggests a correction where one changed.
   - `/orgsync:feedback <what to tell OrgSync>` sends the OrgSync team a pain point, idea, bug or praise about OrgSync,
@@ -62,9 +66,9 @@ With OKR enabled, a goal can hold up to three key results, and the weekly review
 - A connection to OrgSync's server at `https://orgsync.co/mcp`, for Claude apps. You sign in with your
   OrgSync account and choose your company the first time. In Codex and ChatGPT you add the connection with
   the steps on OrgSync's **AI apps** page.
-- Thirteen skills. The `orgsync` skill tells your AI how to use OrgSync: when to look something up, how to cite and
+- Fourteen skills. The `orgsync` skill tells your AI how to use OrgSync: when to look something up, how to cite and
   describe a source, how to share only what you approve, and to answer from OrgSync rather than from memory. The
-  other twelve are `ask`, `share`, `today`, `goals`, `guide`, `first-customers`, `import`, `interview`, `decide`, `refresh`,
+  other thirteen are `get-started`, `ask`, `share`, `today`, `goals`, `guide`, `first-customers`, `import`, `interview`, `decide`, `refresh`,
   `review` and `feedback`, one for each command above.
 
 It also contains the Claude Code mod described below.
