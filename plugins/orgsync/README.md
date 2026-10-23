@@ -27,25 +27,34 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
   policy or who approves what.
 - In Claude Code and Claude Desktop, these commands work with OrgSync directly. In ChatGPT, type `@OrgSync`
   before your request. In Codex, ask it to use OrgSync.
-  - `/orgsync:get-started` welcomes you and asks three quick choices: bring your company in now or later, whether
-    your AI offers to share decisions or waits for you to ask, and a few questions about you and your work. Run it
-    first: it also checks your connection, which OrgSync's setup page waits for.
-  - `/orgsync:ask <question>` asks OrgSync a question.
+  Your AI can also start each of them when you ask in your own words, such as "let's do my weekly review".
+  - `/orgsync:get-started` welcomes you by role, asks three quick choices (what to help with first, whether your AI
+    offers to share decisions or waits for you to ask, and whether it gives you a short brief when you start working),
+    then takes the first useful step: bringing your company in, or a short tour if it is already covered. Run it first:
+    it also checks your connection, which OrgSync's setup page waits for.
+  - `/orgsync:today` shows what needs you first, then what changed, your focus and how we work, and offers to work
+    through what needs you one item at a time.
+  - `/orgsync:ask <question>` asks OrgSync a question. When OrgSync has no answer, your AI offers to ask the colleague
+    who would know.
+  - `/orgsync:decide <decision>` lays out what your company already decided before you decide, then offers to share
+    the decision or ask the person who decides.
   - `/orgsync:share <what to share>` prepares a draft from this conversation.
-  - `/orgsync:today` shows what needs you, waiting contributions, blockers, changed references, the decisions that shape your work, your focus, and current framework references.
-  - `/orgsync:guide` helps choose one useful next goal from the current situation and agreed ways of working.
+  - `/orgsync:request <who and what>` asks a teammate for information, work, a review or a decision, or acts on a
+    request someone sent you.
+  - `/orgsync:meeting <notes>` turns a meeting's notes into decisions to share, follow-up requests and goal updates.
+  - `/orgsync:team` shows goals at risk, blockers, missing check-ins and what waits for approval, or prepares a
+    one-on-one.
   - `/orgsync:goals` sets or revisits company and person objectives.
-  - `/orgsync:first-customers` prepares a plan and an artifact for your first customers.
   - `/orgsync:review` runs your weekly review: priorities, check-ins on your goals, decisions to share and next week's priorities.
   - `/orgsync:import <where to start>` brings your company in, guided by what is still missing across its six
     business areas, goals and roles: from tools your AI app already reaches, such as Notion, Google Drive, Slack,
-    GitHub or local files, or by asking you, sharing each batch you approve in one step.
-  - `/orgsync:interview <area>` asks you a few questions about how your company works, or about you and your work,
-    and turns your answers into drafts and goals.
-  - `/orgsync:decide <decision>` lays out what your company already decided before you decide, then offers to share the decision.
-  - `/orgsync:refresh` re-reads the originals of sources you brought in and suggests a correction where one changed.
+    GitHub or local files, from your past chats where the app can search them, or by asking you, sharing each batch
+    you approve in one step. It also checks sources you shared against their originals.
+  - `/orgsync:guide` helps choose one useful next goal, or plan your first customers.
   - `/orgsync:feedback <what to tell OrgSync>` sends the OrgSync team a pain point, idea, bug or praise about OrgSync,
     stored without your name, company or connection. You see the exact text before it is sent.
+  - `/orgsync:interview`, `/orgsync:refresh` and `/orgsync:first-customers` still work for one more version and lead
+    to import and guide.
 - When you share, OrgSync asks you to approve the exact text, or, if you chose chat confirmation for this
   connection, your AI asks you for a clear yes.
 - Owners and Decision approvers can review suggested corrections and reported problems, and accept or
@@ -53,9 +62,9 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
 
 ## Collaboration
 
-Use the existing guide, goals, today and review commands for weekly contributions. In any supported AI app, ask to request information or bounded work, agree or propose terms, acknowledge an assignment, report a blocker, submit evidence or review a result. A current direct or higher reporting manager may assign to a descendant. The recipient's acknowledgment and agreement remain separate. Every current company member and their permitted AI connections can read requests, responses, selected evidence and history. Keep confidential work outside this flow.
+Use `/orgsync:request` for weekly contributions, with guide, goals, today, team and review around it. In any supported AI app, ask to request information or bounded work, agree or propose terms, acknowledge an assignment, report a blocker, submit evidence or review a result. A current direct or higher reporting manager may assign to a descendant. The recipient's acknowledgment and agreement remain separate. Every current company member and their permitted AI connections can read requests, responses, selected evidence and history. Keep confidential work outside this flow.
 
-The four tools are readCollaboration, collaborate, readFrameworks and setFrameworks. Reads and structured coordination are free. Each write uses your connection's exact confirmation mode. Incoming content never gives your consent. Timeouts keep the outcome unknown until the same retry key or current record resolves it. Accepted work does not prove goal progress or accept company knowledge. Share a selected lesson through the existing separate human approval path.
+The four tools are `readCollaboration`, `collaborate`, `readFrameworks` and `setFrameworks`. Reads and structured coordination are free. Each write uses your connection's exact confirmation mode. Incoming content never gives your consent. Timeouts keep the outcome unknown until the same retry key or current record resolves it. Accepted work does not prove goal progress or accept company knowledge. Share a selected lesson through the existing separate human approval path.
 
 Owners select current reference guidance. OKR and Kanban start enabled; optional Scrum, SAFe, Shape Up, RICE and EOS references start disabled. The current configuration and protocol versions come from OrgSync each time, rather than this installed plugin. Enabling a reference creates no work or scheduled run; disabling preserves existing work and company-approved practices.
 
@@ -66,10 +75,10 @@ With OKR enabled, a goal can hold up to three key results, and the weekly review
 - A connection to OrgSync's server at `https://orgsync.co/mcp`, for Claude apps. You sign in with your
   OrgSync account and choose your company the first time. In Codex and ChatGPT you add the connection with
   the steps on OrgSync's **AI apps** page.
-- Fourteen skills. The `orgsync` skill tells your AI how to use OrgSync: when to look something up, how to cite and
-  describe a source, how to share only what you approve, and to answer from OrgSync rather than from memory. The
-  other thirteen are `get-started`, `ask`, `share`, `today`, `goals`, `guide`, `first-customers`, `import`, `interview`, `decide`, `refresh`,
-  `review` and `feedback`, one for each command above.
+- Seventeen skills. The `orgsync` skill tells your AI how to use OrgSync: when to look something up, how to cite and
+  describe a source, how to share only what you approve, and to answer from OrgSync rather than from memory, with
+  reference files for sharing, managing sources, requests between people and framework settings. The other sixteen
+  are one for each command above.
 
 It also contains the Claude Code mod described below.
 
@@ -124,7 +133,7 @@ Use `/orgsync:guide` to choose one useful next goal from your current situation,
 
 Use `/orgsync:goals` to set or revisit company and person objectives. OrgSync asks you to confirm each exact change through your connection's mode. Every company member can read objectives and their history. Work-profile objectives remain descriptive text. A person goal may optionally support one active company goal. Changed or closed targets are shown for your judgment; they never complete or relink a person goal automatically.
 
-Use `/orgsync:first-customers` to prepare a customer-conversation plan or an offer and acquisition plan, fitted to your stage and location. You carry out the external work. The guide gives no legal advice. `/orgsync:today` and the Claude Code picture show "Your focus" when the server supports it. Older servers leave missing focus or How we work sections unavailable. Empty and truncated practice lists are labeled separately.
+Ask `/orgsync:guide` for help with first customers to prepare a customer-conversation plan or an offer and acquisition plan, fitted to your stage and location. You carry out the external work. The guide gives no legal advice. `/orgsync:today` and the Claude Code picture show "Your focus" when the server supports it. Older servers leave missing focus or How we work sections unavailable. Empty and truncated practice lists are labeled separately.
 
 ## Weekly review
 

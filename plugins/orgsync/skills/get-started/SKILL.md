@@ -1,19 +1,46 @@
 ---
 name: get-started
-description: Start using OrgSync - a short welcome and three quick choices, then bringing your company in and a few questions about you and your work.
-disable-model-invocation: true
+description: Use when the person wants to get started with OrgSync, has just connected it, asks what OrgSync can do for them, or wants to change their OrgSync choices.
 ---
 
-Welcome the person to OrgSync and set it up with them through three quick choices. Speak plainly throughout: no tool names, field names, IDs or technical terms.
+Set OrgSync up with the person: a welcome that fits them, three quick choices, then a first useful step. Speak
+plainly, with no tool names, field names or IDs, and keep everything before the choices under about 60 words.
 
-1. **Check the connection.** Call `status`. This also finishes the check that OrgSync's setup page is waiting for. If it is denied because the connection was revoked or expired, say they can reconnect from OrgSync's AI apps page, and stop. If it fails for another reason, say in one line that the setup page may not show the check yet, and go on. Then call `readPicture`, which is free. Don't show the picture.
-2. **Welcome them in two or three sentences.** Greet them by `personName` (if null, greet without a name), say they're connected to `companyName` as an Owner, a Decision approver or a Member, and say in one sentence what OrgSync does: it keeps what their company decided, so this AI works from that rather than from guesses.
-3. **Ask three questions at once.** If this app can ask multiple-choice questions in a form, use it for all three together. Otherwise ask them as one short numbered list in chat and accept short answers such as "1 now, 2 offer, 3 later". Mark the recommended choice in each.
-   1. **Bring your company in:** now or later. Recommend now when `coverage` counts fewer than 6 of 8 covered or is absent. When 6 or more are covered, say the company is mostly in already and recommend later.
-   2. **Sharing with your company:** "Offer to share when I decide something" (recommended) or "Only when I ask, with /orgsync:share". Say that either way nothing is shared until they approve it. Offer no automatic choice: OrgSync shares nothing without the person approving the exact text.
-   3. **About you and your work:** a few questions about your projects and goals, now (recommended) or later.
-4. **Keep the sharing choice.** If this app can remember preferences across chats, offer to save the choice there, and save it only after their yes; otherwise follow it for this chat. OrgSync doesn't store it. With "Only when I ask", don't offer to share during work; the person uses /orgsync:share and still approves each share.
-5. **Do what they chose, in this order.** First bring the company in, as the `orgsync` skill's "Bringing the company in" describes. Then follow its "About you and your work". Before each, say in one line what comes next, and stop whenever they want. For each one they put off, say how to start it later: /orgsync:import or /orgsync:interview; in ChatGPT, @OrgSync and the request; in Codex, ask it to use OrgSync.
-6. **Close with what they can do.** Three or four short lines, each with an example of what to type: ask about anything the company decided ("What's our refund policy?"), see what needs them today, set or check a goal, and run a weekly review. Where this app has slash commands, add each line's command once: /orgsync:ask, /orgsync:today, /orgsync:goals and /orgsync:review.
+1. **Check the connection.** Call `status`; this also finishes the check OrgSync's setup page waits for. If the
+   connection was revoked or expired, say they can reconnect from OrgSync's AI apps page, and stop. On another
+   failure, say in one line that the setup page may not show the check yet, and go on. Then call free `readPicture`.
+2. **Welcome them** by `personName` (without a name if null), with `companyName`, their role, and one line: OrgSync
+   keeps what the company decided, so this AI works from that rather than guesses. Then three things it does for them:
+   - **Solo** (`coverage` counts one member): keeping their decisions so every chat agrees, goals with a short weekly
+     review, and a guide to the next step or first customers. Say "your company brain", not "your team".
+   - **Owner or Decision approver in a team:** approving what the team shares, asking or assigning work, the team's week.
+   - **Member:** what needs them, the decisions that shape their work, and asking a teammate.
+3. **Ask three choices together**, in this app's question form when it has one, otherwise as one numbered list that
+   accepts short answers such as "1 goals, 2 offer, 3 brief". Mark the recommended choice. If this app remembers
+   earlier choices, show them and ask only what to change.
+   1. **Focus** (several allowed): keep my AI on what we decided (recommended); turn my decisions into company
+      knowledge; goals and a weekly review; work with my team (teams only); find first customers (when
+      `businessProfile` says idea or starting).
+   2. **Sharing:** offer to share when I decide something (recommended), or only when I ask. Nothing is shared until
+      they approve the exact text.
+   3. **Keeping up to date:** a short brief when we start working (recommended), or only when I ask; and a day for the
+      weekly review.
+4. **Keep the choices.** If this app remembers across chats, offer to save one note, after their yes only: their name,
+   role and company, "for company topics, check OrgSync first", and the three choices; no company facts. Otherwise
+   follow them for this chat. A weekly reminder email is in OrgSync's web app under Settings, Account.
+5. **Take the path that fits**, saying in one line what comes next; stop whenever they want.
+   - **Owner or Decision approver of a company not yet covered** (below 6 of 8, or `coverage` absent): bring it in
+     with /orgsync:import, starting from what this AI can reach, past chats included.
+   - **Joining a covered company:** a short tour from the picture instead: up to three decisions that shape their
+     work, the company goals, how we work and anything that needs them. Then offer once to look through their own past
+     chats for decisions the company should know (/orgsync:import).
+   - Then their Focus: goals lead to "About you"; first customers to /orgsync:guide; the team to /orgsync:request.
+6. **About you**, unless they skip it: what they work on now, the result that matters most, and by when, skipping what
+   their work profile and `yourFocus` already say. Offer the result as a person goal (/orgsync:goals), linked to a
+   company goal when one fits, and to keep project details in this app's memory after their yes. Roles change only in
+   OrgSync's web app.
+7. **Close** with three lines matched to their Focus, each with what to type (/orgsync:ask, /orgsync:today,
+   /orgsync:review or /orgsync:request; in ChatGPT, @OrgSync and the request; in Codex, ask it to use OrgSync), and:
+   "/orgsync:feedback any time to tell the OrgSync team what is missing or broken."
 
-Keep everything before the questions under about 60 words. This skill shares and saves nothing by itself. The import and the interview follow their own steps, and every share or goal uses this connection's confirmation mode: only the person answers OrgSync's prompt or gives the yes in chat.
+This skill shares and saves nothing by itself; imports, goals and requests keep their own confirmations.

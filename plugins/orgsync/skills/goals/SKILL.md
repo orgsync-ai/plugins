@@ -1,24 +1,40 @@
 ---
 name: goals
-description: Set or revisit company and person objectives in OrgSync, with success criteria, a responsible person and a date.
+description: Use when the person wants to set, change, check or close a company or personal goal in OrgSync, with key results, an owner and a date.
 argument-hint: "[goal or result to review]"
-disable-model-invocation: true
 ---
 
-Help the person set or revisit their objectives. Start with what they asked: $ARGUMENTS
+Help the person set or revisit goals. Start with what they asked: $ARGUMENTS
 
-1. Call `status`, `readPicture`, `readFrameworks` with `view: "guidance"` and `pillars: ["business_management"]`, and `list` with `what: "objectives"`. Reads are free. Use `view: "closed"` for completed or dropped objectives, and pass `nextCursor` as `cursor` for more. An absent `yourFocus` means unavailable, not zero objectives. Full `successCriteria` come from the list.
-2. For a new goal, ask what result they want, what observable evidence would count as success, who is responsible, and the timeframe. Agree a specific `dueOn` calendar date and a `horizon` of `day`, `week`, `month`, `quarter` or `custom`. Set optional `periodStartOn` separately from the due date. An optional `reviewCadence` is a weekly local schedule with `weekday` Sunday zero through Saturday six, `localTime`, IANA `timeZone`, `startOn`, nullable `endOn` and explicit `exceptions`. Keep it separate from the outcome period; it creates no other person's commitment. Occurrence exceptions name their original date and `moveTo`, or null to skip. Show date/timezone and exceptions in confirmation. Never invent criteria, a responsible person or a date. Work-profile `roleObjectives` is descriptive text, separate from these objectives.
-3. **Key results and tags.** When the `business_management` guidance has OKR enabled, propose up to three `keyResults`. Each has a short lowercase `keyResultId` that stays stable across replacements, a `label`, and a `unit`, `baseline` and `target` when the result is measurable; with a null `target` it is qualitative, which is valid. Take numbers only from the person. Offer `tagIds`, up to five, chosen from the active `tags` the guidance read returned. When no tag fits, the goal goes untagged and the person can ask an Owner for one, as the orgsync skill's tags note describes. A replacement that omits `keyResults` or `tagIds` keeps them; an empty array clears them. Show key results and tag labels in the confirmation.
-4. Offer one optional link from a person goal to an active company goal in this company, using top-level `supports`. Omit it to keep the existing link, send null to remove it, or a company objective ID to assign or reaffirm it. Never set `supportsRevision`; the server owns it. On reads, `supportsContext` names the target and its `revision`, `status` and `linkedRevision`. If revisions differ, show that the company goal changed. If completed or dropped, show that it closed. Neither changes, completes nor relinks the person goal. Ask for the person's judgment. Links grant no permission. Solo and unlinked goals work normally. For a link-only change, use `operation: "replace"` with the complete current editable objective and a reason. Omit `supports` on `complete` and `drop`; the saved link stays in history.
-5. Explain that every current company member and their connected AI clients can read objectives and their history. An Owner or Decision approver may change any objective and assign an active member. A Member may change only person objectives they own. Responsibility gives no permission. Company objectives may be unassigned; person objectives require an owner. Scope stays fixed. A revoked owner stays attributed as inactive until an approver reassigns them.
-6. Call `setObjective` when the person wants to save. Use a fresh `idempotencyKey` for each intended change, repeated only to retry it. Creation uses `operation: "create"`, a fresh `objectiveId`, `expectedRevision: 0`, `scope` and the complete editable `objective`. Replacement uses `operation: "replace"`, the listed revision and every editable field. Supply the person's `reason`.
-   - On a prompt connection, only the person answers OrgSync's form. You never answer it.
-   - On a chat connection, the first call returns `awaiting_confirmation`. Summarize the server's `confirmation` in plain words: what changes, the company, visibility to every current company member, before and after titles, values, dates, owner names, reason and finality. Include `beforeSupports` and `afterSupports`, naming the target's current title, revision and state or the link removal. Never show IDs, hashes or raw JSON. Ask for an explicit yes to those exact values. Only after that yes, repeat the exact arguments with `idempotencyKey` copied from `retry.idempotencyKey` and the returned `confirmationHash`. Keep that key across turns; never generate a new one for this yes. A no, ambiguity or silence changes nothing.
-   - After `confirmation_changed` or `objective_revision_conflict`, read again, show the fresh confirmation and ask for another yes. Use a new key when intent changes. Never silently retry approval. For `objective_support_unavailable` or `objective_support_not_allowed`, relay the server message, read active goals again and ask which valid link or unlinked goal the person wants. Do not silently remove a requested link.
-   - A decline or dismissal changes nothing. Ask again only if the person asks.
-7. On return, read the nullable `latestCheckIn` and its `recordedAt` date as reported evidence against its `objectiveRevision`, including uncertainty. A check-in for an earlier revision does not establish the current goal's status. Offer /orgsync:review for a weekly check-in. A stop or done call never completes a goal. Read linked contributions with `readCollaboration` and keep submitted work, accepted contributions and changes in the objective result distinct. On return, compare the person's reported evidence with the stored criteria and the goal's server-computed `progress`: each key result's latest `value`, `recordedAt` and `percent`, and `staleDays` since the last check-in. Distinguish what happened from what is still unknown. Propose the next step. Complete or drop only when the person judges the result and confirms it through `setObjective`, with `operation: "complete"` or `drop`, the current revision and no replacement fields. Completion and dropping are final. A new goal gets a new objective.
+1. **Read**, all free: `status`, `readPicture`, `readFrameworks` with `view: "guidance"` and
+   `pillars: ["business_management"]`, and `list` with `what: "objectives"` (`view: "closed"` for completed or dropped
+   ones; follow `nextCursor`). Each goal carries server-computed `progress`: per key result the latest `value`,
+   `recordedAt` and `percent`, and `staleDays` since the last check-in.
+2. **A new goal.** Ask what result they want, what observable evidence counts as success, who is responsible, and by
+   when; take every number, owner and date from the person. Agree a `dueOn` date and a `horizon` (`day`, `week`,
+   `month`, `quarter` or `custom`); an optional `periodStartOn`; and an optional weekly `reviewCadence` (weekday Sunday
+   zero to Saturday six, local time, time zone, start date and exceptions), shown in the confirmation.
+3. **Key results and tags.** When OKR is enabled, propose up to three `keyResults`, each with a short stable lowercase
+   `keyResultId`, a `label`, and a `unit`, `baseline` and `target` when measurable (a null `target` is qualitative).
+   Offer up to five `tagIds` from the active `tags`. A replacement that omits `keyResults` or `tagIds` keeps them; an
+   empty list clears them.
+4. **A link.** A person goal may support one active company goal through `supports`: omit it to keep the link, null to
+   remove it, or the company goal's ID to set it. On reads, `supportsContext` gives the target's current title,
+   `revision` and `status`; a `linkedRevision` that differs means the company goal changed, and completed or dropped
+   means it closed. Neither changes the person goal; ask the person.
+5. **Who can change what.** Every member and their AI apps can read goals and their history. Owners and Decision
+   approvers can change any goal and assign an active member; a Member changes only person goals they own. Being
+   responsible for a goal grants no permission.
+6. **Save** with `setObjective` and a fresh `idempotencyKey` per intended change, with the person's `reason`:
+   - create: `operation: "create"`, a new `objectiveId`, `expectedRevision` 0, `scope` and the complete `objective`;
+   - replace: `operation: "replace"`, the listed revision and every editable field (also for a link-only change);
+   - complete or drop: the current revision and no other fields, only when the person judges the result. These are
+     final; a new goal gets a new objective.
+   Confirm as the ground rules describe, including before and after links. After `confirmation_changed` or
+   `objective_revision_conflict`, read again and ask for a fresh yes. For `objective_support_unavailable` or
+   `objective_support_not_allowed`, relay the message and ask which link they want.
+7. **On return**, compare the person's evidence with the criteria and `progress`, separate what happened from what is
+   unknown, and propose the next step. A check-in belongs in /orgsync:review; help from a teammate in
+   /orgsync:request.
 
-Saving goals is free. It grants no external action. Report only the result OrgSync returned; a suggestion is not a saved commitment.
-
-For weekly help from a teammate, follow the [human collaboration workflow](../guide/references/human-collaboration.md). Manager contribution authority is separate from objective-change authority.
+Saving goals is free and grants no outside action. Report only what OrgSync returned.

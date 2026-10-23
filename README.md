@@ -67,7 +67,7 @@ Use `/orgsync:guide` to choose one useful next goal from your current situation,
 
 Use `/orgsync:goals` to set or revisit company and person objectives. OrgSync asks you to confirm each exact change through your connection's mode. Every company member can read objectives and their history. Work-profile objectives remain descriptive text. A person goal may optionally support one active company goal. Changed or closed targets are shown for your judgment; they never complete or relink a person goal automatically.
 
-Use `/orgsync:first-customers` to prepare a customer-conversation plan or an offer and acquisition plan, fitted to your stage and location. You carry out the external work. The guide gives no legal advice. `/orgsync:today` and the Claude Code picture show "Your focus" when the server supports it. Older servers leave missing focus or How we work sections unavailable. Empty and truncated practice lists are labeled separately.
+Ask `/orgsync:guide` for help with first customers to prepare a customer-conversation plan or an offer and acquisition plan, fitted to your stage and location (`/orgsync:first-customers` still leads there for one more version). You carry out the external work. The guide gives no legal advice. `/orgsync:today` and the Claude Code picture show "Your focus" when the server supports it. Older servers leave missing focus or How we work sections unavailable. Empty and truncated practice lists are labeled separately.
 
 ## Weekly contributions across AI apps
 
@@ -85,7 +85,18 @@ Plugin 0.11.0 turns `/orgsync:import` into a guided flow. It shows how much of y
 
 ## Getting started
 
-Plugin 0.12.0 adds `/orgsync:get-started`, the first thing to run after connecting. It checks your connection, welcomes you, and asks three quick choices: bring your company in now or later, whether your AI offers to share decisions or waits for you to ask, and a few questions about you and your work. Nothing is shared without your approval either way, and your AI keeps your sharing choice in its own memory only if you agree. `/orgsync:interview` can now also ask about you and your work, offering each result you want as a goal you confirm. In ChatGPT, type `@OrgSync get started`; in Codex, ask it to get started with OrgSync.
+`/orgsync:get-started` is the first thing to run after connecting. Since plugin 0.13.0 it fits you: it welcomes you by role (solo founder, Owner or approver in a team, or Member), then asks three quick choices: what OrgSync should help with first, whether your AI offers to share decisions or waits for you to ask, and whether it gives you a short brief when you start working. Your AI keeps those choices in its own memory only if you agree. An Owner of a company that is not yet covered is offered to bring it in, starting from what the AI can reach, past chats included; someone joining a company that is already covered gets a short tour instead. Nothing is read or shared without your yes. In ChatGPT, type `@OrgSync get started`; in Codex, ask it to get started with OrgSync.
+
+## Commands by job
+
+Plugin 0.13.0 arranges OrgSync around what people do, and your AI can now start each workflow when you ask in your own words, such as "let's do my weekly review". Every change still needs your own yes.
+
+- `/orgsync:request` asks a teammate for information, work, a review or a decision, or acts on a request someone sent you.
+- `/orgsync:meeting` turns notes from a meeting into decisions to share, follow-up requests and goal updates for your review.
+- `/orgsync:team` shows goals at risk, blockers, missing check-ins and what waits for approval, or prepares a one-on-one.
+- `/orgsync:today` puts what needs you first and offers to work through it one item at a time.
+- When OrgSync has no answer, your AI offers to ask the colleague who would know.
+- `/orgsync:import` also covers answering questions and checking shared sources against their originals; `/orgsync:interview` and `/orgsync:refresh` lead there for one more version.
 
 ## Weekly review
 

@@ -1,14 +1,12 @@
 ---
 name: ask
-description: Ask your company's approved OrgSync context a question and get a cited answer.
+description: Use when the person asks what their company decided or how something is done there, and wants a cited answer from OrgSync.
 argument-hint: "[question]"
-disable-model-invocation: true
 ---
 
 Answer this question from the company's OrgSync context: $ARGUMENTS
 
-Follow the `orgsync` skill's "Answering from company context" steps:
-- Answer from what OrgSync returns, never from memory. A decision named in the server instructions or by `list` with `what: "decisions"`, which is free, can be opened with `readSource`, also free.
-- Call `readPermittedContext` once with the question.
-- Cite each source you use by its title, and describe its status accurately.
-- Say plainly when the company has no permitted source for it.
+Follow the `orgsync` skill's "Answering from company context":
+- A decision named in the server instructions or by free `list` with `what: "decisions"` opens free with `readSource`.
+- Otherwise call `readPermittedContext` once with the question, cite each source by its title and describe its status.
+- When OrgSync has no permitted source, say so and offer to ask the colleague who would know.
