@@ -90,7 +90,9 @@ request or goal, follow /orgsync:todo. Saving with free `setTodo` needs no confi
 yes in chat. Reminders for life outside work belong in their phone or their own to-do app, not in OrgSync.
 
 - **Private.** Only the person who made a to-do can read it, through their own AI apps. Teammates, managers and Owners
-  cannot, and OrgSync emails reminders only to the person's own sign-in address.
+  cannot.
+- **No email.** A due reminder shows in /orgsync:today and the Claude Code pane; OrgSync sends no to-do email. For a
+  phone alert, the person can also add it to their phone's reminders.
 - **Never company knowledge.** A to-do is never a draft, a source, a request or a weekly priority, and never evidence
   for an answer. It becomes shared only by turning it into one of those through that record's own confirmation.
 

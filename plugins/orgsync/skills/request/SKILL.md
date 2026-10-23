@@ -27,7 +27,8 @@ confirmation for every write.
 5. Report what OrgSync returned. If it matters soon, suggest the person also tell the recipient directly.
 6. Once the request is created, offer the person one follow-up, such as "Want a reminder on Thursday if Priya hasn't
    submitted?". On a yes, save it as their private to-do linked to the request, with `unless` set to `request_moved`,
-   as /orgsync:todo describes. It closes itself, with no email, if the request moves first.
+   as /orgsync:todo describes. It shows as due in /orgsync:today at that time, or closes itself if the request moves
+   first; OrgSync sends no to-do email.
 
 **Acting on a request**
 

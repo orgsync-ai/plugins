@@ -48,8 +48,8 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
   - `/orgsync:goals` sets or revisits company and person objectives.
   - `/orgsync:review` runs your weekly review: priorities, check-ins on your goals, decisions to share, to-dos that keep slipping and next week's priorities.
   - `/orgsync:todo <what and when>` keeps a private to-do for your work, with a date, a time, a repeat and reminders
-    by email, such as "remind me Friday at 10 to send Acme the new price" or "remind me Thursday if Priya hasn't
-    submitted".
+    that show as due in `/orgsync:today`, such as "remind me Friday at 10 to send Acme the new price" or "remind me
+    Thursday if Priya hasn't submitted". OrgSync never emails to-dos.
   - `/orgsync:import <where to start>` brings your company in, guided by what is still missing across its six
     business areas, goals and roles: from tools your AI app already reaches, such as Notion, Google Drive, Slack,
     GitHub or local files, from your past chats where the app can search them, or by asking you, sharing each batch
@@ -154,12 +154,11 @@ changes only your own list.
 
 - **Private to you.** Only you can read your to-dos, through your own AI apps. Your teammates, managers and your
   company's Owners cannot, and a to-do is never shared as company knowledge.
-- **Emailed reminders.** At the time you set, OrgSync emails the address you sign in with. The email shows only the
-  company name, the to-do's title and its time, never its note or anything it links to, so a title can't hold a link,
-  an email address or a handle. Stop these emails for a company in **Settings › Account** or with the link in any
-  reminder; `/orgsync:today` still shows due to-dos.
+- **Reminders, never email.** At the time you set, the to-do shows as due in `/orgsync:today` and in the Claude Code
+  pane. OrgSync never emails to-dos or reminders; for a phone alert, add it to your phone's reminders too. A title
+  can't hold a link, an email address or a handle.
 - **Follow-ups that close themselves.** A to-do linked to a request or a goal can wait on it: if the request moves or
-  someone checks in on the goal first, no email is sent and the to-do closes itself.
+  someone checks in on the goal first, the to-do closes itself instead of coming due.
 - **Free.** To-dos use no company credit. Done, dropped and handed-off to-dos are deleted 30 days after they close.
 - **Work only.** Reminders for life outside work belong in your phone or your own to-do app.
 
