@@ -32,8 +32,9 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
     offers to share decisions or waits for you to ask, and whether it gives you a short brief when you start working),
     then takes the first useful step: bringing your company in, or a short tour if it is already covered. Run it first:
     it also checks your connection, which OrgSync's setup page waits for.
-  - `/orgsync:today` shows what needs you first, then what changed, your focus and how we work, and offers to work
-    through what needs you one item at a time.
+  - `/orgsync:today` opens with one ranked list of what to do: what someone is waiting on first, then what is due,
+    work for a company goal and the priorities from your weekly review. Then it shows what changed, your focus and how
+    we work, and offers to work through the list one item at a time.
   - `/orgsync:ask <question>` asks OrgSync a question. When OrgSync has no answer, your AI offers to ask the colleague
     who would know.
   - `/orgsync:decide <decision>` lays out what your company already decided before you decide, then offers to share

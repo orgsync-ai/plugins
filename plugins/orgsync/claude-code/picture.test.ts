@@ -135,6 +135,16 @@ test("new focus and business facts change standing hashes; absent focus stays un
     {...focus,items:[{...focus.items[0]!,dueOn:"2026-02-30"}]}]) expect(parsePicture(wire({...p,yourFocus}))).toBe(null);
 });
 
+test("this week's own priorities join focus; null or an older server adds none, and malformed ones are unavailable", () => {
+  const old=pictureFixture(), weekly={reviewId:"review-a",recordedAt:AS_OF,priorities:["Call five customers","Fix the import"]};
+  const parsed=parsePicture(wire({...old,yourPriorities:weekly}))!;
+  expect(parsed.items.filter(i=>i.section==="focus").map(i=>[i.id,i.title,i.details[0]])).toEqual([
+    ["priority:review-a:0","Call five customers","Your priority this week"],["priority:review-a:1","Fix the import","Your priority this week"]]);
+  for(const yourPriorities of [null,undefined])expect(parsePicture(wire({...old,yourPriorities}))?.items.some(i=>i.id.startsWith("priority:"))).toBe(false);
+  for(const yourPriorities of [{...weekly,priorities:[]},{...weekly,priorities:["a","b","c","d"]},{...weekly,recordedAt:"yesterday"},{...weekly,priorities:[7]}])
+    expect(parsePicture(wire({...old,yourPriorities}))).toBe(null);
+});
+
 
 test("practices distinguish old-server absence, empty and truncated, and bind all standing facts", () => {
   const old = pictureFixture(), practice = practiceFixture(), page = { count: 2, truncated: true, items: [practice] };

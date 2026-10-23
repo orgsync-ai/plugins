@@ -7,7 +7,9 @@ argument-hint: "[a team, a person for a one-on-one, or blank for the company]"
 Show how the team is doing from OrgSync's records, for an Owner, a Decision approver or a manager. These records are
 company-readable, so any member may ask. Scope, if given: $ARGUMENTS
 
-Refer to colleagues by name or as "they", never with a pronoun guessed from their name.
+Refer to colleagues by name or as "they", never with a pronoun guessed from their name: write "Eva reported it" or
+"they reported it", never "she", "he", "her", "his" or "him". Before answering, reread every line for those words and
+replace each one with the name or "they".
 
 1. **Read**, all free, narrowed to the team's `tagId` or the person's `personId` when given, following `nextCursor` up
    to three pages and saying when more remain:

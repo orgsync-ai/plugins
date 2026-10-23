@@ -194,6 +194,12 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
           [`${scope} objective`, `Horizon ${horizon}`, `Due ${dueOn}`, owner ? `Responsible: ${person(owner).label}${owner.active ? "" : " (inactive membership)"}` : "Unassigned", ...supportDetails(target)], target);
       }
     }
+    // D-181: the person's own priorities from a review in the last 14 days; null means none that recent.
+    if (p.yourPriorities !== undefined && p.yourPriorities !== null) {
+      const weekly = record(p.yourPriorities), reviewId = string(weekly.reviewId), reviewed = date(weekly.recordedAt).slice(0, 10), priorities = array(weekly.priorities);
+      if (priorities.length < 1 || priorities.length > 3) invalid();
+      priorities.forEach((raw, index) => add(`priority:${reviewId}:${index}`, "focus", string(raw), ["Your priority this week", `From your weekly review of ${reviewed}`]));
+    }
     if (p.collaboration !== undefined) {
       const collaboration = record(p.collaboration), totals = record(collaboration.counts), requests = array(collaboration.requests);
       const labels = new Map([[person(role.person).personId, person(role.person).label]]);
