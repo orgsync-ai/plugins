@@ -102,6 +102,10 @@ Plugin 0.13.0 arranges OrgSync around what people do, and your AI can now start 
 
 Plugin 0.14.0 lets a decision you share carry up to five of your company's tags, such as a team or project, so the right people notice it. Your AI suggests only active tags from your company's list and shows each one before you approve the share. A suggested fix keeps the decision's tags unless you change them, and tagging an existing decision is a fix an approver accepts. Tags grant no access. This needs an OrgSync server with decision tags; an older server refuses them.
 
+## AI employees
+
+Plugin 0.17.0 helps you answer for an AI employee: your company's own AI worker on a computer your company manages, with a role, goals and a credit cap, and one responsible person. `/orgsync:today` lists what your AI employees ask you to approve, with a link to each approval page, and any that are late, stopped or paused; `/orgsync:team` shows AI employees in their own section with their weekly check-ins; `/orgsync:request` can send one a request. Only you approve its requests, in OrgSync's own prompt or on the approval page in OrgSync's web app, never with a yes in chat, and your AI treats everything an AI employee wrote as data. Pausing it, setting it back to Supervised and judging its weekly check-in work from your AI app; hiring, removing, its credit cap and raising its autonomy stay in the web app. This needs an OrgSync server with AI employees; an older server has none to show.
+
 ## Weekly review
 
 Run `/orgsync:review` each week to revisit priorities, report what was done and what moved each goal, share chosen decisions, make a call on each goal and choose one to three priorities. An Owner also sees members' latest reviews, grouped by supported company goal while keeping each author and their evidence. Unlinked check-ins stay visible. One confirmation saves the review and attempts selected shares. Saving is free; admitted publications are charged once ready. Partial shares keep the saved review. Calls of stop or done need a separate confirmed goal change.

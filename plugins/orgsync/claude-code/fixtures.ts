@@ -30,6 +30,12 @@ export const todosFixture = () => ({ open: 3, due: 1, overdue: 1, truncated: fal
   { todoId: "todo-b", occurrenceId: "occ-1", revision: 1, title: "Send Acme the revised price", dueOn: "2026-10-11", dueTime: "10:00", dueAt: "2026-10-11T13:00:00.000Z",
     overdueDays: null, rolledOver: 0, reasons: ["due_today", "reminder_due", "closes_at_reminder"] }] });
 
+export const employeeApprovalFixture = () => ({ approvalRequestId: "ear-a", employee: { personId: "ae-a", label: "Scout (AI employee)", active: true, kind: "ai_employee", responsiblePersonId: PERSON.personId },
+  action: "share_draft", subjectId: "draft-ae", subjectRevision: 2, title: "Competitor pricing", state: "open", stateReason: null, reason: null,
+  createdAt: BEFORE, expiresAt: "2026-10-18T11:00:00.000Z", webPath: "/c/company-a/employee-approvals/ear-a" });
+export const employeeAttentionFixture = () => ({ employee: { personId: "ae-b", handle: "atlas", name: "Atlas", title: "Support assistant",
+  responsible: { ...PERSON, active: true }, state: "stopped", autonomy: "supervised", lastSeenAt: BEFORE, revision: 4 }, reasons: ["stopped", "interrupted"] });
+
 export const practiceFixture = () => ({ ...pictureFixture().decisionsThatShapeYourWork.page.items[0]!,
   sourceId: "source-practice", title: "Review customer conversations weekly", area: "sales_marketing", classification: "way_of_working", acceptedInAreaCount: 2 });
 export const supportContextFixture = () => ({ objectiveId: "company-goal", title: "Win five customers", revision: 3, status: "active", linkedRevision: 2 });

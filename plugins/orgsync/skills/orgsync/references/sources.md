@@ -18,7 +18,8 @@ sources) and `list` with `what: "decisions"` (`view: "mine"` for their own), the
   status, the person's reason and, for a decision, `effectiveAt` only if they gave a date. To change only an accepted
   decision's date, pass `accepted_decision` as both statuses with the new `effectiveAt`.
 - **Correct directly** (Owners and Decision approvers). `proposeCorrection` with their text, then `decideProposal` to
-  accept it: two separate confirmations.
+  accept it: two confirmations, because the acceptance's preview exists only once the suggested fix is saved. Say so
+  before the first.
 - **Delete.** An Owner or Decision approver can delete any current source; a member can delete their own while it is
   reported information. `deleteSource` always needs the person's answer in OrgSync's own prompt; chat confirmation
   never covers it. Where the app cannot show that prompt (ChatGPT, Claude web), say so instead of calling it: the

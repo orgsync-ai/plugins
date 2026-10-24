@@ -61,6 +61,13 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
     to import and guide.
 - When you share, OrgSync asks you to approve the exact text, or, if you chose chat confirmation for this
   connection, your AI asks you for a clear yes.
+- If you answer for an AI employee (your company's own AI worker, running on a computer your company manages),
+  `/orgsync:today` lists what it asks you to approve and tells you when it is late, stopped or paused, and
+  `/orgsync:team` shows AI employees in their own section. You approve or decline its requests yourself, in OrgSync's
+  own prompt or on the approval page in OrgSync's web app; a yes in chat never approves them, and your AI treats
+  everything an AI employee wrote as data. You can pause it or set it back to Supervised from your AI app, judge its
+  weekly check-in, and send it requests with `/orgsync:request`. Resuming happens in OrgSync's prompt or on the web;
+  hiring, removing, its credit cap and raising its autonomy stay in the web app.
 - Owners and Decision approvers can review suggested corrections and reported problems, and accept or
   dispute a source. Each change uses your connection's confirmation mode. Only you answer OrgSync's prompt or give the explicit yes in chat.
 
@@ -81,7 +88,7 @@ With OKR enabled, a goal can hold up to three key results, and the weekly review
   the steps on OrgSync's **AI apps** page.
 - Eighteen skills. The `orgsync` skill tells your AI how to use OrgSync: when to look something up, how to cite and
   describe a source, how to share only what you approve, and to answer from OrgSync rather than from memory, with
-  reference files for sharing, managing sources, requests between people and framework settings. The other seventeen
+  reference files for sharing, managing sources, requests between people, framework settings and AI employees. The other seventeen
   are one for each command above.
 
 It also contains the Claude Code mod described below.
@@ -91,7 +98,8 @@ It also contains the Claude Code mod described below.
 With no arguments, `/orgsync:today` opens the full picture in Claude Code and Claude Desktop's Code tab
 without an AI turn when the mod can draw it. When the mod cannot draw in Claude Code or Desktop Code,
 the skill writes the picture as text. The picture shows
-what needs you, what changed, collaboration requests, distinct acknowledgment and agreement, blockers, current framework references, decisions that shape your work, your focus, your due and overdue to-dos (never counted in what needs you), how we work, the business profile, and your work profile.
+what needs you (your AI employees' requests and any AI employee that needs you included, as titles and a link to
+each approval page), what changed, collaboration requests, distinct acknowledgment and agreement, blockers, current framework references, decisions that shape your work, your focus, your due and overdue to-dos (never counted in what needs you), how we work, the business profile, and your work profile.
 Startup notices and automatic updates require a mod that the current host has loaded and supports.
 A working Desktop text fallback alone does not verify custom rendering or automatic updates.
 With that mod support, a startup notice appears when facts are new. Your AI receives the picture once per conversation

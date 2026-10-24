@@ -1,5 +1,5 @@
 import { test, expect } from "claude-code/testing";
-import { AS_OF, changed, collaborationFixture, frameworkConfigFixture, frameworkSummaryFixture, legacyFrameworkConfigFixture, jsonWire, PERSON, pictureFixture, pillarInstructionsFixture, practiceFixture, supportContextFixture, SOURCE, sourceFixture, todosFixture, wire } from "./fixtures.js";
+import { AS_OF, BEFORE, changed, collaborationFixture, employeeApprovalFixture, employeeAttentionFixture, frameworkConfigFixture, frameworkSummaryFixture, legacyFrameworkConfigFixture, jsonWire, PERSON, pictureFixture, pillarInstructionsFixture, practiceFixture, supportContextFixture, SOURCE, sourceFixture, todosFixture, wire } from "./fixtures.js";
 import { decisionLine, lookKey, mapTools, parsePicture, parseSources, readable, refusalStopsReads } from "./picture.js";
 
 test("date display replaces ISO times without changing other plain facts", () => {
@@ -24,6 +24,42 @@ test("an approver's newly shared reported information needs them, and an older s
     details: ["Shared by Eva as reported information", "Not yet accepted as a company decision", `Shared ${AS_OF}`] });
   expect(parsed?.counts).toContainEqual({ label: "Newly shared reported information", count: 1, truncated: false });
   expect(parsePicture(wire(p))?.counts.map(c => c.label)).not.toContain("Newly shared reported information");
+});
+
+test("a responsible human's AI employee requests and AI employees need them, as metadata with the approval page (D-180)", () => {
+  const p = pictureFixture(), page = <T>(items: T[]) => ({ count: items.length, items, truncated: false });
+  const parsed = parsePicture(wire({ ...p, needsYou: { ...p.needsYou, employeeApprovals: page([employeeApprovalFixture()]), employees: page([employeeAttentionFixture()]) } }));
+  expect(parsed?.items.filter(i => i.section === "needs").map(i => i.id)).toEqual(["draft:draft-a:1", "proposal:proposal-a:1", "employee-approval:ear-a", "employee:ae-b"]);
+  expect(parsed?.items.find(i => i.id === "employee-approval:ear-a")).toMatchObject({ title: "Competitor pricing", details: expect.arrayContaining(["From Scout (AI employee)",
+    "Asks to share a draft with the company", "Approval page: https://orgsync.co/c/company-a/employee-approvals/ear-a"]) });
+  expect(parsed?.items.find(i => i.id === "employee:ae-b")).toMatchObject({ title: "Atlas (AI employee)", details: expect.arrayContaining([
+    "Stopped: not seen for a long time", "Work it held was interrupted", "Responsible: Sam", `Last seen ${BEFORE}`, "OrgSync cannot restart or see its computer."]) });
+  expect(parsed?.counts).toEqual(expect.arrayContaining([{ label: "AI employee requests", count: 1, truncated: false }, { label: "AI employees needing you", count: 1, truncated: false }]));
+  // An older server, or a person who answers for no AI employee, sends neither section.
+  expect(parsePicture(wire(p))?.counts.map(c => c.label)).not.toContain("AI employee requests");
+  // A newer action or reason reads generically, and an unexpected page is never offered as a link.
+  const newer = parsePicture(wire({ ...p, needsYou: { ...p.needsYou, employeeApprovals: page([{ ...employeeApprovalFixture(), action: "future_action", webPath: "/elsewhere?next=1" }]),
+    employees: page([{ ...employeeAttentionFixture(), reasons: ["future_reason"] }]) } }));
+  expect(newer?.items.find(i => i.id === "employee-approval:ear-a")?.details).toContain("Asks for your approval");
+  expect(newer?.items.find(i => i.id === "employee:ae-b")?.details).toContain("Needs your attention");
+  expect(JSON.stringify(newer)).not.toContain("elsewhere");
+  // A closed request no longer needs them.
+  expect(parsePicture(wire({ ...p, needsYou: { ...p.needsYou, employeeApprovals: page([{ ...employeeApprovalFixture(), state: "approved" }]) } }))?.items.map(i => i.id))
+    .not.toContain("employee-approval:ear-a");
+  const attention = employeeAttentionFixture();
+  for (const malformed of [{ employees: page([{ ...attention, reasons: [] }]) }, { employees: page([{ ...attention, employee: { ...attention.employee, state: "dreaming" } }]) },
+    { employeeApprovals: { count: 0, items: [employeeApprovalFixture()], truncated: false } }, { employeeApprovals: page([{ ...employeeApprovalFixture(), expiresAt: "soon" }]) }])
+    expect(parsePicture(wire({ ...p, needsYou: { ...p.needsYou, ...malformed } }))).toBe(null);
+});
+
+test("an AI employee's resource request and its follow-ups keep the collaboration picture available (D-180)", () => {
+  const request = collaborationFixture(), terms = { ...request.terms, kind: "resource", mode: "peer_request", title: "A larger machine" };
+  const parsed = parsePicture(wire({ ...pictureFixture(), collaboration: { requests: [{ ...request, terms }], counts: { needsYou: 1, waiting: 0, blocked: 0 }, nextCursor: null,
+    followUps: [{ collaborationId: request.collaborationId, reasons: ["work_interrupted", "employee_paused"] }] } }));
+  const item = parsed?.items.find(i => i.section === "collaboration");
+  expect(item).toMatchObject({ title: "A larger machine", details: expect.arrayContaining(["resource request from an AI employee"]) });
+  expect(item?.details.some(line => line.includes("The AI employee's work was interrupted; The AI employee is paused"))).toBe(true);
+  expect(parsePicture(wire({ ...pictureFixture(), collaboration: { requests: [{ ...request, terms: { ...terms, kind: "salary" } }], counts: { needsYou: 1, waiting: 0, blocked: 0 }, nextCursor: null } }))).toBe(null);
 });
 
 test("limitation codes become plain sentences, with unknown and engineering codes omitted", () => {

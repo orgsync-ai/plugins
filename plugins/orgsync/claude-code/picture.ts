@@ -14,6 +14,14 @@ const person = (v: unknown) => { const p = record(v); return { personId: string(
 const day = (v: unknown): string => /^\d{4}-\d{2}-\d{2}$/.test(string(v)) && Number.isFinite(Date.parse(string(v))) && new Date(string(v)).toISOString().slice(0, 10) === v ? string(v) : invalid();
 const clockTime = (v: unknown): string => /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(string(v)) ? string(v) : invalid();
 const TODO_REASONS = ["overdue", "due_today", "reminder_due", "closes_at_reminder", "rolled_over", "link_unavailable"];
+// D-180: what an AI employee asks its responsible human, and why one needs them. An action or reason a newer server adds
+// reads generically rather than hiding the picture; neither carries the request's content.
+const EMPLOYEE_ACTIONS: Record<string, string> = { share_draft: "Asks to share a draft with the company", share_correction_proposal: "Asks to suggest a fix to a source",
+  collaboration: "Asks to act on a request", objective: "Asks to change its own goal" };
+const EMPLOYEE_REASONS: Record<string, string> = { late: "Late: missed its scheduled work checks", stopped: "Stopped: not seen for a long time", paused: "Paused",
+  interrupted: "Work it held was interrupted", at_cap: "Reached its monthly credit cap" };
+const EMPLOYEE_STATES = ["setting_up", "running", "late", "stopped", "paused", "removed"];
+const APPROVAL_PAGE = /^\/c\/[^/\s?#]+\/employee-approvals\/[^/\s?#]+$/;
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 // Historical receipts keep their original categories. Read their enabled flags as saved,
 // including conflicting project choices; only a confirmed configuration write resolves them.
@@ -145,6 +153,23 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
       if (v.acceptedRevision !== null) revision(v.acceptedRevision);
       add(`proposal:${string(v.proposalId)}:${revision(v.revision)}`, "needs", s.title, [`${v.outcome} by ${person(v.by).label}`, `Decided ${date(v.at)}`]);
     });
+    // D-180: a responsible human's AI employee requests and the AI employees that need them, as metadata. An older server, or a
+    // person who answers for no AI employee, sends neither section.
+    if (needs.employeeApprovals !== undefined) readSection(needs.employeeApprovals, "AI employee requests", "approvalRequestId", v => {
+      if (v.state !== "open") return;
+      const page = string(v.webPath), action = string(v.action);
+      number(v.subjectRevision); date(v.createdAt);
+      add(`employee-approval:${string(v.approvalRequestId)}`, "needs", string(v.title), [`From ${person(v.employee).label}`, EMPLOYEE_ACTIONS[action] ?? "Asks for your approval",
+        `Expires ${date(v.expiresAt)}`, "Only you answer it, in OrgSync's prompt or on its approval page; a chat reply cannot approve it.",
+        ...(APPROVAL_PAGE.test(page) ? [`Approval page: https://orgsync.co${page}`] : [])]);
+    });
+    if (needs.employees !== undefined) readSection(needs.employees, "AI employees needing you", "employee", v => {
+      const employee = record(v.employee), state = string(employee.state), reasons = array(v.reasons).map(string), seen = nullableDate(employee.lastSeenAt);
+      if (!EMPLOYEE_STATES.includes(state) || reasons.length < 1 || new Set(reasons).size !== reasons.length) invalid();
+      revision(employee.revision);
+      add(`employee:${string(employee.personId)}`, "needs", `${string(employee.name)} (AI employee)`, [...reasons.map(reason => EMPLOYEE_REASONS[reason] ?? "Needs your attention"),
+        `Responsible: ${person(employee.responsible).label}`, seen ? `Last seen ${seen}` : "Not seen yet", "OrgSync cannot restart or see its computer."]);
+    });
     const changeSection = readSection(p.changedForYou, "Changed for you", "kind", v => {
       if (!["source_published", "status_changed", "correction_accepted", "source_deleted"].includes(v.kind as string)) return;
       const eventId = string(v.eventId), at = date(v.at), kind = string(v.kind);
@@ -238,7 +263,8 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
         const request = record(raw), terms = record(request.terms), rev = revision(request.revision), termsRev = revision(request.termsRevision);
         if (request.protocolVersion !== "human-collaboration-v1" || request.visibility !== "company" || request.companyId !== company.companyId) invalid();
         const mode = string(terms.mode), kind = string(terms.kind), state = string(request.status);
-        if (!["peer_request", "manager_assignment"].includes(mode) || !["information", "contribution", "review", "decision"].includes(kind) ||
+        // D-180: `resource` is an AI employee's ask for more, which reaches the person it reports to.
+        if (!["peer_request", "manager_assignment"].includes(mode) || !["information", "contribution", "review", "decision", "resource"].includes(kind) ||
           !["requested", "assigned", "in_progress", "submitted", "changes_requested", "reviewed", "declined", "cancelled"].includes(state)) invalid();
         const due = (v: unknown): string | null => v === null ? null : /^\d{4}-\d{2}-\d{2}$/.test(string(v)) && Number.isFinite(Date.parse(string(v))) && new Date(string(v)).toISOString().slice(0, 10) === v ? string(v) : invalid();
         const dueOn = due(terms.dueOn), recipient = string(terms.recipientPersonId), reviewer = string(terms.reviewerPersonId), author = string(request.createdByPersonId);
@@ -248,7 +274,7 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
         if (acknowledgment) date(acknowledgment.recordedAt);
         if (agreement) date(agreement.recordedAt);
         const pending = request.pendingTerms === null ? null : record(request.pendingTerms), blocker = request.blocker === null ? null : record(request.blocker);
-        const details = [kind, state.replace(/_/g, " "), mode === "manager_assignment" ? "Manager assignment" : "Peer request", "Readable by current company members",
+        const details = [kind === "resource" ? "resource request from an AI employee" : kind, state.replace(/_/g, " "), mode === "manager_assignment" ? "Manager assignment" : "Peer request", "Readable by current company members",
           `Contribution revision ${rev}; terms revision ${termsRev}`, `Recipient: ${label(recipient)}`, `Reviewer: ${label(reviewer)}`, `Requested by: ${label(author)}`,
           `${mode === "manager_assignment" ? "Manager-set" : "Requested"} date: ${dueOn ?? "None"}`,
           acknowledged ? "Recipient acknowledged these terms" : "Not acknowledged for these terms", agreed ? `Recipient agreed date: ${due(agreement!.dueOn) ?? "None"}` : "No recipient agreement for these terms"];
@@ -258,7 +284,8 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
         if (request.latestReview !== null) { const review = record(request.latestReview), verdict = string(review.verdict); if (!["accepted", "changes_requested", "inconclusive"].includes(verdict)) invalid(); details.push(`Review: ${verdict.replace(/_/g, " ")}; submission revision ${revision(review.submissionRevision)}`); }
         if (collaboration.followUps !== undefined) for (const raw of array(collaboration.followUps)) {
           const followUp=record(raw); if (string(followUp.collaborationId)!==request.collaborationId) continue;
-          const words: Record<string,string> = { requester_inactive: "Requester is inactive", recipient_inactive: "Recipient is inactive", reviewer_inactive: "Reviewer is inactive", manager_changed: "Reporting manager changed", manager_unavailable: "Reporting manager is unavailable" };
+          const words: Record<string,string> = { requester_inactive: "Requester is inactive", recipient_inactive: "Recipient is inactive", reviewer_inactive: "Reviewer is inactive", manager_changed: "Reporting manager changed", manager_unavailable: "Reporting manager is unavailable",
+            work_interrupted: "The AI employee's work was interrupted", employee_paused: "The AI employee is paused" };
           const reasons=array(followUp.reasons).map(string); if (!reasons.length || reasons.some(reason=>!Object.hasOwn(words,reason))) invalid();
           details.push(`Review needed: ${reasons.map(reason=>words[reason]).join("; ")}. Read the current record before proposing reassignment or takeover.`);
         }

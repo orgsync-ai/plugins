@@ -17,17 +17,21 @@ replace each one with the name or "they".
    - requests waiting on them: to answer, agree, acknowledge, submit or review;
    - for Owners and Decision approvers, suggested fixes and problem reports waiting for them, and newly shared
      sources they can accept;
+   - for a responsible human, each approval request from their AI employees (`needsYou.employeeApprovals`), and each
+     AI employee in `needsYou.employees` that is late, stopped, paused, interrupted or at its credit cap;
    - their private drafts, with the day each is deleted if not shared;
    - goals they own that are due within seven days, or whose `latestCheckIn` is missing or more than 14 days old;
    - their own to-dos from `yourTodos`: each due or overdue item, which only they can see;
    - their own priorities for this week from `yourPriorities`, in their order.
 
-   Rank them in this order: someone is waiting on them; then what is due or deleted soonest, due and overdue to-dos
-   included; then work for a company goal; then their weekly priorities; then the rest, with open to-dos that have no
-   date last (the picture leaves them out: read them with free `list`, `what: "todos"`, only when the list has room).
-   A to-do whose reminder is due never ranks above something a person waits on. Give each line its reason in a few
-   words ("Sam is waiting for your answer since Tuesday", "deleted Friday if not shared", "your to-do, due today at
-   10:00", "your to-do, overdue by 3 days", "your priority this week", "no check-in since 3 October"). Say how long
+   Rank them in this order: someone is waiting on them, an AI employee's approval request included; then an AI
+   employee that needs them; then what is due or deleted soonest, due and overdue to-dos included; then work for a
+   company goal; then their weekly priorities; then the rest, with open to-dos that have no date last (the picture
+   leaves them out: read them with free `list`, `what: "todos"`, only when the list has room). A to-do whose reminder
+   is due never ranks above something a person waits on. Give each line its reason in a few words ("Sam is waiting
+   for your answer since Tuesday", "Scout (AI employee) asks to share a draft; expires Thursday", "Atlas (AI
+   employee) stopped; last seen yesterday", "deleted Friday if not shared", "your to-do, due today at 10:00", "your
+   to-do, overdue by 3 days", "your priority this week", "no check-in since 3 October"). Say how long
    an overdue to-do is overdue from `overdueDays`; `rolledOver` counts the times a repeat passed unfinished, and
    `closes_at_reminder` means a follow-up that closes itself if what it waits on moves. Never rank by guessing
    importance from titles. Say how many more items are below the list.
@@ -40,6 +44,11 @@ replace each one with the name or "they".
    - **Needs you:** collaboration that needs them, then each other item with why it is theirs ("you approve changes
      to it", "your draft is deleted on Friday if not shared", "Eva shared it as reported information; you can accept
      it as a company decision"). Keep a request's author, recipient, mode, acknowledgment and agreement separate.
+   - **Your AI employees:** each approval request as metadata only: the AI employee, the kind of action, the title,
+     when it expires and its approval page, https://orgsync.co followed by its `webPath`; say they answer it in
+     OrgSync's prompt or on that page, never by a reply in chat. Then each AI employee that needs them, with its
+     `reasons` in words and when it was last seen. Name AI employees and people by name, never by an id; the page
+     link is the only place an id appears. Both sections are absent when they answer for no AI employee.
    - **Waiting and blocked:** work they wait for and unresolved blockers.
    - **Changed for you:** newest first: what changed, who changed it and when.
    - **Decisions that shape your work:** with who accepted them and when.
@@ -62,8 +71,12 @@ replace each one with the name or "they".
    - a shared source, suggested fix or problem report (Owners and Decision approvers): accept, decide or look, as
      [managing sources](../orgsync/references/sources.md) describes;
    - their own private draft: share or discard, as [sharing](../orgsync/references/sharing.md) describes;
+   - their AI employee's approval request: approve or decline in OrgSync's prompt or on its approval page, and for an
+     AI employee that needs them, pause it if they want; OrgSync cannot restart or see its computer. Follow
+     [AI employees](../orgsync/references/ai-employees.md);
    - their own to-do: complete, snooze, change, hand off or drop, as /orgsync:todo describes.
-   Each change takes its own confirmation; a to-do change saves on their answer, without a preview. Reading, opening
+   When they pick several changes, confirm them together as one yes, as the ground rules' one yes per task describes;
+   a to-do change saves on their answer, without a preview. Reading, opening
    the picture and polling acknowledge nothing and agree to nothing. Stop when they want.
 
 If they ask OrgSync to remember or remind them of something for their work, offer /orgsync:todo: OrgSync keeps it as
