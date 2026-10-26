@@ -1,8 +1,8 @@
 # Framework settings
 
 Only an Owner changes the company's framework references, tags and work-in-progress limit, through `setFrameworks`
-and its exact confirmation. Read the current settings first with free `readFrameworks`, `view: "configuration"`, and
-show the exact before and after.
+and its exact confirmation. Read the current settings first with free `list`, `what: "frameworks"` (its default view
+is the configuration), and show the exact before and after.
 
 - **References.** Six pillars hold thirteen references: business management (OKR, EOS), product management (RICE,
   Shape Up), project management (Kanban, Scrum, SAFe), finance (cash flow, unit economics), marketing (STP, SOSTAC) and

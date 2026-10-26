@@ -47,6 +47,18 @@ export type OrgSyncRuntime = {
   baseline: string | null;
   lease: { id: string; expires: number } | null;
 };
+/** B1 steering, for this session only: the hint budget, and the facts (numbers, units, nearby words, never text) of sources
+ * already read in this conversation. */
+export type OrgSyncSteering = {
+  /** `off` is the off-the-record marker: set by the person's own words, it silences every hint for the session. */
+  ledger: { turnId: string | null; turnHints: number; sessionHints: number; hinted: string[]; overridden: string[]; last: { kind: string; decisions: string[] } | null; off?: boolean };
+  /** Counts the person's prompts, so a turn runs from one prompt to the next. */
+  turn: number;
+  learned: Record<string, { value: number; unit: string; limit: "min" | "max" | null; anchors: string[] }[]>;
+  digested: boolean;
+  /** The picture's standing facts when the decision index was last read; a change reads it again. */
+  indexFacts: string | null;
+};
 export type OrgSyncData = {
   runtime: OrgSyncRuntime | null;
   picture: OrgSyncPicture | null;
@@ -64,6 +76,7 @@ export type OrgSyncData = {
   offeredPaths: string[];
   turn: { id: string; sources: OrgSyncSource[]; notified: string | null } | null;
   lastDecisionLine: string | null;
+  steering?: OrgSyncSteering;
 };
 declare module "claude-code" {
   interface PluginState { orgsync: { data: OrgSyncData } }

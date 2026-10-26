@@ -4,22 +4,34 @@ Act only when the person asks. Find the source free with `readPicture` (its revi
 sources) and `list` with `what: "decisions"` (`view: "mine"` for their own), then call `readSource` for its current
 `revision` and `knowledgeStatus`. A source's web page is read-only; these tools are the only way to change it.
 
-- **Something is wrong.** `reportProblem` with the source, its revision, one `issueType` (`incorrect`, `outdated`,
+- **Something is wrong.** `report` with `kind: "problem"`, the source, its revision, one `issueType` (`incorrect`, `outdated`,
   `missing_context` or `other`) and the person's note as `detail`. It changes nothing and needs no confirmation.
 - **Better text.** Show the exact replacement summary, excerpts and reason, add in a few words that approvers see it
   under the person's name, and ask for a yes. Then `proposeCorrection` with `baseRevision` set to the revision
   you read. Keep `area` and `classification` unless the person deliberately changes them, and show any change. Omit
   `tagIds` to keep the source's `tags`, which `readSource` shows; to change them, pass the whole new list from the
   active tags (`[]` clears them) and show the change by label. To tag an existing decision, suggest a fix that keeps
-  its text and changes only `tagIds`. Nothing changes until an approver accepts it.
-- **Take back a suggestion.** Find it with `list`, `what: "proposals"`, `view: "mine"`, then `withdrawProposal` with
+  its text and changes only `tagIds`. A fix may carry a new `title`, and `replaces` may name up to 5 other sources it
+  supersedes, at their current `revision`; show both. Nothing changes until an approver accepts it.
+- **Take back a suggestion.** Find it with `list`, `what: "proposals"`, `view: "mine"`, then `discard` with
   its `proposalId` and `revision`. It works until someone decides it.
-- **Accept, question or withdraw** (Owners and Decision approvers). `setKnowledgeStatus` with the expected and target
-  status, the person's reason and, for a decision, `effectiveAt` only if they gave a date. To change only an accepted
-  decision's date, pass `accepted_decision` as both statuses with the new `effectiveAt`.
-- **Correct directly** (Owners and Decision approvers). `proposeCorrection` with their text, then `decideProposal` to
-  accept it: two confirmations, because the acceptance's preview exists only once the suggested fix is saved. Say so
-  before the first.
+- **Accept, question or withdraw** (Owners and Decision approvers). `decide` with `operation: "status"`, the expected
+  and target status, the person's reason and, for a decision, `effectiveAt` only if they gave a date. To change only an accepted
+  decision's date, pass `accepted_decision` as both statuses with the new `effectiveAt`. Accepting can also retire
+  other decisions it supersedes: pass them in `replaces`.
+- **Pick the replacements.** When a confirmation carries `offeredReplacements`, list every entry by its `n` and title,
+  marking those a member suggested (`origin: "intent"`), and ask which to apply; none is applied unless kept. On a chat
+  connection, repeat the call with the `confirmationHash` and `replaceSelection`: the numbers they keep, or `[]` for
+  none. OrgSync refuses a chat yes without `replaceSelection` while it offers a member's suggestion
+  (`replacement_selection_required`); ask, then repeat. A member's suggestion is offered once, when its source is
+  accepted.
+- **Correct directly** (Owners and Decision approvers). One confirmation: `proposeCorrection` with their text,
+  `decision: "accept"`, any new `title` and `replaces`. On a chat connection it returns a `correctSource` confirmation;
+  show it, and after their yes repeat the call with its `confirmationHash`.
+- **Who answers for a decision.** `readSource`'s `stewardship` names its owner, `reviewBy` and `freshness`;
+  `unverified` means it is past its review date but still current guidance. An approver sets `ownerPersonId` or
+  `reviewIntervalDays` with `decide`, `operation: "status"` (both statuses `accepted_decision`); the owner or an approver
+  re-confirms it with `verify` set. `list` with `view: "to_review"` shows those due.
 - **Delete.** An Owner or Decision approver can delete any current source; a member can delete their own while it is
   reported information. `deleteSource` always needs the person's answer in OrgSync's own prompt; chat confirmation
   never covers it. Where the app cannot show that prompt (ChatGPT, Claude web), say so instead of calling it: the
@@ -35,12 +47,13 @@ Owners and Decision approvers, when they ask.
 - **Waiting for a decision.** `list` with `what: "proposals"` and `view: "awaiting_decision"`: the source, the revision
   it would replace, the suggested text, the proposer's reason and name. A proposal whose `baseRevision` is no longer
   the source's `currentRevision` can no longer be decided.
-- **Accept or reject.** Show the proposal first, then `decideProposal` with its `proposalId`, `revision` and
-  `decision` (`accept` or `reject`). A rejection needs the person's reason; an acceptance takes their own reason only
-  if they give one, never the proposer's. When the confirmation's `baseTags` and `tags` differ, show that change by
+- **Accept or reject.** Show the proposal first, then `decide` with `operation: "proposal"`, its `proposalId`,
+  `revision` and `decision` (`accept` or `reject`). A rejection needs the person's reason; an acceptance takes their own
+  reason only if they give one, never the proposer's. When the confirmation's `baseTags` and `tags` differ, show that change by
   label. Accepting makes the text the source's new current revision, an accepted decision under the person's name,
-  charged as one publication; pass `effectiveAt` only if they gave a date.
+  charged as one publication; pass `effectiveAt` only if they gave a date. Show a `proposedTitle`, and pick the
+  `offeredReplacements` the proposer named as above.
 - **Problem reports.** `list` with `what: "problem_reports"`, then `readSource` to look, and act only if the person
   decides to.
 - **Accepting a shared source.** A colleague's newly shared source is reported information until an approver accepts
-  it with `setKnowledgeStatus`.
+  it with `decide` (`operation: "status"`).

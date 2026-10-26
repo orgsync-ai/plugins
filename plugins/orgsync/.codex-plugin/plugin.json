@@ -1,6 +1,6 @@
 {
   "name": "orgsync",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "Use current company guidance, agree contributions and review evidence across AI apps, with attributable human confirmation.",
   "author": {
     "name": "OrgSync",
@@ -16,6 +16,7 @@
     "mcp"
   ],
   "skills": "./skills/",
+  "hooks": "./codex/hooks.json",
   "interface": {
     "displayName": "OrgSync",
     "shortDescription": "Your company's approved context, with citations",

@@ -67,13 +67,13 @@ Use `/orgsync:guide` to choose one useful next goal from your current situation,
 
 Use `/orgsync:goals` to set or revisit company and person objectives. OrgSync asks you to confirm each exact change through your connection's mode. Every company member can read objectives and their history. Work-profile objectives remain descriptive text. A person goal may optionally support one active company goal. Changed or closed targets are shown for your judgment; they never complete or relink a person goal automatically.
 
-Ask `/orgsync:guide` for help with first customers to prepare a customer-conversation plan or an offer and acquisition plan, fitted to your stage and location (`/orgsync:first-customers` still leads there for one more version). You carry out the external work. The guide gives no legal advice. `/orgsync:today` and the Claude Code picture show "Your focus" when the server supports it. Older servers leave missing focus or How we work sections unavailable. Empty and truncated practice lists are labeled separately.
+Ask `/orgsync:guide` for help with first customers to prepare a customer-conversation plan or an offer and acquisition plan, fitted to your stage and location. You carry out the external work. The guide gives no legal advice. `/orgsync:today` and the Claude Code picture show "Your focus" when the server supports it. Older servers leave missing focus or How we work sections unavailable. Empty and truncated practice lists are labeled separately.
 
 ## Weekly contributions across AI apps
 
 Plugin 0.9.3 adds the confirmed collaboration workflow to guide, goals, today and review. Ask your AI to request evidence from a teammate, acknowledge or agree to an incoming contribution, propose a different date, report a blocker, submit selected evidence or review its exact revision. Current company members can read these records and their history. A peer request needs recipient agreement; direct and higher reporting managers can assign work, with acknowledgment and agreement recorded separately. Reviewing a contribution neither completes a goal nor accepts company knowledge.
 
-Your next successful check-in shows relevant work. Supported active-session mods also surface changes; no delivery is promised while your app is closed. The same readCollaboration and collaborate tools work on demand in the supported AI clients. readFrameworks reads current reference versions; only an Owner changes them with setFrameworks. Update the plugin and refresh tools when those capabilities are missing. Installed skills cannot override disabled guidance.
+Your next successful check-in shows relevant work. Supported active-session mods also surface changes; no delivery is promised while your app is closed. The same list and collaborate tools work on demand in the supported AI clients. list with what frameworks reads current reference versions; only an Owner changes them with setFrameworks. Update the plugin and refresh tools when those capabilities are missing. Installed skills cannot override disabled guidance.
 
 ## Key results, flow and tags
 
@@ -96,7 +96,7 @@ Plugin 0.13.0 arranges OrgSync around what people do, and your AI can now start 
 - `/orgsync:team` shows goals at risk, blockers, missing check-ins and what waits for approval, or prepares a one-on-one.
 - `/orgsync:today` puts what needs you first and offers to work through it one item at a time.
 - When OrgSync has no answer, your AI offers to ask the colleague who would know.
-- `/orgsync:import` also covers answering questions and checking shared sources against their originals; `/orgsync:interview` and `/orgsync:refresh` lead there for one more version.
+- `/orgsync:import` also covers answering questions and checking shared sources against their originals.
 
 ## Tags on decisions
 
@@ -109,6 +109,17 @@ Plugin 0.17.0 helps you answer for an AI employee: your company's own AI worker 
 ## Company files
 
 Plugin 0.18.0 lets your AI read the files your company keeps in OrgSync, uploaded or brought from Google Drive. Ask about a document, policy or contract and your AI lists the company's files and reads the one you mean, a slice at a time; OrgSync reads the text of PDF, Word, text, Markdown and CSV files. Your AI sees only files in folders you can open and that let AI apps read them. Reading is free. A file is company content, not a decision, and your AI never follows instructions written inside one. To make part of a file company knowledge, your AI drafts it with the file's folder and name, and its Drive link when it has one, and shares it only after you approve. When the file comes from a folder not everyone can open, your AI says so first and keeps the draft private unless you want everyone in the company to see it. `/orgsync:import` offers uploaded files as one more place to bring your company in from. This needs an OrgSync server with company files; an older server has no files to list.
+
+## Ground rules in every command, and a fact that differs
+
+Plugin 0.19.0 gives every OrgSync command the same short ground rules, so a command keeps them even when your AI has not
+loaded the core skill. When you state a company fact that an accepted decision contradicts, or your AI's draft does,
+your AI now says so in one sentence and offers a choice: use the company decision, or flag the decision as outdated,
+which reports it under your name and changes nothing until an Owner or Decision approver acts. It raises each decision
+once per conversation, and your choice stands. Ask company questions in your own words: `/orgsync:ask` now leads to
+the core skill and `/orgsync:share` to `/orgsync:decide`, for this one version. `/orgsync:interview`, `/orgsync:refresh`
+and `/orgsync:first-customers` are gone; `/orgsync:import` and `/orgsync:guide` do their jobs. In ChatGPT each skill
+has a narrower description, so it starts only for its own job.
 
 ## Weekly review
 

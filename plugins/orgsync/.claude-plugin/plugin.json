@@ -1,7 +1,7 @@
 {
   "name": "orgsync",
   "displayName": "OrgSync",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "Use current company guidance, agree contributions and review evidence across AI apps, with attributable human confirmation.",
   "author": {
     "name": "OrgSync",
@@ -17,5 +17,14 @@
     "mcp"
   ],
   "hooks": "./claude-code/hooks.json",
-  "types": "./types/index.d.ts"
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "hints_while_working": {
+      "type": "boolean",
+      "title": "Hints while you work",
+      "description": "When your prompt, Claude's reply or a file it writes touches one of your company's decisions, add one short factual line naming it. Matching runs on this computer; nothing you type is sent to OrgSync.",
+      "required": false,
+      "default": true
+    }
+  }
 }

@@ -21,6 +21,9 @@ const EMPLOYEE_ACTIONS: Record<string, string> = { share_draft: "Asks to share a
 const EMPLOYEE_REASONS: Record<string, string> = { late: "Late: missed its scheduled work checks", stopped: "Stopped: not seen for a long time", paused: "Paused",
   interrupted: "Work it held was interrupted", at_cap: "Reached its monthly credit cap" };
 const EMPLOYEE_STATES = ["setting_up", "running", "late", "stopped", "paused", "removed"];
+// A1 (D-194): the server may order standing decisions by last change, or changed first and then by role. The mod shows
+// them in the order sent, so it only needs to accept each value before the server starts sending it.
+const DECISION_ORDERINGS = ["first_published_desc", "last_changed_desc", "changed_then_role"];
 const APPROVAL_PAGE = /^\/c\/[^/\s?#]+\/employee-approvals\/[^/\s?#]+$/;
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 // Historical receipts keep their original categories. Read their enabled flags as saved,
@@ -193,7 +196,7 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
       changes.push({ eventId, at, line: `${display(title)}: ${details.map(display).join("; ")}. Re-check before relying on it.` });
     });
     const decisions = record(p.decisionsThatShapeYourWork);
-    if (decisions.ordering !== "first_published_desc") invalid();
+    if (!DECISION_ORDERINGS.includes(decisions.ordering as string)) invalid();
     readSection(decisions.page, "Decisions that shape your work", "sourceId", d => {
       add(`source:${string(d.sourceId)}:${revision(d.currentRevision)}`, "decisions", string(d.title), decisionFacts(d));
     });
@@ -322,7 +325,7 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
       add(`frameworks:${configRev}`, "frameworks", "Ways of working", [
         enabledNames.length ? `Enabled references: ${enabledNames.join(", ")}` : "No preset references enabled",
         ...(labels.length ? [`Custom instructions: ${labels.join(", ")}`] : []),
-        `Configuration revision ${configRev}. Read readFrameworks with view guidance for the relevant pillars before planning work.`,
+        `Configuration revision ${configRev}. Read list with what frameworks and view guidance for the relevant pillars before planning work.`,
         "Reference guidance only; company-approved practices and human authority remain."
       ]);
       if (config.updatedAt !== null) {

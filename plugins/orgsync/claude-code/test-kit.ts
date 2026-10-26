@@ -9,7 +9,7 @@ export const band = { hasSurvey: false, isWorking: false, maxRows: 12, bodyColum
 export function world(on: On, surface: RenderSurface | null = "terminal") {
   const clock = mock.clock(on), session = mock.session(on);
   const readers: (() => void)[] = [];
-  const w = { clock, session, body: pictureFixture(), calls: [] as { server: string; tool: string; args: unknown }[], sessionId: "conversation-a", surfaces: surface ? [surface] : [], opens: 0, registrations: 0, skillRuns: 0, failure: null as string | null, data: null as OrgSyncData | null, restore: null as ((data: OrgSyncData) => OrgSyncData) | null, stored: {} as Record<string, unknown>, readDone: async () => { if (w.data?.runtime?.phase === "loading") await new Promise<void>(resolve => readers.push(resolve)); }, activate: async () => { await clock.settle(); await w.readDone(); await clock.settle(); } };
+  const w = { clock, session, body: pictureFixture(), calls: [] as { server: string; tool: string; args: unknown }[], sessionId: "conversation-a", surfaces: surface ? [surface] : [], opens: 0, registrations: 0, skillRuns: 0, failure: null as string | null, data: null as OrgSyncData | null, restore: null as ((data: OrgSyncData) => OrgSyncData) | null, stored: {} as Record<string, unknown>, index: [] as unknown[], indexCalls: [] as unknown[], indexFailure: null as string | null, readDone: async () => { if (w.data?.runtime?.phase === "loading") await new Promise<void>(resolve => readers.push(resolve)); }, activate: async () => { await clock.settle(); await w.readDone(); await clock.settle(); } };
   on("state.set", { plugin: "orgsync", key: "data" }, async ($, e, next) => { const value = w.restore ? w.restore(e.value) : e.value; w.restore = null; const result = await next({ ...e, value }); w.data = value; if (w.data.runtime?.phase !== "loading") for (const resolve of readers.splice(0)) resolve(); return result; });
   on("store.set", { key: /^(look|subject):/ }, async ($, e, next) => { const result = await next(e); w.stored[e.key] = e.value; return result; });
   mock.store(on);
@@ -23,6 +23,8 @@ export function world(on: On, surface: RenderSurface | null = "terminal") {
   on("ui.open", () => { w.opens++; return { value: { isPlaced: true } }; });
   on("mcp.connect", () => ({ value: { isConnected: true, server: "orgsync-owner" } }));
   on("tool.list", () => ({ value: ["readSource", "readPermittedContext"].map(tool => ({ name: `mcp__orgsync-owner__${tool}`, description: "", mcp: true })) }));
+  // B1: the decision index the steering reads has its own count, so the picture-read counts stay as they were.
+  on("mcp.call", { tool: "list" }, ($, e) => { w.indexCalls.push(e.args); const failure = w.indexFailure ?? w.failure; return { value: { ...wire(failure ? { status: "error", code: failure } : { status: "decision_index", requestId: "index", asOf: w.body.asOf, ordering: "last_changed_desc", entries: w.index, nextCursor: null }), isError: failure !== null } }; });
   on("mcp.call", ($, e) => { w.calls.push({ server: e.server, tool: e.tool, args: e.args }); return { value: { ...wire(w.failure ? { status: "error", code: w.failure } : { ...w.body, window: { ...w.body.window, since: typeof e.args?.since === "string" ? e.args.since : null } }), isError: w.failure !== null } }; });
   on("turn.start", ($, e) => ({ turnId: e.turnId }));
   on("turn.complete", () => ({ text: "" }));

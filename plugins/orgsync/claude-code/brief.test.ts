@@ -60,7 +60,7 @@ test("the native brief receives custom pillar labels without any instruction tex
   on("session.model", () => ({ value: "selected-main-model" }));
   on("model.complete", ($, e) => {
     calls++; expect(e.prompt).toContain("Custom instructions: Business management, Product management, Project management, Finance, Marketing, Sales");
-    expect(e.prompt).toContain("Read readFrameworks with view guidance for the relevant pillars before planning work.");
+    expect(e.prompt).toContain("Read list with what frameworks and view guidance for the relevant pillars before planning work.");
     expect(JSON.stringify(e)).not.toContain("HIDDEN");
     return { value: { isAnswered: false, reason: "empty-reply", usage: { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 } } };
   });

@@ -327,7 +327,7 @@ test("six maximum-length custom pillar instructions expose only their availabili
   expect(parsed?.frameworksAvailable).toBe(true);
   expect(parsed?.items.filter(item => item.section === "frameworks").length).toBe(1);
   expect(parsed?.items.find(item => item.id === "frameworks:0")?.details).toContain("Custom instructions: Business management, Product management, Project management, Finance, Marketing, Sales");
-  expect(parsed?.items.find(item => item.id === "frameworks:0")?.details).toContain("Configuration revision 0. Read readFrameworks with view guidance for the relevant pillars before planning work.");
+  expect(parsed?.items.find(item => item.id === "frameworks:0")?.details).toContain("Configuration revision 0. Read list with what frameworks and view guidance for the relevant pillars before planning work.");
   expect(JSON.stringify(parsed)).not.toContain("HIDDEN");
   expect(parsed?.items.filter(item => item.section === "practices").length).toBe(0);
   const legacy = legacyFrameworkConfigFixture();
@@ -376,4 +376,17 @@ test("compact guidance availability is one bounded fact without disabled referen
   expect(parsePicture(wire({ ...pictureFixture(), frameworkSummary: summary, frameworkConfig: full }))).toBe(null);
   const changed = parsePicture(wire({ ...pictureFixture(), frameworkSummary: { ...summary, revision: 1 } }))!;
   expect(changed.standingHash).not.toBe(parsePicture(wire({ ...pictureFixture(), frameworkSummary: summary }))?.standingHash);
+});
+
+
+test("standing decisions in any ordering the server may send are read in the order sent, and unknown orderings are refused", () => {
+  const p = pictureFixture(), page = p.decisionsThatShapeYourWork.page;
+  const first = { ...page.items[0], sourceId: "source:first", title: "Older decision" }, second = { ...page.items[0], sourceId: "source:second", title: "Newer decision" };
+  const sections = (ordering: unknown) => parsePicture(wire({ ...p, decisionsThatShapeYourWork: { ordering,
+    page: { count: 2, truncated: false, items: [second, first] } } }));
+  const parsed = ["first_published_desc", "last_changed_desc", "changed_then_role"].map(sections);
+  for (const picture of parsed) expect(picture?.items.filter(i => i.section === "decisions").map(i => i.title)).toEqual(["Newer decision", "Older decision"]);
+  // The order is presentation only: the standing facts stay the same whichever value is sent.
+  expect(new Set(parsed.map(picture => picture?.standingHash)).size).toBe(1);
+  for (const ordering of ["relevance", "", null, undefined, 1]) expect(sections(ordering)).toBe(null);
 });

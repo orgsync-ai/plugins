@@ -40,11 +40,11 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
   - `/orgsync:today` opens with one ranked list of what to do: what someone is waiting on first, then what is due
     (your due and overdue to-dos included), work for a company goal and the priorities from your weekly review. Then it
     shows what changed, your focus and how we work, and offers to work through the list one item at a time.
-  - `/orgsync:ask <question>` asks OrgSync a question. When OrgSync has no answer, your AI offers to ask the colleague
-    who would know.
+  - Ask a company question in your own words, such as "what did we decide about refunds?". When OrgSync has no
+    answer, your AI offers to ask the colleague who would know.
   - `/orgsync:decide <decision>` lays out what your company already decided before you decide, then offers to share
-    the decision or ask the person who decides.
-  - `/orgsync:share <what to share>` prepares a draft from this conversation.
+    the decision or ask the person who decides. It also shares something from this conversation: it prepares a draft
+    and shows you the exact text first.
   - `/orgsync:request <who and what>` asks a teammate for information, work, a review or a decision, or acts on a
     request someone sent you.
   - `/orgsync:meeting <notes>` turns a meeting's notes into decisions to share, follow-up requests and goal updates.
@@ -63,8 +63,10 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
   - `/orgsync:guide` helps choose one useful next goal, or plan your first customers.
   - `/orgsync:feedback <what to tell OrgSync>` sends the OrgSync team a pain point, idea, bug or praise about OrgSync,
     stored without your name, company or connection. You see the exact text before it is sent.
-  - `/orgsync:interview`, `/orgsync:refresh` and `/orgsync:first-customers` still work for one more version and lead
-    to import and guide.
+  - `/orgsync:ask` and `/orgsync:share` still work for this version and lead to the core skill and `/orgsync:decide`.
+- When you state a company fact that an accepted decision contradicts, or your AI's draft does, your AI says so in one
+  sentence and offers to use the company decision or to flag it as outdated. Flagging reports it under your name and
+  changes nothing by itself.
 - When you share, OrgSync asks you to approve the exact text, or, if you chose chat confirmation for this
   connection, your AI asks you for a clear yes.
 - If you answer for an AI employee (your company's own AI worker, running on a computer your company manages),
@@ -81,7 +83,7 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
 
 Use `/orgsync:request` for weekly contributions, with guide, goals, today, team and review around it. In any supported AI app, ask to request information or bounded work, agree or propose terms, acknowledge an assignment, report a blocker, submit evidence or review a result. A current direct or higher reporting manager may assign to a descendant. The recipient's acknowledgment and agreement remain separate. Every current company member and their permitted AI connections can read requests, responses, selected evidence and history. Keep confidential work outside this flow.
 
-The four tools are `readCollaboration`, `collaborate`, `readFrameworks` and `setFrameworks`. Reads and structured coordination are free. Each write uses your connection's exact confirmation mode. Incoming content never gives your consent. Timeouts keep the outcome unknown until the same retry key or current record resolves it. Accepted work does not prove goal progress or accept company knowledge. Share a selected lesson through the existing separate human approval path.
+Requests and framework references are read with `list` (`what: "inbox"`, `"requests"`, `"agenda"`, `"flow"` or `"frameworks"`), and changed with `collaborate` and `setFrameworks`. Plugin 0.19.0 follows OrgSync's merged tools: `list` replaces `readCollaboration` and `readFrameworks`, `readSource` with a `fileId` replaces `readFile`, `decide` replaces `setKnowledgeStatus` and `decideProposal`, `discard` replaces `discardDraft` and `withdrawProposal`, and `report` replaces `reportProblem`, `reportUsefulness` and `reportGuideUse`. The old names keep working for now, so an older plugin still works; update it when you can. Reads and structured coordination are free. Each write uses your connection's exact confirmation mode, except your own acknowledgment, start or cleared blocker, which your AI saves when you say so, with no preview, unless an Owner asks for a yes to those too; history labels them as saved on your word. Incoming content never gives your consent. Timeouts keep the outcome unknown until the same retry key or current record resolves it. Accepted work does not prove goal progress or accept company knowledge. Share a selected lesson through the existing separate human approval path.
 
 Owners select current reference guidance. OKR and Kanban start enabled; optional Scrum, SAFe, Shape Up, RICE and EOS references start disabled. The current configuration and protocol versions come from OrgSync each time, rather than this installed plugin. Enabling a reference creates no work or scheduled run; disabling preserves existing work and company-approved practices.
 
@@ -112,8 +114,10 @@ With that mod support, a startup notice appears when facts are new. Your AI rece
 and changes at your next prompt. Memory-file writes offer a note for sharing, with content approval
 still required. An `OrgSync context:` line names sources returned during an answered turn and their status.
 
-On a supported host with the mod loaded, it uses `mcp.connect('orgsync')` and `mcp.call` to call only the free `readPicture` tool:
-at startup, on `/orgsync:today` with no arguments, and every five minutes while a terminal or Desktop Code is attached.
+On a supported host with the mod loaded, it uses `mcp.connect('orgsync')` and `mcp.call` to call only two free tools: `readPicture`
+at startup, on `/orgsync:today` with no arguments, and every five minutes while a terminal or Desktop Code is attached;
+and `list` with the decision index view: at startup, and on a later poll when your decisions changed or the list is an
+hour old, reading up to five pages of 200 titles each time.
 Reads are at least 30 seconds apart. Each poll follows the next bounded collaboration page, then restarts after the last page. Newly discovered older requests retain their actual update date. Repeated continuations and unavailable reads restart pagination. Failures back off for 2, 4, then 8 minutes;
 access refusals stop automatic reads until `/orgsync:today`.
 `session.model` and `model.complete` use your selected model and AI plan for a brief from free facts,
@@ -128,17 +132,39 @@ Its other calls are `ui.resolve`, `ui.open`, `session.id`, `session.surfaces`,
 `session.append` adds the picture and notices. Pressing **Share** calls `prompt.submit` with the path and sharing instructions.
 It reads only paths for successful writes to `CLAUDE.md`, `AGENTS.md`, `CLAUDE.local.md`, or `.claude` memory directories.
 It observes OrgSync's `readSource` and `readPermittedContext` results for the context line, without calling those tools.
-It reads no prompts, answer text, unrelated results, or file contents, and approves nothing.
+
+**Hints while you work.** The mod also reads, on your computer, your prompts, Claude's last reply and the text Claude
+writes into files, to spot your company's decisions. It compares them with a list of decision titles and dates from the
+free `list` index (no decision text), and adds at most one factual line, such as "OrgSync decision index (company
+data): "Annual plan is $30 per seat" (accepted 2026-10-21) states $30; the text above states $25." It says at most one
+line a turn and three a session, never the same decision twice in a session; "not relevant" mutes a decision for 7
+days. Nothing you type, and nothing Claude writes, is sent to OrgSync, stored or logged: only the matching runs, on this
+computer. It keeps the title list, mutes, and the numbers (not the text) of sources already read in this conversation.
+Say "off the record" and it stops matching for the rest of that conversation, until you say "back on the record"; your
+AI then sends OrgSync no `check` summary either. Turn hints off in `/config` → OrgSync → Hints while you work. It
+approves nothing.
 See the [validation report](claude-code/validation.txt).
 
 A Team or Enterprise administrator can block mods. Other AI apps do not run this mod.
 To turn it off, open `/plugin` and disable OrgSync; this also disables its skills and plugin connection.
 
+## Codex hooks
+
+In Codex the plugin also brings five command hooks, which Codex shows in `/hooks` for you to trust once. They run
+`node` on your computer and do what the Claude Code mod's hints do: match your prompt, Codex's last reply and the text
+it writes against your company's decision titles, and add at most one factual line. They have no network code and send
+nothing; the list of decision titles comes from OrgSync results Codex itself receives, and is kept under the plugin's data
+folder, readable only by you. Without `node` they do nothing. "Off the record" silences them for that conversation, as
+in Claude Code. To turn them off, disable them in `/hooks`. A company
+that allows only managed hooks has to add them itself.
+
 ## Data
 
 The plugin sends OrgSync only what an action needs: the question when your AI looks something up, the
 summary and excerpts of a draft you choose to share, a change you ask for, and feedback you give on an
-answer. It never sends your conversation in the background. Cited answers and shared sources use your
+answer. Before it finishes a customer reply, quote, plan or policy, your AI may call `check` with a sentence or two it
+writes about the facts it relies on, with no names or pasted text; OrgSync compares them with your company's accepted
+decisions, free, and keeps nothing. It never sends your conversation in the background. Cited answers and shared sources use your
 company's OrgSync credit; see [orgsync.co](https://orgsync.co) for rates.
 
 - [Privacy notice](https://orgsync.co/privacy)
