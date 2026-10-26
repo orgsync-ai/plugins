@@ -14,7 +14,8 @@ Lay out what the company knows; the person decides. Refer to colleagues by name 
    bear on this one, and open each with free `readSource`.
 3. **Ask the company once** with `readPermittedContext` and the decision as the query: it also finds reported
    information and who is involved.
-4. **Write the brief**, citing every source by title:
+4. **Write the brief** in short lines, one per point, empty parts left out, citing every source by title, as
+   [In conversation](../orgsync/SKILL.md#in-conversation) limits it:
    - **Already decided:** accepted decisions that settle or constrain it, with who accepted them and when.
    - **Reported, not decided:** reported and questioned sources that bear on it.
    - **Who to involve:** colleagues from `companyWorkProfiles` whose work touches it, and the person's own
@@ -22,8 +23,8 @@ Lay out what the company knows; the person decides. Refer to colleagues by name 
    - **Gaps:** what the company has no source for.
    - **Options:** two or three, each with what it would change. An option that contradicts an accepted decision says
      so and names it; changing that decision is a suggested fix to it, not a new decision beside it.
-5. **Once the person has decided**, offer to share it through [sharing](../orgsync/references/sharing.md), including
-   its check for a decision this one replaces.
+5. **Once the person has decided**, offer in one line to share it through
+   [sharing](../orgsync/references/sharing.md), including its check for a decision this one replaces.
    - **An Owner or Decision approver** can then accept their shared decision as a company decision (a second
      confirmation, as [managing sources](../orgsync/references/sources.md) describes).
    - **A Member** shares it as reported information; then offer to ask the right Owner or Decision approver to decide,

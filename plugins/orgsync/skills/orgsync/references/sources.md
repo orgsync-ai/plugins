@@ -6,8 +6,8 @@ sources) and `list` with `what: "decisions"` (`view: "mine"` for their own), the
 
 - **Something is wrong.** `reportProblem` with the source, its revision, one `issueType` (`incorrect`, `outdated`,
   `missing_context` or `other`) and the person's note as `detail`. It changes nothing and needs no confirmation.
-- **Better text.** Show the exact replacement summary, excerpts and reason, say that Owners and Decision approvers will
-  see it under the person's name, and ask for a yes. Then `proposeCorrection` with `baseRevision` set to the revision
+- **Better text.** Show the exact replacement summary, excerpts and reason, add in a few words that approvers see it
+  under the person's name, and ask for a yes. Then `proposeCorrection` with `baseRevision` set to the revision
   you read. Keep `area` and `classification` unless the person deliberately changes them, and show any change. Omit
   `tagIds` to keep the source's `tags`, which `readSource` shows; to change them, pass the whole new list from the
   active tags (`[]` clears them) and show the change by label. To tag an existing decision, suggest a fix that keeps

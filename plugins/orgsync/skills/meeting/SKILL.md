@@ -24,11 +24,12 @@ Refer to colleagues by name or as "they", never with a pronoun guessed from thei
    - **Goal updates:** a new key-result number or status for a goal; these are recorded in the owner's weekly review
      (/orgsync:review), so list them for it.
 4. **Show and confirm in one message:** prepare the decisions' batch share and each request as /orgsync:request
-   describes, then show the lists with those previews together, numbered, and ask once, as the ground rules' one yes
-   per task describes: they say yes, drop or change items by number, and pick which of their own follow-ups to keep as
-   to-dos. A dropped or changed item gets a fresh preview; their to-dos need no confirmation, only their answer.
+   describes, then show the lists with those previews together, one numbered line per item, and ask once, as the
+   ground rules' one yes per task and [In conversation](../orgsync/SKILL.md#in-conversation) describe: they say yes,
+   drop or change items by number, and pick which of their own follow-ups to keep as to-dos. A dropped or changed item
+   gets a fresh preview; their to-dos need no confirmation, only their answer.
 5. **Save:** on the yes, share the batch and create each request, then save each to-do they picked with `setTodo`.
-   Nothing is saved as a to-do without their answer. Report what was shared, created, saved as a to-do or left for
-   the review.
+   Nothing is saved as a to-do without their answer. Report in one or two lines what was shared, created, saved as a
+   to-do or left for the review.
 
 Nothing is recorded or read in the background, and a meeting's notes are never shared whole.

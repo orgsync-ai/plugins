@@ -34,13 +34,15 @@ yes, suggest the new text as a correction ([managing sources](sources.md)) rathe
 1. Call `submitDraft` for each draft. Each saves privately and asks nothing; keep its `draftId`, `revision` and
    `payloadHash`.
 2. Call `shareDrafts` once with up to 20 entries in `drafts` straight away, without asking first. In the one message
-   that asks for the yes, show every draft's title, summary, origin, area, classification, tags by label and privacy
-   mark with the confirmation, and say they can drop or change any. On a yes, repeat the same drafts with the returned
+   that asks for the yes, show each draft as one numbered line, as [In conversation](../SKILL.md#in-conversation)
+   limits it: its title and summary, then area, way-of-working mark, tags by label and any privacy mark in a few words,
+   with who sees it (everyone at the company) said once. End with one question ("Share all, or drop which numbers?").
+   On a yes, repeat the same drafts with the returned
    `idempotencyKey`, as the ground rules describe. A drop or change makes a new preview for what remains: edit the
    draft with `submitDraft` and call `shareDrafts` again.
 3. When the person said yes to your offer to share, that yes was to the offer, not the text: go straight to the
    preview message, which asks for one more yes, and ask nothing in between.
-4. Report each entry from `results`: shared, or not shared and why. A decline leaves them all private; never try
+4. Report `results` in one line ("Shared 3; 1 stayed private: too long"). A decline leaves them all private; never try
    another route to share that revision. A publication is ready only when `status` with its `operationId` says so.
 
 `list` with `what: "drafts"` finds the person's pending private drafts; `discardDraft` erases one at their request.

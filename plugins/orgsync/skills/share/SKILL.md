@@ -8,5 +8,8 @@ The person wants to share this with their company through OrgSync: $ARGUMENTS
 
 Follow [sharing with the company](../orgsync/references/sharing.md): check for a decision it replaces, write the draft,
 save it privately with `submitDraft`, call `shareDrafts`, and show the draft with any area and tags you suggest and the
-confirmation in one message that asks once. If it updates an existing source, suggest the text as a fix to that source instead. A decline keeps the draft
-private.
+confirmation in one message that asks once. If it updates an existing source, suggest the text as a fix to that source
+instead. A decline keeps the draft private.
+
+That message is the draft's line and one question, and the result after the yes is one line, as
+[In conversation](../orgsync/SKILL.md#in-conversation) limits them.

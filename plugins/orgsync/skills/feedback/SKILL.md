@@ -13,9 +13,11 @@ Help the person tell the OrgSync team about OrgSync itself, the product, not the
 3. Write `feedback` as one general paragraph of 10 to 1,000 characters from only what they said. The AI app's name
    and OrgSync's features are fine; leave out names of people, companies, customers and products, contact details,
    links, numbers, IDs from tool results and any company content.
-4. Show the exact paragraph with its kind and area; call free `sendFeedback` only after their yes.
-5. Say it reached the OrgSync team without their name or company, so the team cannot reply; changes it leads to are
-   listed in OrgSync's What's new.
+4. Show the exact paragraph with its kind and area, and one short line saying it goes to the OrgSync team without
+   their name or company; call free `sendFeedback` only after their yes.
+5. After sending, one short line: it reached the OrgSync team without their name or company, so the team cannot
+   reply; changes it leads to are listed in OrgSync's What's new. Keep both lines that short, as
+   [In conversation](../orgsync/SKILL.md#in-conversation) limits them.
 
 A refusal such as `feedback_contains_person_name` or `feedback_contains_link` sent nothing: rewrite without that
 detail and ask again. `feedback_limit_reached` means combine points and try later.

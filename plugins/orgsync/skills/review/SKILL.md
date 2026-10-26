@@ -4,7 +4,9 @@ description: Use when the person wants their weekly review - last week's priorit
 ---
 
 Run the weekly review in this AI app. Record the person's own account, uncertainty included: work done does not prove
-a result moved. Keep it to evidence, without scores or rankings. Refer to colleagues by name or as "they", never with a pronoun guessed from their name.
+a result moved. Keep it to evidence, without scores or rankings. Refer to colleagues by name or as "they", never with a
+pronoun guessed from their name. Each step is a short question or a few short lines, as
+[In conversation](../orgsync/SKILL.md#in-conversation) limits it; the person's week is the subject, not OrgSync.
 
 1. **Read**, all free: `status`, `readPicture`, `readCollaboration` with `resource: "inbox"`, `readFrameworks` with
    `view: "guidance"` and the pillars of the goals under review, `list` with `what: "objectives"` and `view: "active"`
@@ -37,11 +39,13 @@ a result moved. Keep it to evidence, without scores or rankings. Refer to collea
    active work exceeds the company's limit; it never blocks a priority. Before they choose, offer research on the top
    goal with this app's own web search, on request only: at most two ideas, with sources.
 9. **Save** with one `saveReview`: `checkIns`, `nextWeekPriorities`, the selected `drafts` and `contributions` (empty
-   lists when none) and a fresh `idempotencyKey`. Saving is free; each shared draft is charged once ready. In the
-   confirmation, say that every member and their AI apps can read the saved review, its priorities and check-ins.
-   Where the app cannot show OrgSync's prompt and the connection uses it, save nothing.
-10. **Report** whether the review saved and each share's result. A partial share still saved the review, and retrying
-    its key does not retry failed drafts. After an unavailable result, retry the identical key.
-11. **After saving**, offer a separate `setObjective` change for any stop or done call, only on the person's judgment.
-    Offer the person's own follow-ups from the review as private to-dos (/orgsync:todo); they pick which, and nothing
-    is saved without their answer. The weekly reminder is optional, in OrgSync's web app under Settings, Account.
+   lists when none) and a fresh `idempotencyKey`. Saving is free; each shared draft is charged once ready. The preview
+   is one line per check-in, priority and draft, and says once that everyone in the company can read the saved
+   review. Where the app cannot show OrgSync's prompt and the connection uses it, save nothing.
+10. **Report** in one line whether the review saved and how many shares went through, naming any that did not. A
+    partial share still saved the review, and retrying its key does not retry failed drafts. After an unavailable
+    result, retry the identical key.
+11. **After saving**, in one or two lines, offer a separate `setObjective` change for any stop or done call, only on
+    the person's judgment, and the person's own follow-ups from the review as private to-dos (/orgsync:todo); they pick
+    which, and nothing is saved without their answer. Mention the optional weekly reminder (OrgSync's web app,
+    Settings, Account) only if they ask about reminders.

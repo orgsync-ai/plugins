@@ -11,6 +11,9 @@ Refer to colleagues by name or as "they", never with a pronoun guessed from thei
 "they reported it", never "she", "he", "her", "his" or "him". Before answering, reread every line for those words and
 replace each one with the name or "they".
 
+Keep the reply to the brief, the list and short lines below it, as
+[In conversation](../orgsync/SKILL.md#in-conversation) limits it: no preamble about OrgSync, no recap at the end.
+
 1. Call `readPicture` and `readCollaboration` with `resource: "inbox"`. Both are free. Pass `since` only when the person named a time, as a full past date and time; otherwise OrgSync covers the last seven days.
 2. **Your list today.** Start with one numbered list of at most seven things for them to do, built only from these
    facts:
@@ -39,8 +42,9 @@ replace each one with the name or "they".
    it is absent, say priorities are unavailable in this picture. If `yourTodos` is absent, say to-dos are unavailable
    on this connection, never that there are none. Priorities change only in /orgsync:review, and reading the list
    marks nothing done.
-3. Below the list, write the picture in this order, leaving out empty parts except the How we work note. Refer to an
-   item already on the list by its number instead of repeating it:
+3. Below the list, add only the picture sections that hold something not already on the list, in this order: one
+   short line per item, a few lines per section at most, empty sections left out. Refer to an item already on the
+   list by its number instead of repeating it:
    - **Needs you:** collaboration that needs them, then each other item with why it is theirs ("you approve changes
      to it", "your draft is deleted on Friday if not shared", "Eva shared it as reported information; you can accept
      it as a company decision"). Keep a request's author, recipient, mode, acknowledgment and agreement separate.
@@ -55,17 +59,19 @@ replace each one with the name or "they".
    - **Your focus:** active goals from `yourFocus` with dates, owners, the company goal each supports (say if it
      changed or closed), and each nullable `latestCheckIn` as reported by its author. A missing check-in means no
      report yet.
-   - **How we work:** adopted practices from `howWeWork`; absent means unavailable, a zero count means none. For
-     references, use the picture's `frameworkSummary`: enabled reference titles, custom-pillar availability and, when
-     present, the tag count and work-in-progress limit. On an older picture, use `frameworkConfig` if present. If both fields are absent, say reference guidance is unavailable in this picture, not disabled or empty.
+   - **How we work**, in one line: adopted practices from `howWeWork`; absent means unavailable, a zero count means
+     none. For references, use the picture's `frameworkSummary`: enabled reference titles, custom-pillar availability
+     and, when present, the tag count and work-in-progress limit. On an older picture, use
+     `frameworkConfig` if present. If both fields are absent, say reference guidance is unavailable in this picture,
+     not disabled or empty.
    - **Your to-dos:** due and overdue to-dos not already on the list, private to them, never under Needs you.
    - **Your role:** their permission profile and work profile, in their words.
 4. Above the list, write a brief of one or two sentences, each stating only what an item below says and naming it.
-5. Say what the picture leaves out: `window.sinceClamped` means OrgSync looked back only 30 days; a `truncated`
-   section has more (its `count`, or for `yourTodos` its `due` plus `overdue`), which `list` and `readCollaboration`
-   return; a null `pendingDrafts` means this connection cannot list drafts.
-6. **Act from here.** Offer to work through the list in its order, one item at a time. For each, open it in full first,
-   then offer only the actions it allows:
+5. When the picture leaves something out, say so in one line: `window.sinceClamped` means OrgSync looked back only 30
+   days; a `truncated` section has more (its `count`, or for `yourTodos` its `due` plus `overdue`), which `list` and
+   `readCollaboration` return; a null `pendingDrafts` means this connection cannot list drafts.
+6. **Act from here.** Offer, in one line at the end, to work through the list in its order, one item at a time. For
+   each, open it in full first, then offer only the actions it allows:
    - a request: answer, agree, decline, propose other terms, start, report a blocker, submit or review, as
      /orgsync:request describes;
    - a shared source, suggested fix or problem report (Owners and Decision approvers): accept, decide or look, as

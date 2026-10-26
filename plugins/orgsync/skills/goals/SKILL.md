@@ -30,11 +30,13 @@ Help the person set or revisit goals. Start with what they asked: $ARGUMENTS
    - replace: `operation: "replace"`, the listed revision and every editable field (also for a link-only change);
    - complete or drop: the current revision and no other fields, only when the person judges the result. These are
      final; a new goal gets a new objective.
-   Confirm as the ground rules describe, including before and after links. After `confirmation_changed` or
+   Confirm as the ground rules describe: one preview line per goal, with before → after only for fields that change,
+   links included. After `confirmation_changed` or
    `objective_revision_conflict`, read again and ask for a fresh yes. For `objective_support_unavailable` or
    `objective_support_not_allowed`, relay the message and ask which link they want.
 7. **On return**, compare the person's evidence with the criteria and `progress`, separate what happened from what is
    unknown, and propose the next step. A check-in belongs in /orgsync:review; help from a teammate in
    /orgsync:request.
 
-Saving goals is free and grants no outside action. Report only what OrgSync returned.
+Saving goals is free and grants no outside action. Report only what OrgSync returned, in one line, as
+[In conversation](../orgsync/SKILL.md#in-conversation) limits it.

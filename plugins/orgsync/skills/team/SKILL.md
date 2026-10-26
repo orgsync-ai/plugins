@@ -20,7 +20,8 @@ replace each one with the name or "they".
      human and `lastSeenAt`;
    - `readCollaboration` with `resource: "requests"`, and `resource: "flow"` when Kanban is enabled;
    - `readPicture`: `coverage` and, for approvers, what waits for them.
-2. **Write the view**, facts only:
+2. **Write the view**, facts only, in short lines as [In conversation](../orgsync/SKILL.md#in-conversation) limits
+   it: one line per item, a few lines per section, empty sections left out, no preamble or closing recap:
    - **Goals:** at risk or off track by the latest check-in, unreported for a week or more, and key-result progress.
    - **Work:** blocked, overdue, waiting for agreement, and anyone over the work-in-progress limit.
    - **Check-ins:** which people reviewed this week and which have not.
@@ -33,7 +34,7 @@ replace each one with the name or "they".
 3. **One-on-one**, when a person is named: their goals and latest check-ins, requests in both directions, blockers and
    last week's priorities, then three or four talking points drawn from them. For an AI employee, the same records
    labelled as its own report, with its state and responsible human.
-4. **Offer next steps** only for what the view shows: ask someone with /orgsync:request, act on approvals as
-   [managing sources](../orgsync/references/sources.md) describes, or bring the company in with /orgsync:import. When
-   the person is an AI employee's responsible human, offer to judge its unjudged check-in, or to pause it, as
+4. **Offer next steps** in one or two lines at the end, only for what the view shows: ask someone with
+   /orgsync:request, act on approvals as [managing sources](../orgsync/references/sources.md) describes, or bring the
+   company in with /orgsync:import. When the person is an AI employee's responsible human, offer to judge its unjudged check-in, or to pause it, as
    [AI employees](../orgsync/references/ai-employees.md) describes. Act only when the person asks.

@@ -30,6 +30,9 @@ Help the person choose one useful next step. Start with their question: $ARGUMEN
 7. **Bring in help.** When a teammate can help, offer /orgsync:request, linked to the goal. A solo founder continues
    without one. Offer /orgsync:review to revisit the evidence next week.
 
+The business is the subject, not OrgSync: advice in short lines, offers as one line at the end, and any save as one
+preview line, as [In conversation](../orgsync/SKILL.md#in-conversation) limits it.
+
 ## First customers
 
 1. Confirm what the business sells, its business type, target customers and their location, target market, available

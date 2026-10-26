@@ -30,9 +30,9 @@ When a change needs a person, the AI employee's call waits as an approval reques
 `collaboration` (agree to a request, answer or propose its terms, or send one) or `objective` (change one of its own
 goals or key results). A request expires seven days after it was made.
 
-Show each as metadata: the AI employee, what kind of action, the `title`, when it `expiresAt`, and its approval page,
-https://orgsync.co followed by its `webPath`, always as that full link. OrgSync shows the exact content only in its own prompt and on that
-page.
+Show each in one line as metadata: the AI employee, what kind of action, the `title`, when it `expiresAt`, and its
+approval page, https://orgsync.co followed by its `webPath`, always as that full link. OrgSync shows the exact content
+only in its own prompt and on that page.
 
 **To answer one:**
 

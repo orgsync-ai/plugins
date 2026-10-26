@@ -5,7 +5,8 @@ description: Use when the person wants to get started with OrgSync, has just con
 
 Set OrgSync up with the person: a welcome that fits them, three quick choices, then a first useful step. Speak
 plainly, with no tool names, field names or IDs, and keep everything before the choices under about 60 words. Refer to
-colleagues by name or as "they", never with a pronoun guessed from their name.
+colleagues by name or as "they", never with a pronoun guessed from their name. Each step is a few short lines, as
+[In conversation](../orgsync/SKILL.md#in-conversation) limits it: say what OrgSync does for them, never how it works.
 
 1. **Check the connection.** Call `status`; this also finishes the check OrgSync's setup page waits for. If the
    connection was revoked or expired, say they can reconnect from OrgSync's AI apps page, and stop. On another
@@ -35,6 +36,8 @@ colleagues by name or as "they", never with a pronoun guessed from their name.
    - **Joining a covered company:** a short tour from the picture instead: up to three decisions that shape their
      work, the company goals, how we work and anything that needs them. Then offer once to look through their own past
      chats for decisions the company should know (/orgsync:import).
+   - **In their first weeks** (`startingChecklist`): name what is left in one line; a missing role or manager is an
+     Owner's to set in Team, a first goal is "About you", the first review /orgsync:review.
    - Then their Focus: goals lead to "About you"; first customers to /orgsync:guide; the team to /orgsync:request.
 6. **About you**, unless they skip it: what they work on now, the result that matters most, and by when, skipping what
    their work profile and `yourFocus` already say. Offer the result as a person goal (/orgsync:goals), linked to a

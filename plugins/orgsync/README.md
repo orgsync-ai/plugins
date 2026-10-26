@@ -25,6 +25,11 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
 - Ask about your company as you work, for example "what did we decide about the trial length?". Your AI
   also checks OrgSync on its own when a task touches something your company decided, such as a price, a
   policy or who approves what.
+- Ask about a file your company keeps in OrgSync, for example "what does our lease say about renewal?". Your AI
+  lists the company's files and reads the one you mean, free; OrgSync reads the text of PDF, Word, text, Markdown and
+  CSV files, in folders you can open that let AI apps read them. A file is not a company decision: to make part of one
+  company knowledge, your AI drafts it, naming the file and its folder, and shares it only after you approve. From a
+  folder not everyone can open, it tells you first and keeps the draft private unless you want everyone to see it.
 - In Claude Code and Claude Desktop, these commands work with OrgSync directly. In ChatGPT, type `@OrgSync`
   before your request. In Codex, ask it to use OrgSync.
   Your AI can also start each of them when you ask in your own words, such as "let's do my weekly review".
@@ -52,7 +57,8 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
     Thursday if Priya hasn't submitted". OrgSync never emails to-dos.
   - `/orgsync:import <where to start>` brings your company in, guided by what is still missing across its six
     business areas, goals and roles: from tools your AI app already reaches, such as Notion, Google Drive, Slack,
-    GitHub or local files, from your past chats where the app can search them, or by asking you, sharing each batch
+    GitHub or local files, from files uploaded to OrgSync, from your past chats where the app can search them, or by
+    asking you, sharing each batch
     you approve in one step. It also checks sources you shared against their originals.
   - `/orgsync:guide` helps choose one useful next goal, or plan your first customers.
   - `/orgsync:feedback <what to tell OrgSync>` sends the OrgSync team a pain point, idea, bug or praise about OrgSync,

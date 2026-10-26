@@ -17,3 +17,6 @@ Follow the `orgsync` skill's "Answering from company context":
   no permitted source for it. Then, unless this chat already shows the person's name and role, call free `status`. Then offer once to ask a colleague that `companyWorkProfiles` lists
   other than the person; or, when none is listed and the person is an Owner or Decision approver, offer to decide it
   and record it for the company (/orgsync:decide). `responsibility` is the person's own profile, never someone to ask.
+
+Reply with the answer first, then the source title and its status in a few words, as
+[In conversation](../orgsync/SKILL.md#in-conversation) limits it. Any offer is one short line at the end.

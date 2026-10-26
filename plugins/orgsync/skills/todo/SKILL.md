@@ -18,6 +18,9 @@ To-dos are free and use no company credit.
 OrgSync sends no to-do email. At its time, a reminder shows the to-do as due in /orgsync:today and in the Claude Code
 pane. For a phone alert, the person can also add it to their phone's reminders.
 
+What you say stays short, as [In conversation](../orgsync/SKILL.md#in-conversation) limits it: the schedule in one
+line, the saved result in one line, and no explanation of how to-dos work beyond the one sentence step 5 asks for.
+
 ## Company work only
 
 Save a to-do only for the person's work in this company: a follow-up, a check, a deadline, something to send, ask or
@@ -51,13 +54,13 @@ request: use /orgsync:request.
    as "Check the runway: every last Friday of the month at 16:00 Halifax time, first on Friday 30 October, with a
    reminder at 16:00." When the request is clear, save in the same turn; ask first only when a date, time, zone or
    repeat is unclear. There is no OrgSync prompt and no confirmation preview: the person's request is their yes.
-5. **First reminder.** When none of their open to-dos has `reminders`, say once that at each reminder time the to-do
-   shows as due in /orgsync:today and in the Claude Code pane, that OrgSync sends no email, and that for a phone alert
-   they can also add it to their phone's reminders.
+5. **First reminder.** When none of their open to-dos has `reminders`, say once, in one short sentence, that at each
+   reminder time the to-do shows as due in /orgsync:today and in the Claude Code pane, that OrgSync sends no email, and
+   that for a phone alert they can also add it to their phone's reminders.
 6. **Save** with `setTodo`, `operation: "create"`, the `todo` fields and a fresh `idempotencyKey`. After a timeout,
    repeat the identical call with the same key.
-7. **Report** from the result only: the title, `dueOn` and `dueTime` (OrgSync sets a repeat's first date; if it differs
-   from what you said, say so) and `nextReminders` in their time zone, when it will show as due.
+7. **Report** from the result only, in one line: the title, `dueOn` and `dueTime` (OrgSync sets a repeat's first date;
+   if it differs from what you said, say so) and `nextReminders` in their time zone, when it will show as due.
 
    Word a reminder as when the to-do shows as due ("it shows as due at 16:00"), never as something they will get,
    receive or be sent ("you'll get a reminder"). OrgSync never emails, notifies or messages them about a to-do.
@@ -73,8 +76,9 @@ When a to-do waits on a request or a goal ("remind me Thursday if Priya hasn't s
 - **On a goal:** link it as `links.goal` and set `unless` to `goal_checked_in`: anyone's check-in on the goal after the
   to-do was made closes it.
 
-Say how it works: at the reminder time OrgSync checks the request or goal; if it moved, the to-do closes itself instead
-of coming due. A read showing `closes_at_reminder` means it will.
+At the reminder time OrgSync checks the request or goal; if it moved, the to-do closes itself instead of coming due. Say
+that in one short sentence ("It closes itself if Priya submits first."). A read showing `closes_at_reminder` means it
+will.
 
 ## See and change
 
