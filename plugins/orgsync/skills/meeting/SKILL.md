@@ -56,4 +56,5 @@ Refer to colleagues by name or as "they", never with a pronoun guessed from thei
    Nothing is saved as a to-do without their answer. Report in one or two lines what was shared, created, saved as a
    to-do or left for the review.
 
-Nothing is recorded or read in the background, and a meeting's notes are never shared whole.
+This skill records and reads nothing in the background, and a meeting's notes are never shared whole. When capture
+is on, a decision already captured from this conversation is not saved twice: share it from the batch instead.

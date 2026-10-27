@@ -5,8 +5,10 @@
 
 export const BUDGET = Object.freeze({ perTurn: 1, perSession: 3, muteDays: 7 });
 
-/** `off` is the session's off-the-record marker (D-196 F5): while it is set, steering says nothing at all.
- * @typedef {{ turnId: string | null, turnHints: number, sessionHints: number, hinted: string[], overridden: string[], last: { kind: string, decisions: string[] } | null, off?: boolean }} Ledger */
+/** `off` is the session's off-the-record marker (D-196 F5): while it is set, steering says nothing at all. `captureOff` is the same
+ * marker for capture, and sticky (D-195): once the person goes off the record, nothing from the session is captured, earlier turns
+ * included, even after "back on the record", which resumes hints only. `forgets` counts the person's requests to forget it.
+ * @typedef {{ turnId: string | null, turnHints: number, sessionHints: number, hinted: string[], overridden: string[], last: { kind: string, decisions: string[] } | null, off?: boolean, captureOff?: boolean, forgets?: number }} Ledger */
 /** @typedef {Record<string, number>} Mutes  sourceId → muted until, in ms */
 
 /** @returns {Ledger} */
@@ -29,14 +31,23 @@ export function spend(ledger, kind, ids) {
     last: { kind, decisions: [...ids] } };
 }
 
-// The person's own words turn the session off the record, or back on. Only a prompt they typed counts.
-const OFF = /\b(off the record|stop (the )?(orgsync )?hints|no (more )?(orgsync )?hints)\b/i;
+// The person's own words turn the session off the record, or back on. Only a prompt they typed counts. `/orgsync:capture off`
+// is the capture command's word for the same thing, and so are "don't save this" and "stop capturing" (D-195).
+// The capture phrases end the sentence or name the conversation, so "don't save this file" or "stop capturing stdout" are code.
+const OFF = new RegExp(String.raw`\b(off the record|stop (the )?(orgsync )?hints|no (more )?(orgsync )?hints)\b|(^|\s)[/$]?orgsync:capture\s+off\b|` +
+  String.raw`\b(?:do(?:n'?t|n’t| not) (?:save|capture|record) (?:this|that|it|any of (?:this|that|it))|stop (?:capturing|saving)(?: (?:this|it))?)` +
+  String.raw`(?= *(?:[.!,;]|$|(?:to|in) orgsync\b|(?:this |the )?(?:conversation|chat|session)\b|for now\b|please\b))`, "i");
+// Forgetting also asks OrgSync to erase what capture already saved from the session; it puts the session off the record too.
+const FORGET = /\bforget (?:this (?:session|conversation|chat)|that (?:session|conversation|chat)|what (?:you|orgsync|capture|it) (?:saved|captured)|everything (?:you|orgsync|capture) (?:saved|captured)|(?:the |my )?captured items)\b|(^|\s)[/$]?orgsync:capture\s+forget\b/i;
 const ON = /\b(back on the record|on the record again|resume (the )?(orgsync )?hints|hints back on)\b/i;
 
-/** The ledger after the person's prompt sets or clears the off-the-record marker. @param {Ledger} ledger @param {string} prompt @returns {Ledger} */
+/** The ledger after the person's prompt sets or clears the off-the-record marker; clearing it never clears `captureOff`. A forget
+ * also counts up `forgets`, so the mod forgets each time it is asked.
+ * @param {Ledger} ledger @param {string} prompt @returns {Ledger} */
 export function recordMarker(ledger, prompt) {
   if (ON.test(prompt)) return { ...ledger, off: false };
-  if (OFF.test(prompt)) return { ...ledger, off: true, last: null };
+  if (FORGET.test(prompt)) return { ...ledger, off: true, captureOff: true, forgets: (ledger.forgets ?? 0) + 1, last: null };
+  if (OFF.test(prompt)) return { ...ledger, off: true, captureOff: true, last: null };
   return ledger;
 }
 

@@ -1,5 +1,5 @@
 {
-  "description": "OrgSync steering (B1): matches prompts, replies and written text with the company's decision titles on this computer and adds at most one factual line. Sends nothing.",
+  "description": "OrgSync steering (B1) and capture (B2). Steering matches prompts, replies and written text with the company's decision titles on this computer and adds at most one factual line. Capture links the session's transcript into a private folder at PreCompact and SessionEnd and starts a background worker that proposes items for the person's private queue; nothing is captured off the record. Every hook but the courier's check exits at once inside a capture worker's own run.",
   "hooks": {
     "SessionStart": [
       {
@@ -20,6 +20,19 @@
           {
             "type": "command",
             "command": "sh -c '[ -n \"$ORGSYNC_CAPTURE_CHILD\" ] && exit 0; command -v node >/dev/null 2>&1 || exit 0; exec node \"$PLUGIN_ROOT/codex/steer.mjs\" UserPromptSubmit'",
+            "commandWindows": "exit /b 0",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "^mcp__.*orgsync.*__(submitDraft|discard|discardDraft)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c '[ -n \"$ORGSYNC_CAPTURE_MANIFEST\" ] || exit 0; command -v node >/dev/null 2>&1 || { echo \"OrgSync capture: refused, no manifest check\" >&2; exit 2; }; exec node \"$PLUGIN_ROOT/worker/courier.mjs\" check'",
             "commandWindows": "exit /b 0",
             "timeout": 2
           }
@@ -56,6 +69,30 @@
           {
             "type": "command",
             "command": "sh -c '[ -n \"$ORGSYNC_CAPTURE_CHILD\" ] && exit 0; command -v node >/dev/null 2>&1 || exit 0; exec node \"$PLUGIN_ROOT/codex/steer.mjs\" Stop'",
+            "commandWindows": "exit /b 0",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c '[ -n \"$ORGSYNC_CAPTURE_CHILD\" ] && exit 0; exec sh \"$PLUGIN_ROOT/codex/capture.sh\" pre_compact'",
+            "commandWindows": "exit /b 0",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c '[ -n \"$ORGSYNC_CAPTURE_CHILD\" ] && exit 0; exec sh \"$PLUGIN_ROOT/codex/capture.sh\" session_end'",
             "commandWindows": "exit /b 0",
             "timeout": 2
           }

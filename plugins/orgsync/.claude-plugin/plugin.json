@@ -1,7 +1,7 @@
 {
   "name": "orgsync",
   "displayName": "OrgSync",
-  "version": "0.19.0",
+  "version": "0.20.0",
   "description": "Use current company guidance, agree contributions and review evidence across AI apps, with attributable human confirmation.",
   "author": {
     "name": "OrgSync",
@@ -25,6 +25,26 @@
       "description": "When your prompt, Claude's reply or a file it writes touches one of your company's decisions, add one short factual line naming it. Matching runs on this computer; nothing you type is sent to OrgSync.",
       "required": false,
       "default": true
+    },
+    "capture_suggestions": {
+      "type": "boolean",
+      "title": "Capture suggestions",
+      "description": "Keep decisions from your sessions as private suggestions in your OrgSync queue. Runs only when your company and you turned capture on in OrgSync.",
+      "required": false,
+      "default": true
+    },
+    "capture_model": {
+      "type": "string",
+      "title": "Capture model",
+      "description": "The model on your own plan that finds those decisions; default uses this session's model.",
+      "required": false,
+      "default": "sonnet",
+      "options": [
+        "default",
+        "haiku",
+        "sonnet",
+        "opus"
+      ]
     }
   }
 }

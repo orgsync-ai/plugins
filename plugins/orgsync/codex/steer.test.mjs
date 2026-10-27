@@ -87,8 +87,10 @@ test('missing data, broken input and an unreadable index print nothing and exit 
 });
 
 test('every hook command checks the capture-child guard first, then node, and the scripts hold no network code', async () => {
-  const hooks = JSON.parse(await readFile(join(HERE, 'hooks.json'), 'utf8')).hooks;
-  assert.deepEqual(Object.keys(hooks), ['SessionStart', 'UserPromptSubmit', 'PostToolUse', 'Stop']);
+  const all = JSON.parse(await readFile(join(HERE, 'hooks.json'), 'utf8')).hooks;
+  // Capture's PreCompact and SessionEnd hooks and the courier's PreToolUse check are tested in capture.test.mjs (B2).
+  assert.deepEqual(Object.keys(all), ['SessionStart', 'UserPromptSubmit', 'PreToolUse', 'PostToolUse', 'Stop', 'PreCompact', 'SessionEnd']);
+  const hooks = { SessionStart: all.SessionStart, UserPromptSubmit: all.UserPromptSubmit, PostToolUse: all.PostToolUse, Stop: all.Stop };
   for (const group of Object.values(hooks).flat()) for (const handler of group.hooks) {
     assert.match(handler.command, /^sh -c '\[ -n "\$ORGSYNC_CAPTURE_CHILD" \] && exit 0; command -v node >\/dev\/null 2>&1 \|\| exit 0; exec node "\$PLUGIN_ROOT\/codex\/steer\.mjs" (SessionStart|UserPromptSubmit|PostToolUse|Stop)'$/);
     assert.equal(handler.timeout, 2); assert.equal(handler.commandWindows, 'exit /b 0');
@@ -116,5 +118,31 @@ test('a missing index at session start is stated as a fact, with no instruction'
   try {
     const started = JSON.parse((await hook('SessionStart', { source: 'startup' }, { PLUGIN_DATA: root })).stdout);
     assert.equal(started.hookSpecificOutput.additionalContext, 'OrgSync decision index (company data): this computer holds no list of company decisions from the last day.');
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test("SessionStart tells the model not to save captured items itself only while Codex hooks capture", async () => {
+  const root = await mkdtemp(join(tmpdir(), "orgsync-steer-capture-"));
+  try {
+    const off = JSON.parse((await hook("SessionStart", { source: "startup" }, { PLUGIN_DATA: root })).stdout).hookSpecificOutput.additionalContext;
+    assert.doesNotMatch(off, /captures here/);
+    const on = JSON.parse((await hook("SessionStart", { source: "startup" }, { PLUGIN_DATA: root, ORGSYNC_CAPTURE_COURIER: "1" })).stdout).hookSpecificOutput.additionalContext;
+    assert.match(on, /^This app's OrgSync plugin captures here: never save captured items yourself\.\n/);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test('off the record, "don\'t save this" or a forget writes capture\'s own sticky marker at once, outliving the day-long hint state (D-195)', async () => {
+  const { captureSession } = await import('../local/capture-session.js');
+  const root = await data(), off = id => join(root, 'orgsync', 'capture', 'off', captureSession(id));
+  try {
+    assert.deepEqual(await hook('UserPromptSubmit', { session_id: 'session-b', prompt: 'Quote the annual plan for 3 seats' }, { PLUGIN_DATA: root }), { code: 0, stdout: '' });
+    await assert.rejects(readFile(off('session-b')));
+    for (const [id, prompt] of [['session-b', "Let's keep this off the record."], ['session-c', "Don't save this."], ['session-d', 'Forget this session.']]) {
+      assert.deepEqual(await hook('UserPromptSubmit', { session_id: id, prompt }, { PLUGIN_DATA: root }), { code: 0, stdout: '' });
+      assert.equal(await readFile(off(id), 'utf8'), '');
+    }
+    // "Back on the record" brings hints back; capture's marker stays.
+    await hook('UserPromptSubmit', { session_id: 'session-b', prompt: 'Back on the record.' }, { PLUGIN_DATA: root });
+    assert.equal(await readFile(off('session-b'), 'utf8'), '');
   } finally { await rm(root, { recursive: true, force: true }); }
 });

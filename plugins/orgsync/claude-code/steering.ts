@@ -60,6 +60,11 @@ export async function refreshIndex($: EngineInterface, server: string, picture: 
   await save($, s => ({ ...s, indexFacts: picture.standingHash }));
 }
 
+/** The titles of the company's current decisions from the kept index, for capture's duplicate check (research B8 fix 1). */
+export async function indexTitles($: EngineInterface, picture: OrgSyncPicture): Promise<string[]> {
+  return (await stored($, picture, await $.clock.now(), true))?.entries.map(e => e.title) ?? [];
+}
+
 async function stored($: EngineInterface, picture: OrgSyncPicture, now: number, evenStale = false): Promise<StoredIndex | null> {
   const value = await $.store.get(indexKey(picture)) as StoredIndex | null | undefined;
   if (!value || typeof value.fetchedAt !== "number" || !Array.isArray(value.entries)) return null;
@@ -81,18 +86,18 @@ export async function sessionDigest($: EngineInterface, picture: OrgSyncPicture,
 
 /** A hint for the person's own prompt, and their answer to the previous hint ("not relevant", "use mine"). */
 export async function promptHint($: EngineInterface, e: { text: string; origin: { kind: string } }, enabled: boolean): Promise<string | null> {
-  if (!enabled || (e.origin.kind !== "composer" && e.origin.kind !== "bridge")) return null;
+  if (e.origin.kind !== "composer" && e.origin.kind !== "bridge") return null;
   const data = (await $.state.get(DATA)).value, picture = data?.picture;
-  if (!data || !picture) return null;
-  // The person's own words set or clear the session's off-the-record marker first, index or not; while it is set nothing
-  // is matched (D-196 F5).
+  if (!data) return null;
+  // The person's own words set or clear the session's off-the-record marker first, hints on or off and index or not; while it
+  // is set nothing is matched (D-196 F5). Capture reads the same marker's sticky `captureOff` (D-195).
   const s = state(data), marked = recordMarker(s.ledger, e.text), turn = s.turn + 1;
-  const now = await $.clock.now(), index = marked.off ? null : await stored($, picture, now);
-  if (!index) { await save($, current => ({ ...current, turn, ledger: marked })); return null; }
-  const mutes = prune((await $.store.get(mutesKey(picture)) as Record<string, number> | null) ?? {}, now);
+  const now = await $.clock.now(), ready = enabled && !marked.off ? picture : null, index = ready ? await stored($, ready, now) : null;
+  if (!ready || !index) { await save($, current => ({ ...current, turn, ledger: marked })); return null; }
+  const mutes = prune((await $.store.get(mutesKey(ready)) as Record<string, number> | null) ?? {}, now);
   const answered = answerLast(marked, mutes, e.text, now);
-  if (answered.outcome === "not_relevant") await $.store.set(mutesKey(picture), answered.mutes);
-  const result = steer({ event: "prompt", text: e.text, index: index.entries, learned: s.learned, now, asOf: Date.parse(index.asOf), companyName: picture.company.name,
+  if (answered.outcome === "not_relevant") await $.store.set(mutesKey(ready), answered.mutes);
+  const result = steer({ event: "prompt", text: e.text, index: index.entries, learned: s.learned, now, asOf: Date.parse(index.asOf), companyName: ready.company.name,
     ledger: answered.ledger, mutes: answered.mutes, turnId: String(turn) });
   await save($, current => ({ ...current, turn, ledger: result.ledger }));
   return result.hint;
@@ -111,6 +116,11 @@ export async function afterHint($: EngineInterface, event: "stop" | "write", e: 
     : steer({ event, text: writtenText(e.tool_input), index: index.entries, learned: s.learned, now, asOf: Date.parse(index.asOf), companyName: picture.company.name, ledger: s.ledger, mutes, turnId: String(s.turn) });
   if (result.hint) await save($, current => ({ ...current, ledger: result.ledger }));
   return result.hint;
+}
+
+/** /orgsync:capture off or forget: the marker the person's own "off the record" sets, so hints stop too (D-196 F5). */
+export async function markOffRecord($: EngineInterface): Promise<void> {
+  await save($, s => ({ ...s, ledger: { ...s.ledger, off: true, captureOff: true, last: null } }));
 }
 
 /** Keeps the facts (numbers, units, nearby words) of a source the AI just read, for this session; never its text. */

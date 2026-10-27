@@ -46,7 +46,10 @@ colleagues by name or as "they", never with a pronoun guessed from their name. E
       knowledge; goals and a weekly review; work with my team (teams only); find first customers (when
       `businessProfile` says idea or starting).
    2. **Sharing:** offer to share when I decide something (recommended), or only when I ask. Nothing is shared until
-      they approve the exact text.
+      they approve the exact text. When `status`'s `capture` says the company has capture on (`company` is `on`), add
+      one line: their AI keeps decisions from their work as private suggestions that only they see, deleted after 7
+      days unless they share them. If `you` is `needs_notice`, it waits for their OK on their capture page (give the
+      `settingsUrl`); if `on`, "off the record" stops it for a conversation. Never take their OK in chat.
    3. **Keeping up to date:** a short brief when we start working (recommended), or only when I ask; and a day for the
       weekly review.
 4. **Keep the choices.** If this app remembers across chats, offer to save one note, after their yes only: their name,

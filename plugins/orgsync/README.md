@@ -94,10 +94,10 @@ With OKR enabled, a goal can hold up to three key results, and the weekly review
 - A connection to OrgSync's server at `https://orgsync.co/mcp`, for Claude apps. You sign in with your
   OrgSync account and choose your company the first time. In Codex and ChatGPT you add the connection with
   the steps on OrgSync's **AI apps** page.
-- Eighteen skills. The `orgsync` skill tells your AI how to use OrgSync: when to look something up, how to cite and
+- Sixteen skills. The `orgsync` skill tells your AI how to use OrgSync: when to look something up, how to cite and
   describe a source, how to share only what you approve, and to answer from OrgSync rather than from memory, with
-  reference files for sharing, managing sources, requests between people, framework settings and AI employees. The other seventeen
-  are one for each command above.
+  reference files for sharing, managing sources, requests between people, framework settings and AI employees. The other fifteen
+  are one for each command above and `/orgsync:capture` for capture (below).
 
 It also contains the Claude Code mod described below.
 
@@ -128,7 +128,9 @@ references, links, extra numbers or more than 280 characters.
 The picture shows numbered items and short dates; the brief points to those item numbers.
 
 Its other calls are `ui.resolve`, `ui.open`, `session.id`, `session.surfaces`,
-`state.get`, `state.set`, `store.get`, `store.set`, `clock.now`, `clock.after`, and `tool.list`.
+`state.get`, `state.set`, `store.get`, `store.set`, `clock.now`, `clock.after`, and `tool.list`. Only when capture is
+on for you (below) does it also read the session (`session.messages`, `session.turns`), run your model for capture, call
+`status`, `submitDraft` and `discard`, and use `env.get`, `fs` and `process.run` for the capture worker's private folder.
 `session.append` adds the picture and notices. Pressing **Share** calls `prompt.submit` with the path and sharing instructions.
 It reads only paths for successful writes to `CLAUDE.md`, `AGENTS.md`, `CLAUDE.local.md`, or `.claude` memory directories.
 It observes OrgSync's `readSource` and `readPermittedContext` results for the context line, without calling those tools.
@@ -150,13 +152,45 @@ To turn it off, open `/plugin` and disable OrgSync; this also disables its skill
 
 ## Codex hooks
 
-In Codex the plugin also brings five command hooks, which Codex shows in `/hooks` for you to trust once. They run
+In Codex the plugin also brings command hooks, which Codex shows in `/hooks` for you to trust once. Five of them run
 `node` on your computer and do what the Claude Code mod's hints do: match your prompt, Codex's last reply and the text
 it writes against your company's decision titles, and add at most one factual line. They have no network code and send
 nothing; the list of decision titles comes from OrgSync results Codex itself receives, and is kept under the plugin's data
 folder, readable only by you. Without `node` they do nothing. "Off the record" silences them for that conversation, as
-in Claude Code. To turn them off, disable them in `/hooks`. A company
-that allows only managed hooks has to add them itself.
+in Claude Code. Two more, at compaction and at the end of a session, are for capture (below), and one checks what
+capture's courier may send. To turn them off, disable them in `/hooks`. A company that allows only managed hooks has to
+add them itself.
+
+## Capture suggestions
+
+**Capture is an internal test, pending a lawyer's review.** It runs only for companies OrgSync has turned it on for, and this
+version is not published to the public marketplace until that review is done.
+
+When your company's Owner turns capture on in OrgSync and you agree to it on your capture page, your own AI keeps
+decisions you make while you work (a price, a policy, an owner, a commitment, a way of working, a goal) as private
+suggestions in your OrgSync queue. Only you see the queue, your setting and its counts; your manager and the Owners do
+not. Nothing is shared until you approve the exact text, and an item you leave alone is deleted after 7 days.
+Your conversation never goes to OrgSync, only the suggestions.
+
+- **Claude Code.** The mod reads the session before compaction and after 30 quiet minutes, never every turn. It keeps
+  your words and Claude's and drops tool output, file contents, thinking and secrets, then your own model (`/config` →
+  OrgSync → Capture model, Sonnet unless you choose) proposes items on your plan. A check on this computer drops
+  anything about health, family, HR, pay, unions, your own legal advice, credentials or someone's personal details,
+  anything not actually decided, notes for one person or one task, and anything the company or your queue already has.
+  OrgSync's `status` is asked just before sending, and only `submitDraft` sends. At the end of a session a worker
+  started in the background (`worker/`) does the same with `claude -p --safe-mode`, and the next session sends what it
+  kept. Its files sit in a folder only you can read, under the plugin's data folder, for at most 24 hours. The band
+  shows one line: "Capture on · /orgsync:capture off", "Off the record", "Paused until 17:00" or "Capture waiting for
+  your OK". Turn the mod's capture off in `/config` → OrgSync → Capture suggestions.
+- **Codex.** For now the skill captures as in the chat apps below. The compaction and session-end hooks, which start the
+  same worker with `codex exec`, stay off until a sending step is proved; `ORGSYNC_CAPTURE_COURIER=1` turns them on.
+- **Claude web, Claude Desktop chat and ChatGPT.** The skill saves a decision privately when you settle one, says so
+  once ("Saved privately to your OrgSync queue. Say 'off the record' to stop."), and offers the batch at the end.
+
+Say "off the record" and nothing from that conversation is captured, earlier turns included, and what it already saved
+is forgotten; "back on the record" brings back hints, never capture. `/orgsync:capture` also takes `forget`, `status`,
+and `pause` or `resume`, which open your capture page: consent, pausing and switching on happen only there, never in
+chat. Review the queue with `/orgsync:today`, or forget a session from Captured for you on OrgSync's Home.
 
 ## Data
 
@@ -164,7 +198,8 @@ The plugin sends OrgSync only what an action needs: the question when your AI lo
 summary and excerpts of a draft you choose to share, a change you ask for, and feedback you give on an
 answer. Before it finishes a customer reply, quote, plan or policy, your AI may call `check` with a sentence or two it
 writes about the facts it relies on, with no names or pasted text; OrgSync compares them with your company's accepted
-decisions, free, and keeps nothing. It never sends your conversation in the background. Cited answers and shared sources use your
+decisions, free, and keeps nothing. It never sends your conversation in the background; with capture on, it sends only the
+private suggestions described above. Cited answers and shared sources use your
 company's OrgSync credit; see [orgsync.co](https://orgsync.co) for rates.
 
 - [Privacy notice](https://orgsync.co/privacy)

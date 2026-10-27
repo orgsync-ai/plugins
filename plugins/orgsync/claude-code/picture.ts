@@ -1,4 +1,4 @@
-import type { OrgSyncChange, OrgSyncItem, OrgSyncPicture, OrgSyncSource, OrgSyncStatus, OrgSyncSupportContext } from "../types/index.js";
+import type { OrgSyncCaptureState, OrgSyncChange, OrgSyncItem, OrgSyncPicture, OrgSyncSource, OrgSyncStatus, OrgSyncSupportContext } from "../types/index.js";
 
 type RecordValue = Record<string, unknown>;
 const invalid = (): never => { throw new Error("unavailable"); };
@@ -20,6 +20,7 @@ const EMPLOYEE_ACTIONS: Record<string, string> = { share_draft: "Asks to share a
   collaboration: "Asks to act on a request", objective: "Asks to change its own goal" };
 const EMPLOYEE_REASONS: Record<string, string> = { late: "Late: missed its scheduled work checks", stopped: "Stopped: not seen for a long time", paused: "Paused",
   interrupted: "Work it held was interrupted", at_cap: "Reached its monthly credit cap" };
+const CAPTURE_STATES = ["on", "off", "paused", "needs_notice", "unavailable"];
 const EMPLOYEE_STATES = ["setting_up", "running", "late", "stopped", "paused", "removed"];
 // A1 (D-194): the server may order standing decisions by last change, or changed first and then by role. The mod shows
 // them in the order sent, so it only needs to accept each value before the server starts sending it.
@@ -342,6 +343,14 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
       add(`business:${string(company.companyId)}`, "business", "Business profile", [country, ...(subdivision ? [subdivision] : []),
         `Stage: ${stage}`, ...helpAreas.map(area => `Help: ${area.replace(/_/g, " ")}`)]);
     }
+    // D-195: the person's own capture state and queue counts, for the band's one capture line. An older server sends none; the
+    // counts stay out of both hashes, so a new captured item never reopens the band.
+    let capture: OrgSyncCaptureState | undefined;
+    if (p.capture !== undefined) {
+      const c = record(p.capture), company = string(c.company), you = string(c.you), pausedUntil = nullableDate(c.pausedUntil), queued = number(c.queued), expiringSoon = number(c.expiringSoon);
+      if ((company !== "on" && company !== "off") || !CAPTURE_STATES.includes(you) || expiringSoon > queued || (you === "paused") !== (pausedUntil !== null)) invalid();
+      capture = { company, you: you as OrgSyncCaptureState["you"], pausedUntil, queued, expiringSoon };
+    }
     const who = person(role.person);
     const details = [permissionProfile.replace(/_/g, " ")];
     if (role.workProfile !== null) {
@@ -353,7 +362,7 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
     const result: OrgSyncPicture = {
       company: { companyId: string(company.companyId), name: string(company.name) }, person: who, permissionProfile,
       asOf: date(p.asOf), since: nullableDate(window.since), sinceClamped: boolean(window.sinceClamped),
-      focusAvailable: p.yourFocus !== undefined, howWeWorkAvailable: p.howWeWork !== undefined, collaborationAvailable: p.collaboration !== undefined, collaborationNextCursor, collaborationChanges, frameworksAvailable: p.frameworkConfig !== undefined || p.frameworkSummary !== undefined, todosAvailable: p.yourTodos !== undefined, changesComplete: !changeSection.truncated && !boolean(window.sinceClamped) && !counts.some(c=>["Collaboration needs you", "Waiting for others", "Blocked contributions"].includes(c.label) && c.truncated), counts, items, changes,
+      focusAvailable: p.yourFocus !== undefined, howWeWorkAvailable: p.howWeWork !== undefined, collaborationAvailable: p.collaboration !== undefined, collaborationNextCursor, collaborationChanges, frameworksAvailable: p.frameworkConfig !== undefined || p.frameworkSummary !== undefined, todosAvailable: p.yourTodos !== undefined, ...(capture ? { capture } : {}), changesComplete: !changeSection.truncated && !boolean(window.sinceClamped) && !counts.some(c=>["Collaboration needs you", "Waiting for others", "Blocked contributions"].includes(c.label) && c.truncated), counts, items, changes,
       limitations: array(p.limitations).flatMap(code => { const line = limitationWords.get(string(code)); return line ? [line] : []; }), factsHash: "", standingHash: ""
     };
     if (date(window.until) !== result.asOf || (result.since && Date.parse(result.since) > Date.parse(result.asOf))) invalid();

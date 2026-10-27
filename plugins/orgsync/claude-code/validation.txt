@@ -5,14 +5,19 @@ Validating plugin manifest: plugins/orgsync/.claude-plugin/plugin.json
 
 Validating hooks: plugins/orgsync/claude-code/hooks.json
 
-  ❯ ./register.tsx hooks: session.start, session.attach{surface=desktop}, session.end, prompt.submit, tool.call{tool=/"^(Write|Edit|MultiEdit)$"/}, classic.Stop, classic.PostToolUse, turn.start, tool.call{tool=/"^mcp__.+__(readPermittedContext|readSource)$"/}, turn.complete, command.run{command=orgsync:today}, ui.render{component=Pane, requestId=orgsync-picture}, ui.render{component=AbovePrompt}
+  ❯ ./register.tsx hooks: session.start, session.attach{surface=desktop}, session.end, prompt.submit, tool.call{tool=/"^(Write|Edit|MultiEdit)$"/}, classic.Stop, classic.PostToolUse, classic.PreCompact, classic.Notification, turn.start, tool.call{tool=/"^mcp__.+__(readPermittedContext|readSource)$"/}, turn.complete, command.run{command=orgsync:today}, command.run{command=orgsync:capture}, ui.render{component=Pane, requestId=orgsync-picture}, ui.render{component=AbovePrompt}
   ❯ ./register.tsx gating hook with .catch: prompt.submit
   ❯ ./register.tsx gating hook with .catch: tool.call{tool=/"^(Write|Edit|MultiEdit)$"/}
   ❯ ./register.tsx gating hook with .catch: classic.Stop
   ❯ ./register.tsx gating hook with .catch: classic.PostToolUse
+  ❯ ./register.tsx gating hook with .catch: classic.PreCompact
+  ❯ ./register.tsx gating hook with .catch: classic.Notification
   ❯ ./register.tsx gating hook with .catch: tool.call{tool=/"^mcp__.+__(readPermittedContext|readSource)$"/}
   ❯ ./register.tsx gating hook with .catch: command.run{command=orgsync:today}
-  ❯ ./register.tsx calls: $.clock.after (via queueActivation, schedule), $.clock.now, $.mcp.call (via performRead, refreshIndex), $.mcp.connect (via performRead), $.model.complete (via generateBrief), $.prompt.submit (via memoryOffer), $.session.append, $.session.id (via ensure), $.session.model (via generateBrief), $.session.surfaces (via supported), $.state.get (via afterHint, get, promptHint, refreshIndex, sessionDigest), $.state.set, $.store.get (via acknowledge, afterHint, performInjection, performRead, promptHint, sessionDigest, stored), $.store.set (via acknowledge, performInjection, performRead, promptHint, refreshIndex, sessionDigest, stored), $.tool.list (via performRead), $.ui.open, $.ui.resolve
+  ❯ ./register.tsx gating hook with .catch: command.run{command=orgsync:capture}
+  ❯ ./register.tsx calls: $.clock.after (via capture, queueActivation, schedule, whenIdle), $.clock.now, $.env.get (via captureRoot), $.fs.list (via drain), $.fs.read (via drain), $.fs.write (via atSessionEnd, drain), $.mcp.call (via captureOn, drain, extract, forget, performRead, refreshIndex), $.mcp.connect (via performRead), $.model.complete (via extract, generateBrief), $.process.run (via drain, shell), $.prompt.submit (via memoryOffer), $.session.append, $.session.id (via ensure, sessionOf), $.session.messages (via atSessionEnd, capture), $.session.model (via atSessionEnd, extract, generateBrief), $.session.surfaces (via supported), $.session.turns (via whenIdle), $.state.get (via afterHint, get, promptHint, read, refreshIndex, sessionDigest), $.state.set, $.store.get (via acknowledge, afterHint, performInjection, performRead, promptHint, sessionDigest, sessions, stored), $.store.set (via acknowledge, performInjection, performRead, promptHint, refreshIndex, remember, sessionDigest, st… [+61 chars]
+  ❯ ./register.tsx env writes: nothing
+  ❯ ./register.tsx env reads: CLAUDE_CONFIG_DIR, CLAUDE_PLUGIN_DATA, HOME
   ❯ ./register.tsx state writes: orgsync.data
   ❯ ./register.tsx state reads: orgsync.data
 

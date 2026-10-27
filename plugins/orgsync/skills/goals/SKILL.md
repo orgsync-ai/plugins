@@ -44,10 +44,18 @@ Help the person set or revisit goals. Start with what they asked: $ARGUMENTS
    remove it, or the company goal's ID to set it. On reads, `supportsContext` gives the target's current title,
    `revision` and `status`; a `linkedRevision` that differs means the company goal changed, and completed or dropped
    means it closed. Neither changes the person goal; ask the person.
-5. **Who can change what.** Every member and their AI apps can read goals and their history. Owners and Decision
+5. **What it rests on.** When the person names an accepted decision the goal, or one key result, rests on, or `check`
+   returns one for it, offer once: "This rests on 'Annual pricing'. Link it?" On a yes, call `setObjective` with
+   `operation: "link"`, the goal's current `expectedRevision` and `scope`, and `links` with `add` entries of `sourceId`
+   and an optional `keyResultId` (at most 8 on the goal and 3 per key result), one preview line per link, one yes. A
+   listed goal's `links` carry a `flag` when a decision changed: `decision_revised`, `decision_status_changed`,
+   `decision_replaced` (with `replacedBy`) or `decision_unavailable`. Say which in one line and ask the person to
+   continue (`reaffirm` at the current revision), revise (change the goal, or `remove` the link and `add` the decision
+   that replaced it) or stop (`remove`, or drop the goal). Never choose for them; a link grants no access.
+6. **Who can change what.** Every member and their AI apps can read goals and their history. Owners and Decision
    approvers can change any goal and assign an active member; a Member changes only person goals they own. Being
    responsible for a goal grants no permission.
-6. **Save** with `setObjective` and a fresh `idempotencyKey` per intended change, with the person's `reason`:
+7. **Save** with `setObjective` and a fresh `idempotencyKey` per intended change, with the person's `reason`:
    - create: `operation: "create"`, a new `objectiveId`, `expectedRevision` 0, `scope` and the complete `objective`;
    - replace: `operation: "replace"`, the listed revision and every editable field (also for a link-only change);
    - complete or drop: the current revision and no other fields, only when the person judges the result. These are
@@ -56,7 +64,7 @@ Help the person set or revisit goals. Start with what they asked: $ARGUMENTS
    links included. After `confirmation_changed` or
    `objective_revision_conflict`, read again and ask for a fresh yes. For `objective_support_unavailable` or
    `objective_support_not_allowed`, relay the message and ask which link they want.
-7. **On return**, compare the person's evidence with the criteria and `progress`, separate what happened from what is
+8. **On return**, compare the person's evidence with the criteria and `progress`, separate what happened from what is
    unknown, and propose the next step. A check-in belongs in /orgsync:review; help from a teammate in
    /orgsync:request.
 

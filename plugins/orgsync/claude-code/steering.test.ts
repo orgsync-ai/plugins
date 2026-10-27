@@ -20,10 +20,11 @@ function setup(on: On) {
   const w = world(on); w.index = INDEX;
   return { w, contexts };
 }
-/** Starts a session and waits until activation has read the decision index, so no prompt races the read. */
+/** Starts a session and waits until activation has read and kept the decision index, so no prompt races the read. Keeping it
+ * comes after the read's call, and a prompt sent in between once found no index on a loaded machine. */
 const start = async ($: Engine, w: ReturnType<typeof world>, sessionId = "conversation-a", reads = w.indexCalls.length + 1) => {
   w.sessionId = sessionId; await $.session.start({ cwd: "/project", surface: "terminal", isInteractive: true }); await w.activate();
-  for (let i = 0; i < 100 && w.indexCalls.length < reads; i++) await w.clock.settle();
+  for (let i = 0; i < 100 && (w.indexCalls.length < reads || !w.data?.steering?.indexFacts); i++) await w.clock.settle();
   if (w.indexCalls.length < reads) throw new Error("the decision index was not read");
 };
 const prompt = ($: Engine, text: string) => $.prompt.submit({ text, wait: false, origin: { kind: "composer" } });

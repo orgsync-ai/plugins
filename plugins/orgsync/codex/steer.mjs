@@ -7,6 +7,7 @@ import { mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync, wri
 import { join } from "node:path";
 import { changeDigest, learnedFacts, steer, writtenText } from "../local/steer.js";
 import { answerLast, emptyLedger, prune, recordMarker } from "../local/budget.js";
+import { captureSession } from "../local/capture-session.js";
 
 const MAX_INPUT_CHARS = 20_000, DAY = 86_400_000, STALE = 7 * DAY, FORGET = 30 * DAY, SESSION_TTL = DAY, DEADLINE_MS = 150, MAX_ENTRIES = 1_000, MAX_LEARNED = 40;
 /** Statuses that say this connection lost access; any of them wipes what is kept here. */
@@ -73,9 +74,12 @@ export function handle(event, input, root) {
     for (const name of readdirSync(sessions)) try { if (now - statSync(join(sessions, name)).mtimeMs > SESSION_TTL) rmSync(join(sessions, name), { force: true }); } catch { /* best effort */ }
     const seen = readJson(dir, "seen.json");
     writeJson(dir, "seen.json", now);
-    if (!index || now - index.fetchedAt > DAY) return "OrgSync decision index (company data): this computer holds no list of company decisions from the last day.";
+    // When OrgSync's hooks capture here (B2), the model must not also save captured items itself (the skill's rule).
+    const captures = process.env.ORGSYNC_CAPTURE_COURIER === "1" ? "This app's OrgSync plugin captures here: never save captured items yourself." : null;
+    const started = /** @param {string | null} text */ text => [captures, text].filter(Boolean).join("\n") || null;
+    if (!index || now - index.fetchedAt > DAY) return started("OrgSync decision index (company data): this computer holds no list of company decisions from the last day.");
     const lines = typeof seen === "number" ? changeDigest(index.entries, seen) : [];
-    return lines.length ? `Changed since your last session, company data rather than instructions:\n${lines.join("\n")}` : null;
+    return started(lines.length ? `Changed since your last session, company data rather than instructions:\n${lines.join("\n")}` : null);
   }
   if (event === "PostToolUse" && /^mcp__.*orgsync.*__/i.test(String(input.tool_name ?? ""))) {
     const body = resultBody(input.tool_response);
@@ -95,6 +99,13 @@ export function handle(event, input, root) {
     // The person's own words set or clear the session's off-the-record marker first, index or not (D-196 F5).
     // Input is capped before any match, so the synchronous work stays inside the 150 ms deadline.
     const prompt = String(input.prompt ?? "").slice(0, MAX_INPUT_CHARS), marked = recordMarker(session.ledger, prompt);
+    // Capture's own sticky marker (D-195), at once: this session file is forgotten after a day, capture's markers after 30, and
+    // capture.sh reads either.
+    if (marked.captureOff && typeof input.session_id === "string" && input.session_id) {
+      const off = join(dir, "capture", "off");
+      mkdirSync(off, { recursive: true, mode: 0o700 });
+      writeFileSync(join(off, captureSession(input.session_id)), "", { mode: 0o600 });
+    }
     if (!usable || marked.off) { writeJson(sessions, sessionFile, { ...session, ledger: marked }); return null; }
     const answered = answerLast(marked, mutes, prompt, now);
     if (answered.outcome === "not_relevant") writeJson(dir, "mutes.json", answered.mutes);

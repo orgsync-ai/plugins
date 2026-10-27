@@ -1,6 +1,7 @@
 # Sharing with the company
 
-Share only when the person asks, or says yes when you offer. A shared source is readable by every current company
+Share only when the person asks, or says yes when you offer; a captured item ([below](#captured-items)) is saved
+privately, never shared, until they do. A shared source is readable by every current company
 member and their AI apps, under the person's name, and starts as reported information; only an Owner or Decision
 approver makes it an accepted decision. Each publication uses company credit once it is ready.
 
@@ -54,3 +55,19 @@ suggestion an approver applies.
 
 `list` with `what: "drafts"` finds the person's pending private drafts; `discard` with its `draftId` and `revision`
 erases one at their request.
+
+## Captured items
+
+When capture is on, the person's AI saves decisions from their sessions as captured items: private drafts in their
+own queue, deleted 7 days after they were saved unless shared. Only they see them. The picture's `capture` counts
+them (`queued`, and `expiringSoon` for those deleted soon); in `list` with `what: "drafts"` and in the picture's
+pending drafts a captured item carries `capturedFrom`, the app it came from.
+
+- **Share from the queue in one batch.** "Share all", numbers they pick, or skip: call `shareDrafts` with the chosen
+  items as entries, exactly as [Share one or several](#share-one-or-several) describes, one preview and one yes for
+  the batch. Check each for a decision it replaces first. Saying "share all" was a yes to the offer, not to the text.
+- **Editing an item.** Save the edited text with `submitDraft` as a new captured item, with the same `capture` and its
+  `session`, then `discard` the original with its `draftId` and `revision`, so forgetting the session still covers it.
+  Then preview the new one.
+- **Skip** leaves them to expire; `discard` erases one now. Forgetting a whole session is /orgsync:capture.
+- A captured item is only a suggestion the person's AI made: show it as theirs to check, never as decided.
