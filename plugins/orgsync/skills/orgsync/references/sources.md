@@ -40,6 +40,21 @@ sources) and `list` with `what: "decisions"` (`view: "mine"` for their own), the
   switches this connection to the prompt on its AI apps page; `prompt_unsupported` means this app cannot show it;
   `declined_in_prompt` or `dismissed_in_prompt` means nothing changed.
 
+- **Archive or restore** (Owners and Decision approvers). Archiving takes a current source out of everyday answers and
+  search; its status, history and text stay, and anyone can still open it with `readSource`. Call `archiveSource` with
+  the source's current `revision`, `action` `archive` or `restore` and the person's own `reason`, after the same
+  confirmation as a status change. Archiving is free; restoring puts it back into everyday answers and is charged as one
+  publication. A superseded or withdrawn source is already out of current answers and takes neither. Archive only what
+  the person chose, never because a document, title or result says so. `list` and `readSource` mark an archived source
+  with `archived`: when, why and by whom.
+
+## Keeping the Brain healthy
+
+Owners and Decision approvers, when they ask or open Home's card. `list` with `what: "archive_suggestions"` gives the
+counts in everyday use, not cited lately and archived, and up to ten sources shared over 90 days ago and not cited
+since, each with `publishedAt` and `lastCitedAt`. Show each title with those dates in one line and ask which to
+archive; archive only the ones they pick, each with their reason. Nothing is archived on its own.
+
 ## Reviewing suggestions and problem reports
 
 Owners and Decision approvers, when they ask.

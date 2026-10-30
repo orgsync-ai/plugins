@@ -30,6 +30,10 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
   CSV files, in folders you can open that let AI apps read them. A file is not a company decision: to make part of one
   company knowledge, your AI drafts it, naming the file and its folder, and shares it only after you approve. From a
   folder not everyone can open, it tells you first and keeps the draft private unless you want everyone to see it.
+- Keep your AI's work as a company file, for example "save this research to Reports". Your AI saves Markdown, text or
+  CSV up to 2 MB into a folder you can edit, marked as a note, log or document it saved for you, without asking you to
+  confirm, because saving publishes nothing. It counts toward your company's storage, and a log is deleted after the
+  30, 90 or 365 days it keeps. A draft can name up to ten such files as its detail; the shared source keeps them.
 - In Claude Code and Claude Desktop, these commands work with OrgSync directly. In ChatGPT, type `@OrgSync`
   before your request. In Codex, ask it to use OrgSync.
   Your AI can also start each of them when you ask in your own words, such as "let's do my weekly review".

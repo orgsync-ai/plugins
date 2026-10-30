@@ -42,18 +42,20 @@ start, if given: $ARGUMENTS
    purpose (documents, team chat, code and docs, email, notes), and whether this app can search its own past chats or
    memory. Match them to the gaps ("Finance is missing; Google Drive is connected"). A named tool that is not
    connected is connected in this app's settings. Only when this connection's `readSource` takes a `fileId`, files people
-   already uploaded to OrgSync are a source too: free `list` with `what: "files"` shows their names. Otherwise skip
-   them and don't mention files.
+   already uploaded to OrgSync are a source too: `readPicture`'s `companyFiles` counts the ones this AI can read and
+   how many are already shared, and free `list` with `what: "files"` shows their names. Otherwise skip them and don't
+   mention files.
 3. **Bring in one bounded set at a time**, biggest gap first unless the person picks, skipping what `list` with
    `what: "decisions"` (and `view: "mine"`) shows is already shared:
    - **A tool:** one Notion space, Drive folder, repository docs folder, or Slack channel over the last 90 days
      (decision-like messages, linked to the thread).
    - **Files in OrgSync**, only when `readSource` takes a `fileId`: the ones the person picks, read with free
-     `readSource` and the `fileId` (page with `nextOffset`). The origin is the file's `folder` path, `name` and section, plus its Drive
-     link when it has one. Name any file without text and skip it. A file with `restricted` true is in a folder not
-     everyone can open: keep its drafts private unless the person, told "This came from Company files / HR, which not
-     everyone can open. Sharing makes it visible to everyone in the company.", says yes; then mark it
-     `other_private_material`.
+     `readSource` and the `fileId` (page with `nextOffset`). Skip a file with `sharedAs` unless the person asks: it is
+     already shared as those sources. Pass the file's `fileId` as `fromFileId` with each draft from it. The origin is
+     the file's `folder` path, `name` and section, plus its Drive link when it has one. Name any file without text and
+     skip it. A file with `restricted` true is in a folder not everyone can open: keep its drafts private unless the
+     person, told "This came from Company files / HR, which not everyone can open. Sharing makes it visible to everyone
+     in the company.", says yes; then mark it `other_private_material`.
    - **Past chats**, after the person's yes: the last 90 days unless they pick another window or a project. Take only
      decision-shaped statements (prices, policies, owners, commitments, ways of working, goals); leave out personal,
      health, pay and HR matters, credentials, and talk about people. Show each as a title, one line and an origin such
