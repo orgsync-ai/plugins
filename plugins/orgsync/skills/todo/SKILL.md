@@ -1,6 +1,6 @@
 ---
 name: todo
-description: Use when the person wants OrgSync to remember or remind them of something for their company work - a follow-up, a check, a deadline or a repeating reminder - or wants to see, change, finish, snooze, hand off, drop or delete their to-dos.
+description: Use when the person wants OrgSync to remember or remind them of something for their company work - a follow-up, a check, a deadline or a repeating reminder - or wants to see, change, finish, snooze, hand off, drop or delete their to-dos. Not for a request a teammate sent them, which /orgsync:request handles.
 argument-hint: "[what and when, such as 'remind me Friday at 10 to send Acme the new price']"
 ---
 

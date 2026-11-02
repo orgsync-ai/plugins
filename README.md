@@ -48,13 +48,18 @@ A plugin added to your Claude account also reaches Claude Code when you are sign
 
 ## Install in ChatGPT
 
-1. Add OrgSync as a custom MCP server, with the ChatGPT steps on your company's **AI apps** page in OrgSync
-   (**Plugins > Add > Add custom MCP server**, with OrgSync's client ID).
-2. Download [orgsync-chatgpt.zip](https://github.com/orgsync-ai/plugins/releases/latest/download/orgsync-chatgpt.zip).
-   In ChatGPT open **Plugins > Add > Upload plugin archive**, add it, and choose **Install plugin**.
-   If ChatGPT says it couldn't add the plugin and you added OrgSync before, open the OrgSync plugin under your
-   plugins, choose **More actions > Upload new version**, upload the same file, then install it.
-3. In a chat, type `@OrgSync` and ask your question.
+In the ChatGPT desktop app, on any plan:
+
+1. Open **Settings > Plugins > Add** and add a custom MCP: name it OrgSync, choose **Streamable HTTP**, paste
+   `https://orgsync.co/mcp`, leave everything else empty and choose **Save**. No client ID is needed.
+2. On the **MCPs** tab, sign in to OrgSync.
+3. On the **Marketplace** tab, add `orgsync-ai/plugins`, install OrgSync and turn it on. Allow its hooks when asked.
+4. Start a new chat on the **Work** tab, not **Chat**, and ask "Get started with OrgSync". To pick it yourself, type `$` and choose OrgSync's `get-started`.
+
+The app's **Chat** tab, like chatgpt.com on Free and Plus plans, can't reach OrgSync. In a Business, Enterprise or Edu workspace, follow the
+chatgpt.com steps on your company's **AI apps** page in OrgSync (a custom MCP server with OrgSync's client ID), then
+download [orgsync-chatgpt.zip](https://github.com/orgsync-ai/plugins/releases/latest/download/orgsync-chatgpt.zip) and
+choose **Plugins > Add > Upload plugin archive**.
 
 ## Help
 
@@ -85,7 +90,7 @@ Plugin 0.11.0 turns `/orgsync:import` into a guided flow. It shows how much of y
 
 ## Getting started
 
-`/orgsync:get-started` is the first thing to run after connecting. Since plugin 0.13.0 it fits you: it welcomes you by role (solo founder, Owner or approver in a team, or Member), then asks three quick choices: what OrgSync should help with first, whether your AI offers to share decisions or waits for you to ask, and whether it gives you a short brief when you start working. Your AI keeps those choices in its own memory only if you agree. An Owner of a company that is not yet covered is offered to bring it in, starting from what the AI can reach, past chats included; someone joining a company that is already covered gets a short tour instead. Nothing is read or shared without your yes. In ChatGPT, type `@OrgSync get started`; in Codex, ask it to get started with OrgSync.
+`/orgsync:get-started` is the first thing to run after connecting. Since plugin 0.13.0 it fits you: it welcomes you by role (solo founder, Owner or approver in a team, or Member), then asks three quick choices: what OrgSync should help with first, whether your AI offers to share decisions or waits for you to ask, and whether it gives you a short brief when you start working. Your AI keeps those choices in its own memory only if you agree. An Owner of a company that is not yet covered is offered to bring it in, starting from what the AI can reach, past chats included; someone joining a company that is already covered gets a short tour instead. Nothing is read or shared without your yes. In ChatGPT or Codex, ask it to get started with OrgSync.
 
 ## Commands by job
 
@@ -120,6 +125,18 @@ once per conversation, and your choice stands. Ask company questions in your own
 the core skill and `/orgsync:share` to `/orgsync:decide`, for this one version. `/orgsync:interview`, `/orgsync:refresh`
 and `/orgsync:first-customers` are gone; `/orgsync:import` and `/orgsync:guide` do their jobs. In ChatGPT each skill
 has a narrower description, so it starts only for its own job.
+
+## Choices, suggestions and clearer approvals
+
+Plugin 0.22.0 lets a decision request offer two to four options for the person deciding to pick from, with your own
+recommendation shown under your name if you give one; picking answers the request and changes no company knowledge until
+a decision is shared. Your AI employee can suggest work for its goal, which you adopt or put aside, and its routine
+shares for one goal show as one line. To approve an AI employee's request, your AI now opens OrgSync's own prompt even
+after you said yes in chat, or gives you the full link to its approval page. "I'll take it and start now" is one
+preview and one yes. Capture never saves anyone's beliefs, politics, origin, sexuality, health data, criminal record
+or information about children. In Codex and the ChatGPT desktop app, OrgSync's hooks now show their names when you review
+them, and they no longer flag a decision that only shares a couple of words with what your AI wrote. In the ChatGPT
+desktop app, ask "Get started with OrgSync" on the Work tab.
 
 ## Weekly review
 

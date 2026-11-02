@@ -34,8 +34,8 @@ For Claude Desktop, Claude on the web, Codex and ChatGPT, follow the steps on Or
   CSV up to 2 MB into a folder you can edit, marked as a note, log or document it saved for you, without asking you to
   confirm, because saving publishes nothing. It counts toward your company's storage, and a log is deleted after the
   30, 90 or 365 days it keeps. A draft can name up to ten such files as its detail; the shared source keeps them.
-- In Claude Code and Claude Desktop, these commands work with OrgSync directly. In ChatGPT, type `@OrgSync`
-  before your request. In Codex, ask it to use OrgSync.
+- In Claude Code and Claude Desktop, these commands work with OrgSync directly. At chatgpt.com, type `@OrgSync`
+  before your request. In the ChatGPT desktop app, type `$` and choose an OrgSync skill. In Codex, ask it to use OrgSync.
   Your AI can also start each of them when you ask in your own words, such as "let's do my weekly review".
   - `/orgsync:get-started` welcomes you by role, asks three quick choices (what to help with first, whether your AI
     offers to share decisions or waits for you to ask, and whether it gives you a short brief when you start working),

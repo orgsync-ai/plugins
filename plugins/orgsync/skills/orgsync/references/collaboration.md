@@ -35,6 +35,9 @@ the `request`:
 - **Terms:** purpose, expected response, observable criteria, due date, recipient and reviewer. A manager's assignment
   links the exact goal revision it moves; a peer request for work links one only when it fits. Add `sourceReferences`
   when it concerns a source.
+- **Options:** a decision request may offer two to four `options` (each an `optionId`, a short `label` and an optional
+  `detail`) and, only when the person themselves recommends one, `recommendedOptionId` with their `recommendationReason`.
+  Never recommend an option yourself: the recommendation is the asker's, shown under their name.
 - **Labels:** up to five `tagIds` from the active tags, and up to eight mentions, which notice but assign nothing.
 - **Load:** when Kanban is enabled, read `list` with `what: "flow"` and the recipient's `personId` first and say if
   `overLimit` is true; the person decides.
@@ -51,6 +54,13 @@ the `request`:
   evidence the person cannot open stays unverified.
 - The named reviewer, or the asker for information, **reviews** the exact current submission: accepted, changes
   requested or inconclusive, with a reason. Accepted does not complete a goal or make a company decision.
+- The recipient of a decision request with `options` **chooses** one (`operation: "choose"` with its `optionId`),
+  which closes the request with no further review, or answers Other with one sentence (`other`), which goes to its
+  reviewer as a submission. Show each option's label as the asker wrote it, none preselected. Choosing answers the
+  request; it does not change company knowledge, which still goes through sharing a draft.
+- An AI employee's **suggestion** (`kind: "suggestion"`) goes to its responsible human, who adds it to its goal
+  (`operation: "adopt"`, which creates that work for the AI employee from its own text) or puts it aside with
+  `decline` and an optional reason. Quote the suggestion as the AI employee's words.
 - **Cancel** stops work with a reason; **reassign** names a new recipient with new terms (agreement never transfers);
   **reopen** adds a reason and a new revision; an eligible manager who is not the recorded one must **take over**
   before changing an assignment.

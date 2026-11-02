@@ -95,6 +95,10 @@ test('every hook command checks the capture-child guard first, then node, and th
     assert.match(handler.command, /^sh -c '\[ -n "\$ORGSYNC_CAPTURE_CHILD" \] && exit 0; command -v node >\/dev\/null 2>&1 \|\| exit 0; exec node "\$PLUGIN_ROOT\/codex\/steer\.mjs" (SessionStart|UserPromptSubmit|PostToolUse|Stop)'$/);
     assert.equal(handler.timeout, 2); assert.equal(handler.commandWindows, 'exit /b 0');
   }
+  // ChatGPT Desktop's hook review titles a hook "Hook N - <statusMessage>", or a bare "Hook N" without one.
+  const messages = Object.values(all).flat().flatMap(group => group.hooks.map(handler => handler.statusMessage));
+  assert.equal(messages.length, 8); assert.equal(new Set(messages).size, 8);
+  for (const message of messages) assert.match(message, /^OrgSync: .{10,70}$/);
   const { stdout } = await run('sh', ['-c', hooks.Stop[0].hooks[0].command], { env: { PATH: process.env.PATH, ORGSYNC_CAPTURE_CHILD: '1', PLUGIN_ROOT: join(HERE, '..') } });
   assert.equal(stdout, '');
   const source = await readFile(SCRIPT, 'utf8');

@@ -5,14 +5,14 @@
 // developers use in another sense are left out or narrowed ("race condition", "disabled button", "discriminated union",
 // "diagnose a bug", "pip install", "dismiss a dialog"). tests/fixtures/capture-gate-g5.json is the labelled set (gate G5).
 
-export const LEXICON_VERSION = "lexicon-1";
+export const LEXICON_VERSION = "lexicon-2";
 
 /** Lower case, accents removed, straight apostrophes, single spaces. @param {string} text */
 export function foldText(text) {
   return text.normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[‘’ʼ`]/g, "'").replace(/\s+/g, " ").trim();
 }
 
-/** @typedef {"health" | "family" | "hr" | "pay" | "union" | "legal_advice"} Topic */
+/** @typedef {"health" | "family" | "hr" | "pay" | "union" | "legal_advice" | "special_category"} Topic */
 
 /** Each topic's patterns, over folded text. @type {Readonly<Record<Topic, { en: readonly string[], fr: readonly string[] }>>} */
 export const TOPICS = Object.freeze({
@@ -82,6 +82,16 @@ export const TOPICS = Object.freeze({
       "\\bmon (visa|permis de travail|statut d'immigration|bail|proprietaire)\\b", "\\bmon immigration\\b",
       "\\bma (demande d'immigration|residence permanente|declaration d'impots|poursuite)\\b", "\\bon me poursuit\\b", "\\bje (suis|me fais) poursuivi(e)?\\b",
       "\\bje veux poursuivre\\b", "\\bconseil juridique (personnel|pour moi)\\b", "\\bmes impots\\b"]
+  },
+  // D-205: the special categories of personal information (GDPR art. 9 and 10, Quebec's sensitive information, California's
+  // sensitive personal information), here only where the text is plainly about one person. A rule that only names a category
+  // (we never ask about religion) stays; the same words about a named person are personal attributes below.
+  special_category: {
+    en: ["\\b(was|were|been|got|is|being) (arrested|convicted|incarcerated|jailed)\\b", "\\b(came|comes|coming) out as\\b",
+      "\\bmy (religion|faith|religious beliefs|ethnicity|ethnic background|sexual orientation|sex life|gender identity|criminal record|political views|dna|genetic test)\\b", "\\bi('m| am) (muslim|christian|jewish|hindu|sikh|buddhist|atheist|gay|lesbian|bisexual|transgender|queer)\\b"],
+    fr: ["\\b(a ete|est|etait) (arrete|arretee|condamne|condamnee|incarcere|incarceree)\\b", "\\bfait son coming[- ]out\\b",
+      "\\bma (religion|foi|vie sexuelle|orientation sexuelle|identite de genre|origine ethnique)\\b", "\\bmon (casier judiciaire|appartenance politique)\\b",
+      "\\bmes (opinions politiques|croyances religieuses|antecedents judiciaires)\\b", "\\bje suis (musulman|musulmane|chretien|chretienne|juif|juive|hindou|hindoue|athee|gai|gaie|lesbienne|bisexuel|bisexuelle|transgenre)\\b"]
   }
 });
 
@@ -92,12 +102,15 @@ export const PERSONAL_ATTRIBUTES = Object.freeze({
     "\\bturn(s|ed)? \\d{2}\\b", "\\breligio(n|us)\\b", "\\b(muslim|christian|jewish|hindu|sikh|buddhist|atheist)\\b", "\\bethnic(ity)?\\b",
     "\\bsexual orientation\\b", "\\b(gay|lesbian|bisexual|transgender)\\b", "\\bimmigration status\\b", "\\bundocumented\\b", "\\bcriminal record\\b",
     "\\barrest record\\b", "\\bpolitical (views|affiliation|party)\\b", "\\bmarital status\\b", "\\bsingle (mother|father|parent)\\b", "\\bcredit score\\b",
-    "\\bpersonal bankruptcy\\b"],
+    "\\bpersonal bankruptcy\\b",
+    "\\bpolitical (opinions?|beliefs|leanings)\\b", "\\bsex life\\b", "\\bgender identity\\b", "\\bgenetic (test|testing|data|information|results?)\\b",
+    "\\bdna (test|tests|results?)\\b", "\\bbiometric (data|information)\\b", "\\bfingerprints?\\b", "\\bcriminal (history|convictions?|charges?)\\b"],
   fr: ["\\badresse (personnelle|du domicile|de domicile)\\b", "\\b(il|elle) habite\\b", "\\b(son|sa) adresse\\b", "\\b(son|sa) numero de (telephone|cellulaire)\\b",
     "\\btelephone personnel\\b", "\\bdate de naissance\\b", "\\b(son|sa) anniversaire\\b", "\\bne(e)? en \\d{4}\\b", "\\ba \\d{2} ans\\b", "\\breligi(on|eux|euse)\\b",
     "\\b(musulman|musulmane|chretien|chretienne|juif|juive|hindou|hindoue|athee)\\b", "\\b(ethnie|origine ethnique)\\b", "\\borientation sexuelle\\b",
     "\\b(gai|gaie|lesbienne|bisexuel|bisexuelle|transgenre)\\b", "\\bstatut d'immigration\\b", "\\bsans papiers\\b", "\\bcasier judiciaire\\b",
-    "\\bopinions? politiques?\\b", "\\betat civil\\b", "\\b(mere|pere|parent) monoparental(e)?\\b", "\\bcote de credit\\b", "\\bfaillite personnelle\\b"]
+    "\\bopinions? politiques?\\b", "\\betat civil\\b", "\\b(mere|pere|parent) monoparental(e)?\\b", "\\bcote de credit\\b", "\\bfaillite personnelle\\b",
+    "\\bvie sexuelle\\b", "\\bidentite de genre\\b", "\\b(donnees|tests?) genetiques?\\b", "\\bdonnees biometriques\\b", "\\bempreintes digitales\\b", "\\bantecedents judiciaires\\b"]
 });
 
 /** Signs that a text is about one individual: a personal pronoun in English or French. Names are found in `individualNamed`. */

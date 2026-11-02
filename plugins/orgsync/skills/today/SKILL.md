@@ -78,7 +78,9 @@ Keep the reply to the brief, the list and short lines below it, as
      it as a company decision"). Keep a request's author, recipient, mode, acknowledgment and agreement separate.
    - **Your AI employees:** each approval request as metadata only: the AI employee, the kind of action, the title,
      when it expires and its approval page, https://orgsync.co followed by its `webPath`; say they answer it in
-     OrgSync's prompt or on that page, never by a reply in chat. Then each AI employee that needs them, with its
+     OrgSync's prompt or on that page, never by a reply in chat. Requests that share a `groupKey` and carry no
+     `flags` are one line ("Nova: 7 routine shares for <goal>"); each flagged one is its own line with its flags in
+     words, as [AI employees](../orgsync/references/ai-employees.md) describes. Then each AI employee that needs them, with its
      `reasons` in words and when it was last seen. Name AI employees and people by name, never by an id; the page
      link is the only place an id appears. Both sections are absent when they answer for no AI employee.
    - **Waiting and blocked:** work they wait for and unresolved blockers.

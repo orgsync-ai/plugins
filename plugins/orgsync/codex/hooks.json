@@ -9,7 +9,8 @@
             "type": "command",
             "command": "sh -c '[ -n \"$ORGSYNC_CAPTURE_CHILD\" ] && exit 0; command -v node >/dev/null 2>&1 || exit 0; exec node \"$PLUGIN_ROOT/codex/steer.mjs\" SessionStart'",
             "commandWindows": "exit /b 0",
-            "timeout": 2
+            "timeout": 2,
+            "statusMessage": "OrgSync: check this session against company decisions"
           }
         ]
       }
@@ -21,7 +22,8 @@
             "type": "command",
             "command": "sh -c '[ -n \"$ORGSYNC_CAPTURE_CHILD\" ] && exit 0; command -v node >/dev/null 2>&1 || exit 0; exec node \"$PLUGIN_ROOT/codex/steer.mjs\" UserPromptSubmit'",
             "commandWindows": "exit /b 0",
-            "timeout": 2
+            "timeout": 2,
+            "statusMessage": "OrgSync: check your message against company decisions"
           }
         ]
       }
@@ -34,7 +36,8 @@
             "type": "command",
             "command": "sh -c '[ -n \"$ORGSYNC_CAPTURE_MANIFEST\" ] || exit 0; command -v node >/dev/null 2>&1 || { echo \"OrgSync capture: refused, no manifest check\" >&2; exit 2; }; exec node \"$PLUGIN_ROOT/worker/courier.mjs\" check'",
             "commandWindows": "exit /b 0",
-            "timeout": 2
+            "timeout": 2,
+            "statusMessage": "OrgSync: check a capture worker's draft before it is sent"
           }
         ]
       }
@@ -47,7 +50,8 @@
             "type": "command",
             "command": "sh -c '[ -n \"$ORGSYNC_CAPTURE_CHILD\" ] && exit 0; command -v node >/dev/null 2>&1 || exit 0; exec node \"$PLUGIN_ROOT/codex/steer.mjs\" PostToolUse'",
             "commandWindows": "exit /b 0",
-            "timeout": 2
+            "timeout": 2,
+            "statusMessage": "OrgSync: check written text against company decisions"
           }
         ]
       },
@@ -58,7 +62,8 @@
             "type": "command",
             "command": "sh -c '[ -n \"$ORGSYNC_CAPTURE_CHILD\" ] && exit 0; command -v node >/dev/null 2>&1 || exit 0; exec node \"$PLUGIN_ROOT/codex/steer.mjs\" PostToolUse'",
             "commandWindows": "exit /b 0",
-            "timeout": 2
+            "timeout": 2,
+            "statusMessage": "OrgSync: learn decision titles from OrgSync results"
           }
         ]
       }
@@ -70,7 +75,8 @@
             "type": "command",
             "command": "sh -c '[ -n \"$ORGSYNC_CAPTURE_CHILD\" ] && exit 0; command -v node >/dev/null 2>&1 || exit 0; exec node \"$PLUGIN_ROOT/codex/steer.mjs\" Stop'",
             "commandWindows": "exit /b 0",
-            "timeout": 2
+            "timeout": 2,
+            "statusMessage": "OrgSync: check the reply against company decisions"
           }
         ]
       }
@@ -82,7 +88,8 @@
             "type": "command",
             "command": "sh -c '[ -n \"$ORGSYNC_CAPTURE_CHILD\" ] && exit 0; exec sh \"$PLUGIN_ROOT/codex/capture.sh\" pre_compact'",
             "commandWindows": "exit /b 0",
-            "timeout": 2
+            "timeout": 2,
+            "statusMessage": "OrgSync: decision capture before compacting (off unless turned on)"
           }
         ]
       }
@@ -94,7 +101,8 @@
             "type": "command",
             "command": "sh -c '[ -n \"$ORGSYNC_CAPTURE_CHILD\" ] && exit 0; exec sh \"$PLUGIN_ROOT/codex/capture.sh\" session_end'",
             "commandWindows": "exit /b 0",
-            "timeout": 2
+            "timeout": 2,
+            "statusMessage": "OrgSync: decision capture at session end (off unless turned on)"
           }
         ]
       }

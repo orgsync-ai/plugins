@@ -196,5 +196,8 @@ export function negationConflict(text, decisionText, shared) {
   const about = sentence => { const terms = new Set(steeringTerms(sentence)); return shared.filter(term => terms.has(term)).length >= 2; };
   const decided = sentences(decisionText).filter(about);
   const claimed = sentences(text).filter(sentence => claims(sentence) && about(sentence) && (ASSERTION.test(sentence.toLowerCase()) || NEGATION.test(sentence.toLowerCase())));
-  return decided.some(d => claimed.some(c => NEGATION.test(d.toLowerCase()) !== NEGATION.test(c.toLowerCase())));
+  // Two shared words are not yet the same rule: the claim must also carry at least a third of the decided sentence's words.
+  /** @param {string} d @param {string} c */
+  const covers = (d, c) => { const said = new Set(steeringTerms(c)), rule = [...new Set(steeringTerms(d))]; return rule.filter(term => said.has(term)).length * 3 >= rule.length; };
+  return decided.some(d => claimed.some(c => NEGATION.test(d.toLowerCase()) !== NEGATION.test(c.toLowerCase()) && covers(d, c)));
 }

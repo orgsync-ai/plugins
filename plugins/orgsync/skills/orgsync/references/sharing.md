@@ -40,7 +40,8 @@ suggestion an approver applies.
 ## Share one or several
 
 1. Call `submitDraft` for each draft. Each saves privately and asks nothing; keep its `draftId`, `revision` and
-   `payloadHash`.
+   `payloadHash`. When the draft serves one of the company's active goals or the person's own, add `goal` with its
+   `objectiveId` (and `keyResultId`, or null); it sits beside the draft, outside its revision, and the source keeps it.
 2. Call `shareDrafts` once with up to 20 entries in `drafts` straight away, without asking first. In the one message
    that asks for the yes, show each draft as one numbered line, as [In conversation](../SKILL.md#in-conversation)
    limits it: its title and summary, then area, way-of-working mark, tags by label, any privacy mark and the decision

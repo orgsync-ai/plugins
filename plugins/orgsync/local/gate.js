@@ -67,7 +67,7 @@ export const THRESHOLDS = Object.freeze(/** @type {Record<string, number>} */ ({
 export const DEFAULT_THRESHOLD = 0.7;
 
 export const ITEM_KINDS = Object.freeze(["decision", "rule", "price", "owner", "commitment", "way_of_working", "goal"]);
-export const SENSITIVE_LABELS = Object.freeze(["none", "health", "family", "hr", "pay", "union", "legal_advice", "credentials", "third_party_personal"]);
+export const SENSITIVE_LABELS = Object.freeze(["none", "health", "family", "hr", "pay", "union", "legal_advice", "special_category", "credentials", "third_party_personal"]);
 export const HELP_AREAS = Object.freeze(["sales_marketing", "finance", "legal", "product", "hiring_people", "operations"]);
 
 /** @typedef {"decision" | "rule" | "price" | "owner" | "commitment" | "way_of_working" | "goal"} ItemKind */

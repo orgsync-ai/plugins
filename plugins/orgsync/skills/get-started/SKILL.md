@@ -69,8 +69,8 @@ colleagues by name or as "they", never with a pronoun guessed from their name. E
    company goal when one fits, and to keep project details in this app's memory after their yes. Roles change only in
    OrgSync's web app.
 7. **Close** with three lines matched to their Focus, each with what to type (a company question in their own
-   words, /orgsync:today, /orgsync:review or /orgsync:request; in ChatGPT, @OrgSync and the request; in Codex, ask it
-   to use OrgSync), and:
+   words, /orgsync:today, /orgsync:review or /orgsync:request; at chatgpt.com, @OrgSync and the request; in the
+   ChatGPT desktop app or Codex, ask it to use OrgSync), and:
    "/orgsync:feedback any time to tell the OrgSync team what is missing or broken."
 
 This skill shares and saves nothing by itself; imports, goals and requests keep their own confirmations.
