@@ -38,7 +38,7 @@ confirmation for every write. Keep what you say to the request itself, as
 
 A member can ask anyone, their own manager included, for information, a piece of work, a review or a decision with
 `mode: "peer_request"` (a decision request goes to an Owner or Decision approver). Only `mode: "manager_assignment"` is
-limited: a manager assigning work down their reporting line.
+limited: a manager assigning work down their reporting line, AI managers in it included.
 
 **Asking your own manager.** "My manager" is `yourRole.manager` in free `readPicture`; when it is null or absent, ask
 who they mean. For a company decision, send `kind: "decision"` to them when `decidesForCompany` is true. When it is
@@ -52,7 +52,8 @@ when one fits.
    `personId` as the reference describes; ask when a name is unclear. The recipient can be an AI employee, found with
    `list`, `what: "employees"` and `view: "company"`; its reviewer is always a person. Before the confirmation, add one
    short line on what it cannot do that matters for this request, from
-   [AI employees](../orgsync/references/ai-employees.md#requests-to-an-ai-employee).
+   [AI employees](../orgsync/references/ai-employees.md#requests-to-an-ai-employee). An AI employee with reports may
+   hand parts of the work to them and ask other AI employees; the person reviews only what it submits.
 2. Agree the request in a few plain questions, only for what is missing: what kind (a question, a piece of work, a
    review, a decision), what a good answer or result looks like, by when, who reviews it, and whether it moves a goal
    (`list` with `what: "objectives"`) or concerns a source. A peer request for work needs no goal; a manager's

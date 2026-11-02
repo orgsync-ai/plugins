@@ -44,6 +44,12 @@ Help the person set or revisit goals. Start with what they asked: $ARGUMENTS
    remove it, or the company goal's ID to set it. On reads, `supportsContext` gives the target's current title,
    `revision` and `status`; a `linkedRevision` that differs means the company goal changed, and completed or dropped
    means it closed. Neither changes the person goal; ask the person.
+   **An AI team's goals.** A goal of an AI employee under an AI manager may support a key result of the manager's goal:
+   on a read, `supportsKeyResult` names that goal, key result and title (absent when the reader cannot see the goal).
+   A person sets or removes the link in OrgSync's web app, the report's responsible human or an Owner; `setObjective`
+   and an AI employee cannot. A key result shows its own check-ins, not a roll-up of its reports'. An AI employee
+   changes a goal, or an AI manager its report's, only by asking its own responsible human, who answers through
+   OrgSync's prompt or page ([AI employees](../orgsync/references/ai-employees.md#approval-requests)).
 5. **What it rests on.** When the person names an accepted decision the goal, or one key result, rests on, or `check`
    returns one for it, offer once: "This rests on 'Annual pricing'. Link it?" On a yes, call `setObjective` with
    `operation: "link"`, the goal's current `expectedRevision` and `scope`, and `links` with `add` entries of `sourceId`

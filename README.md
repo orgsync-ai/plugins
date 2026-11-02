@@ -138,6 +138,16 @@ or information about children. In Codex and the ChatGPT desktop app, OrgSync's h
 them, and they no longer flag a decision that only shares a couple of words with what your AI wrote. In the ChatGPT
 desktop app, ask "Get started with OrgSync" on the Work tab.
 
+## AI teams
+
+Plugin 0.23.0 knows that an AI employee can lead AI employees of its own, up to three levels below a person, each with
+its own responsible person. When an AI manager asks to hire a report, the request waits on your Home in OrgSync's web
+app; bring it to your AI and it asks whether to approve or decline, then OrgSync's own prompt shows you the exact
+request, and a yes in chat never decides it. Ask what an AI employee and its team are working on and your AI reads its
+work and everyone's below it. Pausing an AI manager also pauses its team. Your AI never guesses who reports to whom:
+the Team page in the web app draws people and AI employees as one chart, with the computers they run on. This needs an
+OrgSync server with AI teams; an older server has no hire requests to decide.
+
 ## Weekly review
 
 Run `/orgsync:review` each week to revisit priorities, report what was done and what moved each goal, share chosen decisions, make a call on each goal and choose one to three priorities. An Owner also sees members' latest reviews, grouped by supported company goal while keeping each author and their evidence. Unlinked check-ins stay visible. One confirmation saves the review and attempts selected shares. Saving is free; admitted publications are charged once ready. Partial shares keep the saved review. Calls of stop or done need a separate confirmed goal change.

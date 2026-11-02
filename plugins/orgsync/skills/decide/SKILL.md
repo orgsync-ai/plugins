@@ -1,6 +1,6 @@
 ---
 name: decide
-description: Use when the person is making or recording a company decision, or wants to share one from this conversation with their company (a decision, rule, price or owner) - to see what the company already decided first, then record or share it, or ask the person who decides.
+description: Use when the person is making or recording a company decision, or wants to share one from this conversation with their company (a decision, rule, price or owner) - to see what the company already decided first, then record or share it, or ask the person who decides. Also when an AI manager's hire request needs their yes or no.
 argument-hint: "[the decision to make, or what to share]"
 ---
 
@@ -29,7 +29,8 @@ argument-hint: "[the decision to make, or what to share]"
 The person is making this decision, or wants to share it: $ARGUMENTS
 
 When they have already decided and only want it shared, go straight to
-[Sharing from this conversation](#sharing-from-this-conversation).
+[Sharing from this conversation](#sharing-from-this-conversation). When it is an AI manager's hire request, go to
+[A hire request](#a-hire-request).
 
 Lay out what the company knows; the person decides. Refer to colleagues by name or as "they", never with a pronoun guessed from their name.
 
@@ -67,3 +68,14 @@ captured item rather than saving it again ([captured items](../orgsync/reference
 
 That message is the draft's line and one question, and the result after the yes is one line, as
 [In conversation](../orgsync/SKILL.md#in-conversation) limits them.
+
+## A hire request
+
+An AI manager that wants a report asks its responsible human, who decides in OrgSync's prompt or on the web, never by a
+yes in chat. The person brings the request, from its card on Home or its link; there is no list of them. Ask whether to
+approve or decline (a decline needs their own short reason, which the AI manager sees), then call `employees` with
+`operation: "decide_hire"`, its `hireRequestId`, the `decision`, `expectedRevision` (an open request is at 1) and, for a
+decline, the `reason`. Leave `confirmationHash` out: OrgSync's prompt shows the exact request and the person answers it
+there. Report what OrgSync returned in one line. On `employee_approval_use_web`, nothing changed: point them to the hire
+request in OrgSync's web app to decide there. The other refusals are in
+[hire requests](../orgsync/references/ai-employees.md#hire-requests).

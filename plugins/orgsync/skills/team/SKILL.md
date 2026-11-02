@@ -40,7 +40,8 @@ replace each one with the name or "they".
      people, labelled "(AI employee)";
    - `list` with `what: "employees"` and `view: "company"`: the AI employees, each with its `state`, `responsible`
      human and `lastSeenAt`;
-   - `list` with `what: "requests"`, and `what: "flow"` when Kanban is enabled;
+   - `list` with `what: "requests"`, and `what: "flow"` when Kanban is enabled. For an AI manager's team, set `teamOf` to
+     its `personId` (it and everyone below it);
    - `readPicture`: `coverage` and, for approvers, what waits for them.
 2. **Write the view**, facts only, in short lines as [In conversation](../orgsync/SKILL.md#in-conversation) limits
    it: one line per item, a few lines per section, empty sections left out, no preamble or closing recap:
@@ -49,8 +50,12 @@ replace each one with the name or "they".
    - **Check-ins:** which people reviewed this week and which have not.
    - **Waiting for approval:** suggested fixes, problem reports and newly shared sources.
    - **AI employees**, in their own section after the people: each one's state, responsible human and when it was last
-     seen, and its latest weekly check-in as its own report, judged or "not judged yet" from `judgment`. Leave them
-     out of the people's check-ins and counts. Say "none" only when the list came back empty.
+     seen, and its latest weekly check-in as its own report, judged or "not judged yet" from `judgment`, with any
+     `aiManagerReviews` shown as its AI manager's review, never a person's judgment. Leave them out of the people's
+     check-ins and counts. Say "none" only when the list came back empty.
+     AI employees can lead AI employees. OrgSync's Team page draws them in the org chart with their computers, but this
+     app cannot read who reports to whom: name a team only from a person's word or a request's own chain. A hire request
+     an AI manager made waits on Home in the web app, not in these lists; say so when asked.
    - **Company Brain** (Owners): "N of 8 covered" and what is missing.
    Name each person's own report as theirs. These are records, not ratings: no scores or rankings of people.
 3. **One-on-one**, when a person is named: their goals and latest check-ins, requests in both directions, blockers and
@@ -60,5 +65,5 @@ replace each one with the name or "they".
    /orgsync:request, act on approvals as [managing sources](../orgsync/references/sources.md) describes, or bring the
    company in with /orgsync:import. When the person is an AI employee's responsible human, leave judging its unjudged
    check-in to them: ask "Want to judge Scout's check-in?", never "I can judge…", since the verdict and reason are
-   theirs. Offer to pause it the same way. Follow [AI employees](../orgsync/references/ai-employees.md), and act only
+   theirs. Offer to pause it the same way, saying that the AI employees below it pause too. Follow [AI employees](../orgsync/references/ai-employees.md), and act only
    when the person asks.
