@@ -57,7 +57,8 @@ colleagues by name or as "they", never with a pronoun guessed from their name. E
    follow them for this chat. A weekly reminder email is in OrgSync's web app under Settings, Account.
 5. **Take the path that fits**, saying in one line what comes next; stop whenever they want.
    - **Owner or Decision approver of a company not yet covered** (below 6 of 8, or `coverage` absent): bring it in
-     with /orgsync:import, starting from what this AI can reach, past chats included.
+     with /orgsync:import, starting from what this AI can reach, past chats included, and offer once to record the
+     company's tools ([the company's tools](../orgsync/references/tools.md)).
    - **Joining a covered company:** a short tour from the picture instead: up to three decisions that shape their
      work, the company goals, how we work and anything that needs them. Then offer once to look through their own past
      chats for decisions the company should know (/orgsync:import).

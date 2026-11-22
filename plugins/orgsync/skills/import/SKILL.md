@@ -40,15 +40,18 @@ start, if given: $ARGUMENTS
    don't apply can be skipped: 6 of 8 is `complete`.
 2. **Show what this AI can reach**, reading nothing yet: the connectors and tools here that hold company material, by
    purpose (documents, team chat, code and docs, email, notes), and whether this app can search its own past chats or
-   memory. Match them to the gaps ("Finance is missing; Google Drive is connected"). A named tool that is not
-   connected is connected in this app's settings. Only when this connection's `readSource` takes a `fileId`, files people
+   memory. Match them to the gaps ("Finance is missing; Google Drive is connected"). When the company's "Our tools"
+   is shared, use it to say where each kind of material lives; when it is not, offer once to record it first, as
+   [the company's tools](../orgsync/references/tools.md) describes. A named tool that is not connected is connected
+   in this app's settings. Only when this connection's `readSource` takes a `fileId`, files people
    already uploaded to OrgSync are a source too: `readPicture`'s `companyFiles` counts the ones this AI can read and
    how many are already shared, and free `list` with `what: "files"` shows their names. Otherwise skip them and don't
    mention files.
 3. **Bring in one bounded set at a time**, biggest gap first unless the person picks, skipping what `list` with
    `what: "decisions"` (and `view: "mine"`) shows is already shared:
    - **A tool:** one Notion space, Drive folder, repository docs folder, or Slack channel over the last 90 days
-     (decision-like messages, linked to the thread).
+     (decision-like messages, linked to the thread), read as [the company's tools](../orgsync/references/tools.md)
+     describes for its kind.
    - **Files in OrgSync**, only when `readSource` takes a `fileId`: the ones the person picks, read with free
      `readSource` and the `fileId` (page with `nextOffset`). Skip a file with `sharedAs` unless the person asks: it is
      already shared as those sources. Pass the file's `fileId` as `fromFileId` with each draft from it. The origin is

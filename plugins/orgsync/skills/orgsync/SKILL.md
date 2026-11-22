@@ -258,7 +258,9 @@ team, goals, review, import, guide, todo, feedback and capture (off the record, 
 [Answering from company context](#answering-from-company-context). Where the app has no slash commands (ChatGPT, Codex), follow the skill by name. For a wrong or
 outdated source, a suggested fix, accepting, questioning, withdrawing, archiving, restoring or deleting a source, the
 sources worth archiving, or reviewing suggested fixes and problem reports, follow [managing sources](references/sources.md). For framework references, tags and the
-work-in-progress limit, follow [framework settings](references/frameworks.md).
+work-in-progress limit, follow [framework settings](references/frameworks.md). When work touches a tool the company uses
+(team chat, a work tracker, documents, meetings, a CRM) or the person wants to record the company's tools, follow
+[the company's tools](references/tools.md).
 
 ## To-dos
 

@@ -52,7 +52,10 @@ suggestion an approver applies.
 3. When the person said yes to your offer to share, that yes was to the offer, not the text: go straight to the
    preview message, which asks for one more yes, and ask nothing in between.
 4. Report `results` in one line ("Shared 3; 1 stayed private: too long"). A decline leaves them all private; never try
-   another route to share that revision. A publication is ready only when `status` with its `operationId` says so.
+   another route to share that revision. Some apps answer OrgSync's prompt on their own without showing it, so never say
+   the person declined: say OrgSync's prompt was declined. If they say they never saw a prompt, give them the AI apps
+   settings link from `nextStep`, where they can switch this connection to confirm in the chat; share again only after
+   they switch and ask. A publication is ready only when `status` with its `operationId` says so.
 
 `list` with `what: "drafts"` finds the person's pending private drafts; `discard` with its `draftId` and `revision`
 erases one at their request.
