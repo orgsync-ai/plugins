@@ -41,7 +41,8 @@ colleagues by name or as "they", never with a pronoun guessed from their name. E
    - **Member:** what needs them, the decisions that shape their work, and asking a teammate.
 3. **Ask three choices together**, in this app's question form when it has one, otherwise as one numbered list that
    accepts short answers such as "1 goals, 2 offer, 3 brief". Mark the recommended choice. If this app remembers
-   earlier choices, show them and ask only what to change.
+   earlier choices, show them and ask only what to change. End with one line on what comes after they answer (step
+   5); for someone joining a covered company, that is a short tour of what the company decided.
    1. **Focus** (several allowed): keep my AI on what we decided (recommended); turn my decisions into company
       knowledge; goals and a weekly review; work with my team (teams only); find first customers (when
       `businessProfile` says idea or starting).

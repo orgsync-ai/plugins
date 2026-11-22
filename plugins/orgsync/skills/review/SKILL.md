@@ -61,9 +61,10 @@ pronoun guessed from their name. Each step is a short question or a few short li
    active work exceeds the company's limit; it never blocks a priority. Before they choose, offer research on the top
    goal with this app's own web search, on request only: at most two ideas, with sources.
 9. **Save** with one `saveReview`: `checkIns`, `nextWeekPriorities`, the selected `drafts` and `contributions` (empty
-   lists when none) and a fresh `idempotencyKey`. Saving is free; each shared draft is charged once ready. The preview
-   is one line per check-in, priority and draft, and says once that everyone in the company can read the saved
-   review. Where the app cannot show OrgSync's prompt and the connection uses it, save nothing.
+   lists when none) and a fresh `idempotencyKey`. A review needs one to three priorities, so when the person only checks
+   in on a goal, ask for next week's priorities before saving; a check-in alone is not saved. Saving is free; each
+   shared draft is charged once ready. The preview is one line per check-in, priority and draft, and says once that
+   everyone in the company can read the saved review. Where the app cannot show OrgSync's prompt and the connection uses it, save nothing.
 10. **Report** in one line whether the review saved and how many shares went through, naming any that did not. A
     partial share still saved the review, and retrying its key does not retry failed drafts. After an unavailable
     result, retry the identical key.

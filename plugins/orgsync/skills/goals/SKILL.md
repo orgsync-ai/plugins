@@ -71,8 +71,8 @@ Help the person set or revisit goals. Start with what they asked: $ARGUMENTS
    `objective_revision_conflict`, read again and ask for a fresh yes. For `objective_support_unavailable` or
    `objective_support_not_allowed`, relay the message and ask which link they want.
 8. **On return**, compare the person's evidence with the criteria and `progress`, separate what happened from what is
-   unknown, and propose the next step. A check-in belongs in /orgsync:review; help from a teammate in
-   /orgsync:request.
+   unknown, and propose the next step. A check-in belongs in /orgsync:review, which saves it only with one to three
+   next-week priorities; help from a teammate in /orgsync:request.
 
 Saving goals is free and grants no outside action. Report only what OrgSync returned, in one line, as
 [In conversation](../orgsync/SKILL.md#in-conversation) limits it.
