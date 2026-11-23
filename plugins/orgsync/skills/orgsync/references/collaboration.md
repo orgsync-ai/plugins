@@ -37,7 +37,9 @@ the `request`:
   when it concerns a source.
 - **Options:** a decision request may offer two to four `options` (each an `optionId`, a short `label` and an optional
   `detail`) and, only when the person themselves recommends one, `recommendedOptionId` with their `recommendationReason`.
-  Never recommend an option yourself: the recommendation is the asker's, shown under their name.
+  Never recommend an option yourself: the recommendation is the asker's, shown under their name. Options are not
+  open to every company yet: if the request is refused with `preview_layout_unavailable`, say so in one line and send
+  it again without `options`, as a plain decision request.
 - **Labels:** up to five `tagIds` from the active tags, and up to eight mentions, which notice but assign nothing.
 - **Load:** when Kanban is enabled, read `list` with `what: "flow"` and the recipient's `personId` first and say if
   `overLimit` is true; the person decides.
