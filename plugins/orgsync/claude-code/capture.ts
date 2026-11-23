@@ -50,7 +50,7 @@ const blank = (): OrgSyncCapture => ({ session: null, off: false, mark: null, ru
 const current = (data: OrgSyncData | null | undefined): OrgSyncCapture => data?.capture ?? blank();
 async function read($: EngineInterface): Promise<OrgSyncData | null> { return (await $.state.get(DATA)).value ?? null; }
 function save($: EngineInterface, fn: (c: OrgSyncCapture) => OrgSyncCapture): Promise<OrgSyncData> {
-  return update($, DATA, held => held ? { ...held, capture: fn(current(held)) } : held);
+  return update($, DATA, held => held ? { ...held, capture: fn(current(held)) } : held as unknown as OrgSyncData); // nothing stored yet: leave it so (typed for the engine's StateRef overload)
 }
 /** Whether this session is off the record: the person's own words (the steering ledger's sticky mark) or /orgsync:capture. */
 const offRecord = (data: OrgSyncData | null | undefined): boolean => !!data && (current(data).off || data.steering?.ledger.captureOff === true);

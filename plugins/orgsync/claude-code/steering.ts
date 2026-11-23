@@ -22,7 +22,7 @@ const mutesKey = (p: OrgSyncPicture) => `steer-mutes:v1:${base(p)}`;
 const seenKey = (p: OrgSyncPicture) => `steer-seen:v1:${base(p)}`;
 const state = (data: OrgSyncData): OrgSyncSteering => data.steering ?? { ledger: emptyLedger(), turn: 0, learned: {}, digested: false, indexFacts: null };
 function save($: EngineInterface, fn: (s: OrgSyncSteering) => OrgSyncSteering): Promise<OrgSyncData> {
-  return update($, DATA, held => held ? { ...held, steering: fn(state(held)) } : held);
+  return update($, DATA, held => held ? { ...held, steering: fn(state(held)) } : held as unknown as OrgSyncData); // nothing stored yet: leave it so (typed for the engine's StateRef overload)
 }
 
 const entry = (value: unknown): Entry | null => {

@@ -1,13 +1,14 @@
 {
   "name": "orgsync",
   "displayName": "OrgSync",
-  "version": "0.24.2",
+  "version": "0.24.3",
   "description": "Use current company guidance, agree contributions and review evidence across AI apps, with attributable human confirmation.",
   "author": {
     "name": "OrgSync",
     "url": "https://orgsync.co"
   },
   "homepage": "https://orgsync.co",
+  "privacyPolicyUrl": "https://orgsync.co/privacy",
   "repository": "https://github.com/orgsync-ai/plugins",
   "license": "MIT",
   "keywords": [

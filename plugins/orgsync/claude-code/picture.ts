@@ -349,7 +349,7 @@ export function parsePicture(value: unknown): OrgSyncPicture | null {
     if (p.capture !== undefined) {
       const c = record(p.capture), company = string(c.company), you = string(c.you), pausedUntil = nullableDate(c.pausedUntil), queued = number(c.queued), expiringSoon = number(c.expiringSoon);
       if ((company !== "on" && company !== "off") || !CAPTURE_STATES.includes(you) || expiringSoon > queued || (you === "paused") !== (pausedUntil !== null)) invalid();
-      capture = { company, you: you as OrgSyncCaptureState["you"], pausedUntil, queued, expiringSoon };
+      capture = { company: company as OrgSyncCaptureState["company"], you: you as OrgSyncCaptureState["you"], pausedUntil, queued, expiringSoon };
     }
     const who = person(role.person);
     const details = [permissionProfile.replace(/_/g, " ")];
