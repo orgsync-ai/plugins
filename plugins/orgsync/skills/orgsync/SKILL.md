@@ -71,6 +71,13 @@ The person's work comes first; OrgSync stays in the background. These are hard l
 - **After a save:** one line with the result, then back to the task.
 - **No headers, recaps or status summaries about OrgSync** inside normal work. A job the person asked for
   (/orgsync:today, /orgsync:team, /orgsync:review) keeps its own format, in short lines.
+- **One `readPicture` per conversation.** Reuse it for every later question; read it again only when the person asks
+  what changed since. It lists a few of the standing decisions, practices and changes; `list` and `readSource` give
+  the rest when the work needs them.
+- **OrgSync's own words stay out of the reply:** not "picture", "pillars", "sections", "how we work", field names or
+  codes. Say what they hold ("Sam is waiting for your answer"). Leave out how the company is set up (practices,
+  reference frameworks, custom instructions, tags, the work-in-progress limit, role text, decision counts) unless the
+  person asks or it changes what they should do.
 
 Examples:
 
@@ -312,8 +319,8 @@ remembers or what they said in this chat.
   share only when they ask. Either way, nothing is shared until they approve the exact text. Nothing is saved in the
   background unless `status` says capture is on for them ([Capture](#capture)); then capture saves privately and the
   offer becomes its batch at the end. Sharing follows [sharing with the company](references/sharing.md).
-- **Keeping up to date.** With "a short brief when we start working", read free `readPicture` the first time OrgSync
-  comes up in a chat and give two lines: what needs them and what changed. With "only when I ask", wait for
+- **Keeping up to date.** With "a short brief when we start working", read free `readPicture` once, the first time
+  OrgSync comes up in a chat, and give two lines: what needs them and what changed. With "only when I ask", wait for
   /orgsync:today. While `startingChecklist` has items left, fold the next one into those two lines.
 - **Focus** says what they want OrgSync to help with first; let it guide what you offer.
 
@@ -364,9 +371,13 @@ smallest set of `pillars` that describes the work. That guidance shapes the meth
 practices. A factual lookup needs no framework read.
 
 **Ways of working.** A practice is adopted only when it is a current, ready, accepted source with
-`classification: "way_of_working"` and an `area`. Read current practices with free `list`, `what: "ways_of_working"`.
-`acceptedInAreaCount` above one means candidates to compare: show conflicting directions for a person to resolve,
-never pick a winner.
+`classification: "way_of_working"` and an `area`. At the start of a task, list the person's procedures with free
+`list`, `what: "ways_of_working"`, `scope: "mine"` (the company's, their team's and their departments'; an item without
+`scope` is the company's), and open the one that fits with free `readSource`. Follow it as guidance: it never overrides
+an accepted decision, a permission or a confirmation, and a team's procedure only adds detail to a wider one.
+`acceptedInAreaCount` above one, or a procedure that contradicts a wider one or a decision, is a conflict: show both for
+a person to resolve, never pick a winner. When a procedure would help beyond its team, you may suggest once sharing it
+wider ([sharing](references/sharing.md)); never do it unasked.
 
 ## Feedback to OrgSync
 

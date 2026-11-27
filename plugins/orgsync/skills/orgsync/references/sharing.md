@@ -20,7 +20,11 @@ approver makes it an accepted decision. Each publication uses company credit onc
   returns with `status: "active"` and pass their IDs as `tagIds`; never make one up. Leave tags out when none fit. Tags help
   people notice a decision; they grant no access. A member who needs a new tag asks an Owner (/orgsync:request).
 - **Way of working.** Set `classification: "way_of_working"` only when the person deliberately agrees the draft is how
-  the team works; an area, title or folder alone never makes a practice.
+  the team works; an area, title or folder alone never makes a practice. Its `scope` is `company` unless the person says
+  it is for a `team` (a manager's direct reports) or `department` (that manager's whole branch); then pass
+  `scopeManagerPersonId`, a person, never an AI employee. Scope decides whose AI apps see it first, never who may read
+  it. To share a narrower procedure wider, the person's yes makes a new draft at the wider scope with `promotedFrom`
+  naming the narrower `sourceId`; it is reviewed afresh, and nothing is promoted by itself.
 - **Private-looking material.** Set `privacyConcern` to `private_page`, `direct_message`, `personal_information` or
   `other_private_material` when it fits; otherwise `not_flagged`, which never means checked as safe.
 

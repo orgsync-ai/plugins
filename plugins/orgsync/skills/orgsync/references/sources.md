@@ -18,7 +18,9 @@ sources) and `list` with `what: "decisions"` (`view: "mine"` for their own), the
 - **Accept, question or withdraw** (Owners and Decision approvers). `decide` with `operation: "status"`, the expected
   and target status, the person's reason and, for a decision, `effectiveAt` only if they gave a date. To change only an accepted
   decision's date, pass `accepted_decision` as both statuses with the new `effectiveAt`. Accepting can also retire
-  other decisions it supersedes: pass them in `replaces`.
+  other decisions it supersedes: pass them in `replaces`. A team or department way of working may also be accepted by
+  the manager its `scopeManager` names, for their own branch: the plain acceptance only, without `replaces`, an owner,
+  a review interval or an acknowledgment ask.
 - **Pick the replacements.** When a confirmation carries `offeredReplacements`, list every entry by its `n` and title,
   marking those a member suggested (`origin: "intent"`), and ask which to apply; none is applied unless kept. On a chat
   connection, repeat the call with the `confirmationHash` and `replaceSelection`: the numbers they keep, or `[]` for
